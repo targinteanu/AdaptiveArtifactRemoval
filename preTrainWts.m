@@ -11,6 +11,7 @@ function [w, e_train, op_train, t_train, g_train, d_train, t_test, g_test, d_tes
 %   uchan: array of unique channels, same length as width of g, d, and t
 %   nUpdates: how many times to display progress and whether or not to plot weights. 
 %             0 = no output and no plots 
+%             Default = 10
 % 
 % Outputs: 
 %   w: trained weights, as columns, from oldest --> current time 
@@ -26,6 +27,13 @@ function [w, e_train, op_train, t_train, g_train, d_train, t_test, g_test, d_tes
 %   T: matrix of training time epochs  
 %   G: matrix of training noise reference epochs 
 %   D: matrix of training unfiltered epochs 
+
+if nargin < 7
+    nUpdates = 10;
+    if nargin < 6
+        uchan = 1:size(d,2);
+    end
+end
 
 %% organize into testing and training 
 

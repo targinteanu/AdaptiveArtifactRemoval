@@ -15,6 +15,13 @@ function [e_test, op_test] = testPreTrained(w, t_test, g_test, d_test, N, uchan,
 %   e_test: LMS error signal
 %   op_test: LMS output signal 
 
+if nargin < 7
+    nUpdates = 10;
+    if nargin < 6
+        uchan = 1:size(d,2);
+    end
+end
+
 %% testing  
 op_test = zeros(size(t_test,1)-N+1, length(uchan));
 for idx = 1:length(uchan)
