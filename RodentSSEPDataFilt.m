@@ -130,50 +130,12 @@ lpFilt = designfilt('lowpassiir', ...
                     'DesignMethod', 'cheby2');
 %fvtool(lpFilt);
 
-%% organize into testing and training 
-
-% split testing and training 
+%% pretraining and testing 
 splIdx = floor(trainfrac*size(t,1));
-t_train = t(1:splIdx, :); t_test = t((splIdx+1):end, :);
-g_train = g(1:splIdx, :); g_test = g((splIdx+1):end, :);
-d_train = d(1:splIdx, :); d_test = d((splIdx+1):end, :);
-
-% organize training epochs 
-G = zeros(size(t_train,1)-N+1, N, length(uchan)); 
-T = zeros(size(G)); 
-D = zeros(size(t_train,1)-N+1, length(uchan));
-for idx = 1:length(uchan)
-    D(:,idx) = d_train(N:size(t_train,1), idx);
-    for nf = 1:(size(t_train,1)-N+1)
-        G(nf,:,idx) = g_train(nf:(nf+N-1), idx);
-        T(nf,:,idx) = t_train(nf:(nf+N-1), idx);
-    end
-end
-
-%% training  
-figure('Units','normalized', 'Position',[.1 .1 .4 .8]);
-w = zeros(N, length(uchan));
-for idx = 1:length(uchan)
-    Gidx = G(:,:,idx); Didx = D(:,idx);
-    w(:,idx) = (((Gidx'*Gidx)^-1)*Gidx')*Didx;
-    subplot(length(uchan), 1, idx); stem(w(:,idx)); grid on;
-    title(['Channel ',num2str(uchan(idx)),' training']);
-    xlabel('tap'); ylabel('weight'); 
-    pause(eps);
-end
-pause(.5);
-
-%% testing  
-op_test = zeros(size(t_test,1)-N+1, length(uchan));
-for idx = 1:length(uchan)
-    for ep = (N:size(t_test,1))-N+1 
-        if ~mod(ep, floor(size(t_test,1)/(.1*nUpdates)))
-            disp(['Testing Channel ',num2str(uchan(idx)),': ',num2str(100*ep/size(t_test,1)),'%']);
-        end
-        Gidx = g_test((1:N)+ep-1, idx)';
-        op_test(ep,idx) = Gidx*w(:,idx);
-    end
-end
+tTrainBnd = [t(1), t(splIdx)];
+[w, e_train, op_train, t_train, g_train, d_train, t_test, g_test, d_test, T, G, D] = ...
+    preTrainWts(t, g, d, tTrainBnd, N, uchan, true);
+[e_test, op_test] = testPreTrained(w, t_test, g_test, d_test, N, uchan, nUpdates);
 
 %% online LMS 
 figure('Units','normalized', 'Position',[.1 .1 .8 .8]);
@@ -203,15 +165,6 @@ for idx = 1:length(uchan)
         end
     end
 end
-
-%% post-processing  
-op_train = zeros([size(t_train,1)-N+1,size(t_train,2)]); 
-for idx = 1:length(uchan)
-    op_train(:,idx) = G(:,:,idx)     *w(:,idx);
-end
-
-e_train = d_train; e_train(N:end,:) = e_train(N:end,:) - op_train;
-e_test = d_test; e_test(N:end,:) = e_test(N:end,:) - op_test;
 
 %% post-filtering
 disp('LP Filtering Train Signal')
