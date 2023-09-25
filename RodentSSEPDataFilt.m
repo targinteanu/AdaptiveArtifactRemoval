@@ -138,33 +138,7 @@ tTrainBnd = [t(1), t(splIdx)];
 %[e_test, op_test] = testPreTrained(w, t_test, g_test, d_test, N, uchan, .1*nUpdates);
 
 %% online LMS 
-figure('Units','normalized', 'Position',[.1 .1 .8 .8]);
-%w_OL = zeros(N, length(uchan));
-w_OL = w;
-e_t = nan(size(t,1)-N+1, length(uchan));
-
-for idx = 1:length(uchan)
-    % train w: iterate grad descent
-    subplot(length(uchan),2,2*idx-1); wplot = stem(w_OL(:,idx));    grid on;
-    title(['Channel ',num2str(uchan(idx)),' online']);
-    xlabel('tap'); ylabel('weight');
-    subplot(length(uchan),2,2*idx);   eplot = semilogy(e_t(:,idx)); grid on;
-    title(['Channel ',num2str(uchan(idx)),' online']);
-    xlabel('timepoint'); ylabel('e^2');
-    pause(.5);
-    for ep = (N:size(t,1))-N+1
-        Gidx = g((1:N)+ep-1, idx)';
-        E = d(ep+N-1,idx) - Gidx*w_OL(:,idx);
-        e_t(ep, idx) = E;
-        dw = E*Gidx';
-        w_OL(:,idx) = w_OL(:,idx) + stepsize*dw;
-        if ~mod(ep, floor(size(t,1)/nUpdates))
-            wplot.YData = w_OL(:,idx); eplot.YData = movmean(e_t(:,idx).^2, 5000);
-            disp(['Online Channel ',num2str(uchan(idx)),': ',num2str(100*ep/size(t,1)),'%'])
-            pause(eps);
-        end
-    end
-end
+[e_t, w_OL] = LMSonline(t, g, d, stepsize, N, uchan, w, nUpdates);
 
 %% post-filtering
 disp('LP Filtering Train Signal')
