@@ -74,12 +74,12 @@ end
 % t must be in columns!
 Dt = diff(t);
 dt_mean = mean(Dt(:));
-dt_min  = min(Dt(:));
+dt_resample  = 1/fs;
 dt_err  = std(Dt(:));
 tLen = t(end,:) - t(1,:);
 if dt_err > .01*dt_mean
-    warning(['Inconsistent time steps; resampling at ',num2str(1/dt_min),' Hz']);
-    t_from_start = 0:dt_min:max(tLen);
+    warning(['Inconsistent time steps; resampling at ',num2str(1/dt_resample),' Hz']);
+    t_from_start = 0:dt_resample:max(tLen);
 
     t2 = zeros(length(t_from_start), length(uchan));
     g2 = zeros(length(t_from_start), length(uchan));
@@ -99,13 +99,13 @@ if dt_err > .01*dt_mean
     g        = g2; 
     d_unfilt = d2; 
 
-    dt_mean = dt_min;
+    dt_mean = dt_resample;
 end
 
 Fs = 1/dt_mean; % Hz
 
 %% cleanup 
-clear Dt dt_mean dt_min dt_err tLen 
+clear Dt dt_mean dt_resample dt_err tLen 
 clear t2 g2 d2
 clear T G dta dta_t_chan
 clear g_trl t_trl t_stim chan ch chIdx 
