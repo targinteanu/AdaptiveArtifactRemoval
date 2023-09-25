@@ -1,11 +1,26 @@
 function [e_test, op_test] = testPreTrained(w, t_test, g_test, d_test, N, uchan, nUpdates)
+% Test a given set of weights on a specified part of the signal without
+% adapting the weights.
+% 
+% Inputs:
+%   w: weights, as columns, from oldest --> current time 
+%   t_test: time vectors to use for testing as columns 
+%   g_test: noise reference signal as columns 
+%   d_test: unfiltered signal as columns 
+%   N: number of taps 
+%   uchan: array of unique channels, same length as width of g, d, and t
+%   nUpdates: how many times to display progress. 0 = no output 
+% 
+% Outputs: 
+%   e_test: LMS error signal
+%   op_test: LMS output signal 
 
 %% testing  
 op_test = zeros(size(t_test,1)-N+1, length(uchan));
 for idx = 1:length(uchan)
     for ep = (N:size(t_test,1))-N+1 
         if nUpdates
-            if ~mod(ep, floor(size(t_test,1)/(.1*nUpdates)))
+            if ~mod(ep, floor(size(t_test,1)/(nUpdates)))
                 disp(['Testing Channel ',num2str(uchan(idx)),': ',num2str(100*ep/size(t_test,1)),'%']);
             end
         end

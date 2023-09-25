@@ -134,8 +134,8 @@ lpFilt = designfilt('lowpassiir', ...
 splIdx = floor(trainfrac*size(t,1));
 tTrainBnd = [t(1), t(splIdx)];
 [w, e_train, op_train, t_train, g_train, d_train, t_test, g_test, d_test, T, G, D] = ...
-    preTrainWts(t, g, d, tTrainBnd, N, uchan, true);
-[e_test, op_test] = testPreTrained(w, t_test, g_test, d_test, N, uchan, nUpdates);
+    preTrainWts(t, g, d, tTrainBnd, N, uchan, .1*nUpdates);
+%[e_test, op_test] = testPreTrained(w, t_test, g_test, d_test, N, uchan, .1*nUpdates);
 
 %% online LMS 
 figure('Units','normalized', 'Position',[.1 .1 .8 .8]);
