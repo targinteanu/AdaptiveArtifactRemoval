@@ -1,14 +1,19 @@
-function plotBeforeAfterStim(tBeforeTrig, g, d, e_t, Fs, uchan, N)
+function fig = plotBeforeAfterStim(tBeforeTrig, g, d, e_t, Fs, uchan, N)
 % Plot the filtered and unfiltered signals and their power spectra some
 % time before and after the stimulus. 
 % 
-% tBeforeTrig: time before/after stimulus to plot (s) 
-% g: stimulus value over time, as columns 
-% d: unfiltered value over time, as columns (V)
-% e_t: filtered value over time, as columns (V)
-% Fs: sampling rate of g, d, and e_t (Hz) 
-% uchan: array of unique channels, same length as width of g, d, and e_t 
-% N: number of filter taps                                                 <--- remove by making more robust(?)
+% Inputs: 
+%   tBeforeTrig: time before/after stimulus to plot (s) 
+%   g: stimulus value over time, as columns 
+%   d: unfiltered value over time, as columns (V)
+%   e_t: filtered value over time, as columns (V)
+%   Fs: sampling rate of g, d, and e_t (Hz) 
+%   uchan: array of unique channels, same length as width of g, d, and e_t 
+%   N: number of filter taps         
+% 
+% Outputs: 
+%   fig: matlab figure, 3x2, showing time and spectrum before/after stim
+%        and with/without filtering 
 
 %% getting signals before and after stim  
 %tBeforeTrig = .29; % s

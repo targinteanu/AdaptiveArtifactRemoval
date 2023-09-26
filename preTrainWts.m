@@ -1,4 +1,4 @@
-function [w, e_train, op_train, t_train, g_train, d_train, t_test, g_test, d_test, T, G, D] = ...
+function [w, e_train, op_train, t_train, g_train, d_train, t_test, g_test, d_test, T, G, D, fig] = ...
     preTrainWts(t, g, d, trainTimeBounds, N, uchan, nUpdates)
 % Use a subset of the signal to train optimal LMS weights. 
 %
@@ -27,6 +27,7 @@ function [w, e_train, op_train, t_train, g_train, d_train, t_test, g_test, d_tes
 %   T: matrix of training time epochs  
 %   G: matrix of training noise reference epochs 
 %   D: matrix of training unfiltered epochs 
+%   fig: matlab figure with the trained weights of each channel
 
 if nargin < 7
     nUpdates = 10;

@@ -1,4 +1,4 @@
-function [e_t, w] = LMSonline(t, g, d, stepsize, N, uchan, w, nUpdates)
+function [e_t, w, fig] = LMSonline(t, g, d, stepsize, N, uchan, w, nUpdates)
 % Perform online LMS adaptive filtering. 
 % 
 % Inputs: 
@@ -17,6 +17,7 @@ function [e_t, w] = LMSonline(t, g, d, stepsize, N, uchan, w, nUpdates)
 % Outputs: 
 %   e_t: LMS error signal 
 %   w: final weights 
+%   fig: matlab figure showing the resulting weights and error signal 
 
 if nargin < 7
     nUpdates = 100;
