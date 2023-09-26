@@ -152,10 +152,10 @@ d_lpf       = filtfilt(lpFilt, d);
 
 %% demo final signal 
 for idx = 1:length(uchan)
-    figure; 
-    plot(t(:,idx), d(:,idx), 'k', 'LineWidth', 1); hold on;
-%    plot(t_train(:,idx), e_train_lpf(:,idx)); plot(t_test(:,idx), e_test_lpf(:,idx));
-    plot(t(N:end,idx), e_t_lpf(:,idx)); % is alignment valid???
+    fig = figure; 
+    figure(fig); plot(t(:,idx), d(:,idx), 'k', 'LineWidth', 1); hold on;
+%    figure(fig); plot(t_train(:,idx), e_train_lpf(:,idx)); plot(t_test(:,idx), e_test_lpf(:,idx));
+    figure(fig); plot(t(N:end,idx), e_t_lpf(:,idx)); 
     grid on;
     xlabel('time (s)'); ylabel('filtered signal (V)');
 %    legend('original', 'train', 'test', 'online');
