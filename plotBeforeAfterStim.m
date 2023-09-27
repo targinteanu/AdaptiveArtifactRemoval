@@ -133,10 +133,10 @@ for idx = 1:length(uchan)
     meanSpectUnfiltAfter = mean(spectUnfiltAfterCh); 
     errbSpectUnfiltAfter =  std(spectUnfiltAfterCh);
 
-    fig = figure('Units','normalized', 'Position',[.1 .1 .8 .8]); 
-    figure(fig); sgtitle(['Chennel ',num2str(uchan(idx)),' Avg. Response to Stim']);
+    fig(idx) = figure('Units','normalized', 'Position',[.1 .1 .8 .8]); 
+    figure(fig(idx)); sgtitle(['Chennel ',num2str(uchan(idx)),' Avg. Response to Stim']);
 
-    figure(fig); subplot(321); 
+    figure(fig(idx)); subplot(321); 
            plotWithDistrib(t_PrePost(1,:), meanUnfiltBefore, errbUnfiltBefore, ltRed);
     yrng = plotWithDistrib(t_PrePost(1,:), meanFiltBefore, errbFiltBefore, dkBlue);
     title('Filtered Before'); grid on; 
@@ -144,7 +144,7 @@ for idx = 1:length(uchan)
     ylim(yrng(2,:)); 
     legend('Unfiltered', '-1SD', '+1SD', 'Filtered', '-1SD', '+1SD', 'Location','eastoutside');
 
-    figure(fig); subplot(322); 
+    figure(fig(idx)); subplot(322); 
            plotWithDistrib(t_PrePost(2,:), meanUnfiltAfter, errbUnfiltAfter, ltRed);
     yrng = plotWithDistrib(t_PrePost(2,:), meanFiltAfter, errbFiltAfter, dkBlue);
     title('Filtered After'); grid on; 
@@ -152,7 +152,7 @@ for idx = 1:length(uchan)
     ylim(yrng(2,:));
     legend('Unfiltered', '-1SD', '+1SD', 'Filtered', '-1SD', '+1SD', 'Location','eastoutside');
 
-    figure(fig); subplot(323);  
+    figure(fig(idx)); subplot(323);  
            plotWithDistrib(t_PrePost(1,:), meanFiltBefore, errbFiltBefore, ltBlue);
     yrng = plotWithDistrib(t_PrePost(1,:), meanUnfiltBefore, errbUnfiltBefore, dkRed);
     title('Unfiltered Before'); grid on; 
@@ -160,7 +160,7 @@ for idx = 1:length(uchan)
     ylim(yrng(2,:));
     legend('Filtered', '-1SD', '+1SD', 'Unfiltered', '-1SD', '+1SD', 'Location','eastoutside');
 
-    figure(fig); subplot(324);  
+    figure(fig(idx)); subplot(324);  
            plotWithDistrib(t_PrePost(2,:), meanFiltAfter, errbFiltAfter, ltBlue);
     yrng = plotWithDistrib(t_PrePost(2,:), meanUnfiltAfter, errbUnfiltAfter, dkRed);
     title('Unfiltered After'); grid on; 
@@ -168,7 +168,7 @@ for idx = 1:length(uchan)
     ylim(yrng(2,:));
     legend('Filtered', '-1SD', '+1SD', 'Unfiltered', '-1SD', '+1SD', 'Location','eastoutside');
 
-    figure(fig); subplot(325); 
+    figure(fig(idx)); subplot(325); 
     semilogy(wUnfiltAfter, meanSpectUnfiltAfter, 'Color', ltRed); hold on; 
     semilogy(wFiltAfter, meanSpectFiltAfter, 'Color', ltBlue);
     plotWithDistrib(wUnfiltBefore, meanSpectUnfiltBefore, errbSpectUnfiltBefore, dkRed);
@@ -179,7 +179,7 @@ for idx = 1:length(uchan)
     legend('Unfiltered After', 'Filtered After', ...
         'Unfiltered Before', '-1SD', '+1SD', 'Filtered Before', '-1SD', '+1SD', 'Location','eastoutside');
 
-    figure(fig); subplot(326); 
+    figure(fig(idx)); subplot(326); 
     semilogy(wUnfiltBefore, meanSpectUnfiltBefore, 'Color', ltRed); hold on; 
     semilogy(wFiltBefore, meanSpectFiltBefore, 'Color', ltBlue);
     plotWithDistrib(wUnfiltAfter, meanSpectUnfiltAfter, errbSpectUnfiltAfter, dkRed);
