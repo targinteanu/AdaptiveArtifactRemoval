@@ -134,7 +134,7 @@ for idx = 1:length(uchan)
     errbSpectUnfiltAfter =  std(spectUnfiltAfterCh);
 
     fig(idx) = figure('Units','normalized', 'Position',[.1 .1 .8 .8]); 
-    figure(fig(idx)); sgtitle(['Chennel ',num2str(uchan(idx)),' Avg. Response to Stim']);
+    figure(fig(idx)); sgtitle(['Channel ',num2str(uchan(idx)),' Avg. Response to Stim']);
 
     figure(fig(idx)); subplot(321); 
            plotWithDistrib(t_PrePost(1,:), meanUnfiltBefore, errbUnfiltBefore, ltRed);
