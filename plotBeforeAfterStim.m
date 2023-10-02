@@ -1,4 +1,4 @@
-function fig = plotBeforeAfterStim(tBeforeTrig, g, d, e_t, Fs, uchan, N)
+function fig = plotBeforeAfterStim(tBeforeTrig, g, d, e_t, Fs, uchan, N, nUpdates)
 % Plot the filtered and unfiltered signals and their power spectra some
 % time before and after the stimulus. 
 % 
@@ -137,10 +137,22 @@ for chIdx = 1:length(uchan)
     for trl = 1:size(sigFiltCh,1)
         sFiltBefore(:,:,trl) = spectrogram(sigFiltCh(trl,:,1), sgramWinLen, [], sgramFQ);
         sFiltAfter(:,:,trl) = spectrogram(sigFiltCh(trl,:,2), sgramWinLen, [], sgramFQ);
+        if nUpdates
+            if ~mod(trl, floor(size(sigFiltCh,1)/(nUpdates)))
+                disp(['Obtaining Channel ',num2str(uchan(chIdx)),' Spectrograms: ',...
+                      num2str(100*trl/(size(sigFiltCh,1)+size(sigUnfiltCh,1))),'%']);
+            end
+        end
     end
     for trl = 1:size(sigUnfiltCh,1)
         sUnfiltBefore(:,:,trl) = spectrogram(sigUnfiltCh(trl,:,1), sgramWinLen, [], sgramFQ);
         sUnfiltAfter(:,:,trl) = spectrogram(sigUnfiltCh(trl,:,2), sgramWinLen, [], sgramFQ);
+        if nUpdates
+            if ~mod(trl, floor(size(sigUnfiltCh,1)/(nUpdates)))
+                disp(['Obtaining Channel ',num2str(uchan(chIdx)),' Spectrograms: ',...
+                      num2str(100*(size(sigFiltCh,1)+trl)/(size(sigFiltCh,1)+size(sigUnfiltCh,1))),'%']);
+            end
+        end
     end
 
     [wFiltBefore, spectFiltBeforeCh] = PowerSpectrum(sigFiltCh(:,:,1), Fs);
