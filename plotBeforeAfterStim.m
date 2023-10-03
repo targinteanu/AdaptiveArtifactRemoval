@@ -1,4 +1,4 @@
-function fig = plotBeforeAfterStim(tBeforeTrig, g, d, e_t, Fs, uchan, N, nUpdates)
+function fig = plotBeforeAfterStim(tBeforeTrig, g, d, e_t, Fs, uchan, N, nTrlInBatch, nUpdates)
 % Plot the filtered and unfiltered signals and their power spectra some
 % time before and after the stimulus. 
 % 
@@ -254,7 +254,63 @@ for chIdx = 1:length(uchan)
     xlabel('time (s)'); ylabel('Frequency (Hz)');
 end
 
+%% cleanup 
+clear sFiltBeforeF sFiltBeforeT sFiltBefore sUnfiltBeforeF sUnfiltBeforeT sUnfiltBefore 
+clear yrng 
+clear sgramFQ sgramWinLen sgramFmax sgramFWinLen
+
 %% Plotting averaged - in batches 
+for chIdx = 1:length(uchan)
+    sigFiltCh = e_t_PrePost{chIdx};
+    sigUnfiltCh = d_PrePost{chIdx};
+
+    [wFiltBefore, spectFiltBeforeCh] = PowerSpectrum(sigFiltCh(:,:,1), Fs);
+    [wFiltAfter, spectFiltAfterCh] = PowerSpectrum(sigFiltCh(:,:,2), Fs);
+    [wUnfiltBefore, spectUnfiltBeforeCh] = PowerSpectrum(sigUnfiltCh(:,:,1), Fs);
+    [wUnfiltAfter, spectUnfiltAfterCh] = PowerSpectrum(sigUnfiltCh(:,:,2), Fs);
+
+    % Filtered: means for each batch -------------------------------------
+    nTrl = size(sigFiltCh,1);
+    nBatch = floor(nTrl/nTrlInBatch);
+
+    meanFiltBefore = zeros(nBatch, size(sigFiltCh,2));
+    errbFiltBefore = zeros(size(meanFiltBefore));
+    meanFiltAfter = zeros(size(meanFiltBefore));
+    errbFiltAfter = zeros(size(meanFiltAfter));
+    meanSpectFiltBefore = zeros(nBatch, size(spectFiltBeforeCh,2));
+    errbSpectFiltBefore = zeros(size(meanSpectFiltBefore));
+    meanSpectFiltAfter = zeros(size(meanSpectFiltBefore));
+    errbSpectFiltAfter = zeros(size(meanSpectFiltAfter));
+
+    curBatchIdx = 1;
+    for trl = 1:nTrlInBatch:nTrl
+        curBatchTrlIdx = (0:(nTrlInBatch-1)) + trl;
+
+        % before
+        curBatch = sigFiltCh(curBatchTrlIdx, :, 1);  
+        meanFiltBefore(curBatchIdx,:) = mean(curBatch); 
+        errbFiltBefore(curBatchIdx,:) =  std(curBatch);
+
+        % after
+        curBatch = sigFiltCh(curBatchTrlIdx, :, 2); 
+        meanFiltAfter(curBatchIdx,:) = mean(curBatch); 
+        errbFiltAfter(curBatchIdx,:) =  std(curBatch);
+
+        % Spect 
+        curBatch = spectFiltBeforeCh(curBatchTrlIdx,:);
+        meanSpectFiltBefore(curBatchIdx,:) = mean(curBatch); 
+        errbSpectFiltBefore(curBatchIdx,:) =  std(curBatch);
+        curBatch = spectFiltAfterCh(curBatchTrlIdx,:);
+        meanSpectFiltAfter(curBatchIdx,:) = mean(curBatch); 
+        errbSpectFiltAfter(curBatchIdx,:) =  std(curBatch);
+
+        curBatchIdx = curBatchIdx + 1;
+    end
+    % --------------------------------------------------------------------
+end
+
+%% cleanup 
+clear curBatchTrlIdx curBatchIdx curBatch
 
 %% helper functions 
 function range = plotWithDistrib(x, y, dist, colr)
