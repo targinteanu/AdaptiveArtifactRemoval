@@ -455,6 +455,12 @@ for chIdx = 1:length(uchan)
     [wUnfiltBefore, spectUnfiltBeforeCh] = PowerSpectrum(sigUnfiltCh(:,:,1), Fs);
     [wUnfiltAfter, spectUnfiltAfterCh] = PowerSpectrum(sigUnfiltCh(:,:,2), Fs);
 
+    % normalize power spectra: 
+    spectFiltBeforeCh = spectFiltBeforeCh./sum(spectFiltBeforeCh,2);
+    spectFiltAfterCh = spectFiltAfterCh./sum(spectFiltAfterCh,2);
+    spectUnfiltBeforeCh = spectUnfiltBeforeCh./sum(spectUnfiltBeforeCh,2);
+    spectUnfiltAfterCh = spectUnfiltAfterCh./sum(spectUnfiltAfterCh,2);
+
     nTrl = size(sigFiltCh,1);
     statsTimeFilt = zeros(nTrl,2);
     statsFreqFilt = zeros(nTrl,4);
