@@ -487,32 +487,58 @@ for chIdx = 1:length(uchan)
         [~,statsFreqUnfilt(trl,4)] = ttest(spectUnfiltBeforeCh(trl,:) , spectUnfiltAfterCh(trl,:));
     end
 
+    nTrl = size(sigFiltCh,1);
+    statsTimeOverTimeFilt = zeros(2, size(t_PrePost,2));
+    for tIdx = 1:size(t_PrePost,2)
+        [~,statsTimeOverTimeFilt(1,tIdx)] = kstest2(sigFiltCh(:,tIdx,1), sigFiltCh(:,tIdx,2));
+        [~,statsTimeOverTimeFilt(2,tIdx)] =  ttest2(sigFiltCh(:,tIdx,1), sigFiltCh(:,tIdx,2), 'Vartype', 'unequal');
+    end
+
+    nTrl = size(sigUnfiltCh,1);
+    statsTimeOverTimeUnfilt = zeros(2, size(t_PrePost,2));
+    for tIdx = 1:size(t_PrePost,2)
+        [~,statsTimeOverTimeUnfilt(1,tIdx)] = kstest2(sigUnfiltCh(:,tIdx,1), sigUnfiltCh(:,tIdx,2));
+        [~,statsTimeOverTimeUnfilt(2,tIdx)] =  ttest2(sigUnfiltCh(:,tIdx,1), sigUnfiltCh(:,tIdx,2), 'Vartype', 'unequal');
+    end
+
     fig(chIdx,3) = figure('Units','normalized', 'Position',[.1 .1 .8 .8]); 
     figure(fig(chIdx,3)); sgtitle(['Channel ',num2str(uchan(chIdx)),' Before-After Comparison Statistics']);
 
-    figure(fig(chIdx,3)); subplot(2,2,1);
+    figure(fig(chIdx,3)); subplot(3,2,1);
     plot(statsTimeUnfilt(:,1));
     title('Unfiltered Time Domain'); grid on; 
     xlabel('Trial #'); ylabel('p value: before vs after'); 
     legend('KS Test', 'T Test');
 
-    figure(fig(chIdx,3)); subplot(2,2,2);
+    figure(fig(chIdx,3)); subplot(3,2,2);
     plot(statsTimeFilt(:,1));
     title('Filtered Time Domain'); grid on; 
     xlabel('Trial #'); ylabel('p value: before vs after');
     legend('KS Test', 'T Test');
 
-    figure(fig(chIdx,3)); subplot(2,2,3);
+    figure(fig(chIdx,3)); subplot(3,2,3);
     plot(statsFreqUnfilt(:,1)); 
     title('Unfiltered Frequency Domain'); grid on; 
     xlabel('Trial #'); ylabel('p value: before vs after');
     legend('Wilcoxon Rank', 'Pearson Corr.', 'Spearman Corr.', 'Paired T');
 
-    figure(fig(chIdx,3)); subplot(2,2,4);
+    figure(fig(chIdx,3)); subplot(3,2,4);
     plot(statsFreqFilt(:,1)); 
     title('Filtered Frequency Domain'); grid on; 
     xlabel('Trial #'); ylabel('p value: before vs after');
     legend('Wilcoxon Rank', 'Pearson Corr.', 'Spearman Corr.', 'Paired T');
+
+    figure(fig(chIdx,3)); subplot(3,2,5);
+    plot(t_PrePost(2,:), statsTimeOverTimeUnfilt);
+    title('Unfiltered Time Domain'); grid on; 
+    xlabel('time (s)'); ylabel('p value: before vs after'); 
+    legend('KS Test', 'T Test');
+
+    figure(fig(chIdx,3)); subplot(3,2,6);
+    plot(t_PrePost(2,:), statsTimeOverTimeFilt);
+    title('Filtered Time Domain'); grid on; 
+    xlabel('time (s)'); ylabel('p value: before vs after'); 
+    legend('KS Test', 'T Test');
 
     pause(.25);
 end
