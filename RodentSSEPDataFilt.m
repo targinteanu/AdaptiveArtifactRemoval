@@ -172,4 +172,4 @@ end
 %xlim([336.351, 336.449])
 %xlim([336.1, 337.1])
 
-plotBeforeAfterStim(.29, g, d, e_t_lpf, Fs, uchan, N, .1*nUpdates);
+plotBeforeAfterStim(.29, g, d, e_t_lpf, Fs, uchan, N, 150, .1*nUpdates);
