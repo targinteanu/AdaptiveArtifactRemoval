@@ -122,21 +122,21 @@ for chIdx = 1:length(uchan)
     errbUnfiltBefore =  std(sigUnfiltCh(:,:,1));
     errbUnfiltAfter  =  std(sigUnfiltCh(:,:,2));
 
-    [sFiltBefore, sFiltBeforeF, sFiltBeforeT] = ...
+    [~, sFiltBeforeF, sFiltBeforeT, sFiltBefore] = ...
         spectrogram(meanFiltBefore, sgramWinLen, [], sgramFQ, Fs);
-    [sFiltAfter, sFiltAfterF, sFiltAfterT] = ...
+    [~, sFiltAfterF, sFiltAfterT, sFiltAfter] = ...
         spectrogram(meanFiltAfter, sgramWinLen, [], sgramFQ, Fs);
-    [sUnfiltBefore, sUnfiltBeforeF, sUnfiltBeforeT] = ...
+    [~, sUnfiltBeforeF, sUnfiltBeforeT, sUnfiltBefore] = ...
         spectrogram(meanUnfiltBefore, sgramWinLen, [], sgramFQ, Fs);
-    [sUnfiltAfter, sUnfiltAfterF, sUnfiltAfterT] = ...
+    [~, sUnfiltAfterF, sUnfiltAfterT, sUnfiltAfter] = ...
         spectrogram(meanUnfiltAfter, sgramWinLen, [], sgramFQ, Fs);
     sFiltBefore = zeros([size(sFiltBefore),size(sigFiltCh,1)]);
     sFiltAfter = zeros([size(sFiltAfter),size(sigFiltCh,1)]);
     sUnfiltBefore = zeros([size(sUnfiltBefore),size(sigUnfiltCh,1)]);
     sUnfiltAfter = zeros([size(sUnfiltAfter),size(sigUnfiltCh,1)]);
     for trl = 1:size(sigFiltCh,1)
-        sFiltBefore(:,:,trl) = spectrogram(sigFiltCh(trl,:,1), sgramWinLen, [], sgramFQ, Fs);
-        sFiltAfter(:,:,trl) = spectrogram(sigFiltCh(trl,:,2), sgramWinLen, [], sgramFQ, Fs);
+        [~,~,~,sFiltBefore(:,:,trl)] = spectrogram(sigFiltCh(trl,:,1), sgramWinLen, [], sgramFQ, Fs);
+        [~,~,~,sFiltAfter(:,:,trl)] = spectrogram(sigFiltCh(trl,:,2), sgramWinLen, [], sgramFQ, Fs);
         if nUpdates
             if ~mod(trl, floor(size(sigFiltCh,1)/(nUpdates)))
                 disp(['Obtaining Channel ',num2str(uchan(chIdx)),' Spectrograms: ',...
@@ -145,8 +145,8 @@ for chIdx = 1:length(uchan)
         end
     end
     for trl = 1:size(sigUnfiltCh,1)
-        sUnfiltBefore(:,:,trl) = spectrogram(sigUnfiltCh(trl,:,1), sgramWinLen, [], sgramFQ, Fs);
-        sUnfiltAfter(:,:,trl) = spectrogram(sigUnfiltCh(trl,:,2), sgramWinLen, [], sgramFQ, Fs);
+        [~,~,~,sUnfiltBefore(:,:,trl)] = spectrogram(sigUnfiltCh(trl,:,1), sgramWinLen, [], sgramFQ, Fs);
+        [~,~,~,sUnfiltAfter(:,:,trl)] = spectrogram(sigUnfiltCh(trl,:,2), sgramWinLen, [], sgramFQ, Fs);
         if nUpdates
             if ~mod(trl, floor(size(sigUnfiltCh,1)/(nUpdates)))
                 disp(['Obtaining Channel ',num2str(uchan(chIdx)),' Spectrograms: ',...
@@ -234,22 +234,22 @@ for chIdx = 1:length(uchan)
         'Unfiltered After', '-1SD', '+1SD', 'Filtered After', '-1SD', '+1SD', 'Location','eastoutside');
 
     figure(fig(chIdx,1)); subplot(5,2,7);
-    imagesc(sFiltBeforeT, sFiltBeforeF, abs(mean(sFiltBefore,3))); colorbar;
+    imagesc(sFiltBeforeT, sFiltBeforeF, 10*log10(mean(sFiltBefore,3))); colorbar;
     title('Spectrogram Filtered Before (dB/Hz)'); 
     xlabel('time (s)'); ylabel('Frequency (Hz)');
 
     figure(fig(chIdx,1)); subplot(5,2,8);
-    imagesc(sFiltAfterT, sFiltAfterF, abs(mean(sFiltAfter,3))); colorbar;
+    imagesc(sFiltAfterT, sFiltAfterF, 10*log10(mean(sFiltAfter,3))); colorbar;
     title('Spectrogram Filtered After (dB/Hz)'); 
     xlabel('time (s)'); ylabel('Frequency (Hz)');
 
     figure(fig(chIdx,1)); subplot(5,2,9);
-    imagesc(sUnfiltBeforeT, sUnfiltBeforeF, abs(mean(sUnfiltBefore,3))); colorbar;
+    imagesc(sUnfiltBeforeT, sUnfiltBeforeF, 10*log10(mean(sUnfiltBefore,3))); colorbar;
     title('Spectrogram Unfiltered Before (dB/Hz)'); 
     xlabel('time (s)'); ylabel('Frequency (Hz)');
 
     figure(fig(chIdx,1)); subplot(5,2,10);
-    imagesc(sUnfiltAfterT, sUnfiltAfterF, abs(mean(sUnfiltAfter,3))); colorbar;
+    imagesc(sUnfiltAfterT, sUnfiltAfterF, 10*log10(mean(sUnfiltAfter,3))); colorbar;
     title('Spectrogram Unfiltered After (dB/Hz)'); 
     xlabel('time (s)'); ylabel('Frequency (Hz)');
 end
