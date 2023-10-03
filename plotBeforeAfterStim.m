@@ -269,7 +269,7 @@ for chIdx = 1:length(uchan)
     [wUnfiltBefore, spectUnfiltBeforeCh] = PowerSpectrum(sigUnfiltCh(:,:,1), Fs);
     [wUnfiltAfter, spectUnfiltAfterCh] = PowerSpectrum(sigUnfiltCh(:,:,2), Fs);
 
-    %% Filtered: means for each batch -------------------------------------
+    % Filtered: means for each batch -------------------------------------
     nTrl = size(sigFiltCh,1);
     nBatch = floor(nTrl/nTrlInBatch);
 
@@ -310,7 +310,7 @@ for chIdx = 1:length(uchan)
     end
     % ====================================================================
 
-    %% Unfiltered: means for each batch -----------------------------------
+    % Unfiltered: means for each batch -----------------------------------
     nTrl = size(sigUnfiltCh,1);
     nBatch = floor(nTrl/nTrlInBatch);
 
@@ -349,7 +349,7 @@ for chIdx = 1:length(uchan)
         errbSpectUnfiltAfter(batchIdx,:) =  std(curBatch);
         %}
     end
-    %% ====================================================================
+    % ====================================================================
 
     fig(chIdx,2) = figure('Units','normalized', 'Position',[.1 .1 .8 .8]); 
     figure(fig(chIdx,2)); sgtitle(['Channel ',num2str(uchan(chIdx)),' Batch Responses to Stim']);
@@ -439,34 +439,5 @@ end
 
 %% cleanup 
 clear curBatchTrlIdx batchIdx curBatch theta batchColor
-
-%% helper functions 
-function range = plotWithDistrib(x, y, dist, colr)
-    % plot y with a dashed +- distribution surrounding y. 
-    % y and dist must be row vectors
-    plot(x, y, 'Color', colr); 
-    hold on; 
-    Y = y + [1;-1].*dist;
-    plot(x, Y, ':', 'Color', colr);
-    range = [min(Y(:)), max(Y(:))];
-    range = [range; 1.25*[-1,1]*.5*diff(range) + mean(range)];
-end
-
-function [wP, P, w, Y] = PowerSpectrum(y, Fs)
-    % y: a row vector/matrix in time domain 
-    % wP: one-sided frequency 
-    % P: power spectrum (1-sided) of Y
-    % w: two-sided frequency 
-    % Y: frequency spectrum (2-sided, complex)
-    L = size(y, 2);
-    y = y';
-    Y = fft(y);  
-    w = Fs/L*(-L/2:L/2-1);
-    P = abs(Y/L)'; P = P(:, 1:L/2+1);
-    P(:, 2:end-1) = 2*P(:, 2:end-1);
-    P = P.^2;
-    wP = Fs/L*(0:(L/2));
-    Y = fftshift(Y)';
-end
 
 end
