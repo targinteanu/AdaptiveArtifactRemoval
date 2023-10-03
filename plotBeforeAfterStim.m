@@ -362,7 +362,7 @@ for chIdx = 1:length(uchan)
     for batchIdx = 1:nBatch
         theta = batchIdx/nBatch;
         batchColor = theta*dkPink + (1-theta)*dkAqua;
-        plotWithDistrib(t_PrePost(1,:), meanFiltBefore, errbFiltBefore, batchColor); 
+        plotWithDistrib(t_PrePost(1,:), meanFiltBefore(batchIdx,:), errbFiltBefore(batchIdx,:), batchColor); 
     end
     title('Filtered Before'); grid on; 
     xlabel('time (s)'); ylabel('Signal (V)'); 
@@ -371,7 +371,7 @@ for chIdx = 1:length(uchan)
     for batchIdx = 1:nBatch
         theta = batchIdx/nBatch;
         batchColor = theta*dkPink + (1-theta)*dkAqua;
-        plotWithDistrib(t_PrePost(2,:), meanFiltAfter, errbFiltAfter, batchColor); 
+        plotWithDistrib(t_PrePost(2,:), meanFiltAfter(batchIdx,:), errbFiltAfter(batchIdx,:), batchColor); 
     end
     title('Filtered After'); grid on; 
     xlabel('time (s)'); ylabel('Signal (V)'); 
@@ -380,7 +380,7 @@ for chIdx = 1:length(uchan)
     for batchIdx = 1:nBatch
         theta = batchIdx/nBatch;
         batchColor = theta*dkPink + (1-theta)*dkAqua;
-        plotWithDistrib(wFiltBefore, meanSpectFiltBefore, errbSpectFiltBefore, batchColor); 
+        plotWithDistrib(wFiltBefore, meanSpectFiltBefore(batchIdx,:), errbSpectFiltBefore(batchIdx,:), batchColor); 
     end
     title('Filtered Before'); set(gca, 'YScale', 'log'); grid on; 
     xlabel('Frequency (Hz)'); ylabel('Power Spectrum (V^2*s^2)'); 
@@ -389,7 +389,7 @@ for chIdx = 1:length(uchan)
     for batchIdx = 1:nBatch
         theta = batchIdx/nBatch;
         batchColor = theta*dkPink + (1-theta)*dkAqua;
-        plotWithDistrib(wFiltAfter, meanSpectFiltAfter, errbSpectFiltAfter, batchColor); 
+        plotWithDistrib(wFiltAfter, meanSpectFiltAfter(batchIdx,:), errbSpectFiltAfter(batchIdx,:), batchColor); 
     end
     title('Filtered After'); set(gca, 'YScale', 'log'); grid on; 
     xlabel('Frequency (Hz)'); ylabel('Power Spectrum (V^2*s^2)'); 
@@ -403,7 +403,7 @@ for chIdx = 1:length(uchan)
     for batchIdx = 1:nBatch
         theta = batchIdx/nBatch;
         batchColor = theta*dkPink + (1-theta)*dkAqua;
-        plotWithDistrib(t_PrePost(1,:), meanUnfiltBefore, errbUnfiltBefore, batchColor); 
+        plotWithDistrib(t_PrePost(1,:), meanUnfiltBefore(batchIdx,:), errbUnfiltBefore(batchIdx,:), batchColor); 
     end
     title('Unfiltered Before'); grid on; 
     xlabel('time (s)'); ylabel('Signal (V)'); 
@@ -412,7 +412,7 @@ for chIdx = 1:length(uchan)
     for batchIdx = 1:nBatch
         theta = batchIdx/nBatch;
         batchColor = theta*dkPink + (1-theta)*dkAqua;
-        plotWithDistrib(t_PrePost(2,:), meanUnfiltAfter, errbUnfiltAfter, batchColor); 
+        plotWithDistrib(t_PrePost(2,:), meanUnfiltAfter(batchIdx,:), errbUnfiltAfter(batchIdx,:), batchColor); 
     end
     title('Unfiltered After'); grid on; 
     xlabel('time (s)'); ylabel('Signal (V)'); 
@@ -421,7 +421,7 @@ for chIdx = 1:length(uchan)
     for batchIdx = 1:nBatch
         theta = batchIdx/nBatch;
         batchColor = theta*dkPink + (1-theta)*dkAqua;
-        plotWithDistrib(wUnfiltBefore, meanSpectUnfiltBefore, errbSpectUnfiltBefore, batchColor); 
+        plotWithDistrib(wUnfiltBefore, meanSpectUnfiltBefore(batchIdx,:), errbSpectUnfiltBefore(batchIdx,:), batchColor); 
     end
     title('Unfiltered Before'); set(gca, 'YScale', 'log'); grid on; 
     xlabel('Frequency (Hz)'); ylabel('Power Spectrum (V^2*s^2)'); 
@@ -430,7 +430,7 @@ for chIdx = 1:length(uchan)
     for batchIdx = 1:nBatch
         theta = batchIdx/nBatch;
         batchColor = theta*dkPink + (1-theta)*dkAqua;
-        plotWithDistrib(wUnfiltAfter, meanSpectUnfiltAfter, errbSpectUnfiltAfter, batchColor); 
+        plotWithDistrib(wUnfiltAfter, meanSpectUnfiltAfter(batchIdx,:), errbSpectUnfiltAfter(batchIdx,:), batchColor); 
     end
     title('Unfiltered After'); set(gca, 'YScale', 'log'); grid on; 
     xlabel('Frequency (Hz)'); ylabel('Power Spectrum (V^2*s^2)'); 
