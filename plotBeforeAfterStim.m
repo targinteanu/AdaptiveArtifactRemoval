@@ -253,6 +253,8 @@ for chIdx = 1:length(uchan)
     imagesc(sUnfiltAfterT, sUnfiltAfterF, 10*log10(mean(sUnfiltAfter,3))); colorbar;
     title('Spectrogram Unfiltered After (dB/Hz)'); 
     xlabel('time (s)'); ylabel('Frequency (Hz)');
+
+    pause(.25);
 end
 
 %% cleanup 
@@ -436,6 +438,8 @@ for chIdx = 1:length(uchan)
     title('Unfiltered After'); set(gca, 'YScale', 'log'); grid on; 
     xlabel('Frequency (Hz)'); ylabel('Power Spectrum (V^2*s^2)'); 
     % ====================================================================
+
+    pause(.25);
 end
 
 %% cleanup 
@@ -458,10 +462,10 @@ for chIdx = 1:length(uchan)
         [~,statsTimeFilt(trl,1)] = kstest2(sigFiltCh(trl,:,1), sigFiltCh(trl,:,2));
         [~,statsTimeFilt(trl,2)] =  ttest2(sigFiltCh(trl,:,1), sigFiltCh(trl,:,2), 'Vartype', 'unequal');
         
-        statsFreqFilt(trl,1)  = signrank(spectFiltBeforeCh(trl,:), spectFiltAfterCh(trl,:));
+        statsFreqFilt(trl,1)  = signrank(spectFiltBeforeCh(trl,:) , spectFiltAfterCh(trl,:));
         [~,statsFreqFilt(trl,2)] =  corr(spectFiltBeforeCh(trl,:)', spectFiltAfterCh(trl,:)', 'Type', 'Pearson');
         [~,statsFreqFilt(trl,3)] =  corr(spectFiltBeforeCh(trl,:)', spectFiltAfterCh(trl,:)', 'Type', 'Spearman');
-        [~,statsFreqFilt(trl,4)] = ttest(spectFiltBeforeCh(trl,:), spectFiltAfterCh(trl,:));
+        [~,statsFreqFilt(trl,4)] = ttest(spectFiltBeforeCh(trl,:) , spectFiltAfterCh(trl,:));
     end
 
     nTrl = size(sigUnfiltCh,1);
@@ -471,14 +475,14 @@ for chIdx = 1:length(uchan)
         [~,statsTimeUnfilt(trl,1)] = kstest2(sigUnfiltCh(trl,:,1), sigUnfiltCh(trl,:,2));
         [~,statsTimeUnfilt(trl,2)] =  ttest2(sigUnfiltCh(trl,:,1), sigUnfiltCh(trl,:,2), 'Vartype', 'unequal');
         
-        statsFreqUnfilt(trl,1)  = signrank(spectUnfiltBeforeCh(trl,:), spectUnfiltAfterCh(trl,:));
+        statsFreqUnfilt(trl,1)  = signrank(spectUnfiltBeforeCh(trl,:) , spectUnfiltAfterCh(trl,:));
         [~,statsFreqUnfilt(trl,2)] =  corr(spectUnfiltBeforeCh(trl,:)', spectUnfiltAfterCh(trl,:)', 'Type', 'Pearson');
         [~,statsFreqUnfilt(trl,3)] =  corr(spectUnfiltBeforeCh(trl,:)', spectUnfiltAfterCh(trl,:)', 'Type', 'Spearman');
-        [~,statsFreqUnfilt(trl,4)] = ttest(spectUnfiltBeforeCh(trl,:), spectUnfiltAfterCh(trl,:));
+        [~,statsFreqUnfilt(trl,4)] = ttest(spectUnfiltBeforeCh(trl,:) , spectUnfiltAfterCh(trl,:));
     end
 
     fig(chIdx,3) = figure('Units','normalized', 'Position',[.1 .1 .8 .8]); 
-    figure(fig(chIdx,3)); sgtitle(['Channel ',num2str(uchan(chIdx)),' Comparison Statistics']);
+    figure(fig(chIdx,3)); sgtitle(['Channel ',num2str(uchan(chIdx)),' Before-After Comparison Statistics']);
 
     figure(fig(chIdx,3)); subplot(2,2,1);
     plot(statsTimeUnfilt(:,1));
@@ -493,16 +497,18 @@ for chIdx = 1:length(uchan)
     legend('KS Test', 'T Test');
 
     figure(fig(chIdx,3)); subplot(2,2,3);
-    plot(statsFreqUnfilt(:,1:3)); 
+    plot(statsFreqUnfilt(:,1)); 
     title('Unfiltered Frequency Domain'); grid on; 
     xlabel('Trial #'); ylabel('p value: before vs after');
     legend('Wilcoxon Rank', 'Pearson Corr.', 'Spearman Corr.', 'Paired T');
 
     figure(fig(chIdx,3)); subplot(2,2,4);
-    plot(statsFreqFilt(:,1:3)); 
+    plot(statsFreqFilt(:,1)); 
     title('Filtered Frequency Domain'); grid on; 
     xlabel('Trial #'); ylabel('p value: before vs after');
     legend('Wilcoxon Rank', 'Pearson Corr.', 'Spearman Corr.', 'Paired T');
+
+    pause(.25);
 end
 
 end
