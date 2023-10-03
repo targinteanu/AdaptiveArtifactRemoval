@@ -98,6 +98,7 @@ ltRed   = [250, 150, 150] /255;
 dkBlack = [  0,   0,   0] /255;
 ltBlack = [110, 110, 110] /255;
 dkPink  = [130,   1, 125] /255;
+ltPink  = [255, 120, 245] /255;
 dkAqua  = [  0, 100, 120] /255;
 dkGreen = [  0,  85,  15] /255;
 
@@ -361,7 +362,7 @@ for chIdx = 1:length(uchan)
     figure(fig(chIdx,2)); subplot(4,2,1); hold on;
     for batchIdx = 1:nBatch
         theta = batchIdx/nBatch;
-        batchColor = theta*dkPink + (1-theta)*dkAqua;
+        batchColor = theta*ltPink + (1-theta)*dkGreen;
         plotWithDistrib(t_PrePost(1,:), meanFiltBefore(batchIdx,:), errbFiltBefore(batchIdx,:), batchColor); 
     end
     title('Filtered Before'); grid on; 
@@ -370,7 +371,7 @@ for chIdx = 1:length(uchan)
     figure(fig(chIdx,2)); subplot(4,2,2); hold on;
     for batchIdx = 1:nBatch
         theta = batchIdx/nBatch;
-        batchColor = theta*dkPink + (1-theta)*dkAqua;
+        batchColor = theta*ltPink + (1-theta)*dkGreen;
         plotWithDistrib(t_PrePost(2,:), meanFiltAfter(batchIdx,:), errbFiltAfter(batchIdx,:), batchColor); 
     end
     title('Filtered After'); grid on; 
@@ -379,7 +380,7 @@ for chIdx = 1:length(uchan)
     figure(fig(chIdx,2)); subplot(4,2,5); hold on;
     for batchIdx = 1:nBatch
         theta = batchIdx/nBatch;
-        batchColor = theta*dkPink + (1-theta)*dkAqua;
+        batchColor = theta*ltPink + (1-theta)*dkGreen;
         plotWithDistrib(wFiltBefore, meanSpectFiltBefore(batchIdx,:), errbSpectFiltBefore(batchIdx,:), batchColor); 
     end
     title('Filtered Before'); set(gca, 'YScale', 'log'); grid on; 
@@ -388,7 +389,7 @@ for chIdx = 1:length(uchan)
     figure(fig(chIdx,2)); subplot(4,2,6); hold on;
     for batchIdx = 1:nBatch
         theta = batchIdx/nBatch;
-        batchColor = theta*dkPink + (1-theta)*dkAqua;
+        batchColor = theta*ltPink + (1-theta)*dkGreen;
         plotWithDistrib(wFiltAfter, meanSpectFiltAfter(batchIdx,:), errbSpectFiltAfter(batchIdx,:), batchColor); 
     end
     title('Filtered After'); set(gca, 'YScale', 'log'); grid on; 
@@ -402,7 +403,7 @@ for chIdx = 1:length(uchan)
     figure(fig(chIdx,2)); subplot(4,2,3); hold on;
     for batchIdx = 1:nBatch
         theta = batchIdx/nBatch;
-        batchColor = theta*dkPink + (1-theta)*dkAqua;
+        batchColor = theta*ltPink + (1-theta)*dkGreen;
         plotWithDistrib(t_PrePost(1,:), meanUnfiltBefore(batchIdx,:), errbUnfiltBefore(batchIdx,:), batchColor); 
     end
     title('Unfiltered Before'); grid on; 
@@ -411,7 +412,7 @@ for chIdx = 1:length(uchan)
     figure(fig(chIdx,2)); subplot(4,2,4); hold on;
     for batchIdx = 1:nBatch
         theta = batchIdx/nBatch;
-        batchColor = theta*dkPink + (1-theta)*dkAqua;
+        batchColor = theta*ltPink + (1-theta)*dkGreen;
         plotWithDistrib(t_PrePost(2,:), meanUnfiltAfter(batchIdx,:), errbUnfiltAfter(batchIdx,:), batchColor); 
     end
     title('Unfiltered After'); grid on; 
@@ -420,7 +421,7 @@ for chIdx = 1:length(uchan)
     figure(fig(chIdx,2)); subplot(4,2,7); hold on;
     for batchIdx = 1:nBatch
         theta = batchIdx/nBatch;
-        batchColor = theta*dkPink + (1-theta)*dkAqua;
+        batchColor = theta*ltPink + (1-theta)*dkGreen;
         plotWithDistrib(wUnfiltBefore, meanSpectUnfiltBefore(batchIdx,:), errbSpectUnfiltBefore(batchIdx,:), batchColor); 
     end
     title('Unfiltered Before'); set(gca, 'YScale', 'log'); grid on; 
@@ -429,7 +430,7 @@ for chIdx = 1:length(uchan)
     figure(fig(chIdx,2)); subplot(4,2,8); hold on;
     for batchIdx = 1:nBatch
         theta = batchIdx/nBatch;
-        batchColor = theta*dkPink + (1-theta)*dkAqua;
+        batchColor = theta*ltPink + (1-theta)*dkGreen;
         plotWithDistrib(wUnfiltAfter, meanSpectUnfiltAfter(batchIdx,:), errbSpectUnfiltAfter(batchIdx,:), batchColor); 
     end
     title('Unfiltered After'); set(gca, 'YScale', 'log'); grid on; 
