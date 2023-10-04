@@ -450,6 +450,9 @@ for chIdx = 1:length(uchan)
     sigFiltCh = e_t_PrePost{chIdx};
     sigUnfiltCh = d_PrePost{chIdx};
 
+    sigFiltBeforeCh = sigFiltCh(:,:,1);
+    sigUnfiltBeforeCh = sigUnfiltCh(:,:,1);
+
     [wFiltBefore, spectFiltBeforeCh] = PowerSpectrum(sigFiltCh(:,:,1), Fs);
     [wFiltAfter, spectFiltAfterCh] = PowerSpectrum(sigFiltCh(:,:,2), Fs);
     [wUnfiltBefore, spectUnfiltBeforeCh] = PowerSpectrum(sigUnfiltCh(:,:,1), Fs);
@@ -487,18 +490,28 @@ for chIdx = 1:length(uchan)
         [~,statsFreqUnfilt(trl,4)] = ttest(spectUnfiltBeforeCh(trl,:) , spectUnfiltAfterCh(trl,:));
     end
 
-    nTrl = size(sigFiltCh,1);
     statsTimeOverTimeFilt = zeros(2, size(t_PrePost,2));
     for tIdx = 1:size(t_PrePost,2)
-        [~,statsTimeOverTimeFilt(1,tIdx)] = kstest2(sigFiltCh(:,tIdx,1), sigFiltCh(:,tIdx,2));
-        [~,statsTimeOverTimeFilt(2,tIdx)] =  ttest2(sigFiltCh(:,tIdx,1), sigFiltCh(:,tIdx,2), 'Vartype', 'unequal');
+%        [~,statsTimeOverTimeFilt(1,tIdx)] = kstest2(sigFiltBeforeCh(:), sigFiltCh(:,tIdx,2));
+        [~,statsTimeOverTimeFilt(2,tIdx)] =  ttest2(sigFiltBeforeCh(:), sigFiltCh(:,tIdx,2), 'Vartype', 'unequal');
+        if nUpdates
+            if ~mod(tIdx, floor(size(t_PrePost,2)/(nUpdates)))
+                disp(['Hypothesis-Testing Channel ',num2str(uchan(chIdx)),': ',...
+                      num2str(50*tIdx/(size(t_PrePost,2))),'%']);
+            end
+        end
     end
 
-    nTrl = size(sigUnfiltCh,1);
     statsTimeOverTimeUnfilt = zeros(2, size(t_PrePost,2));
     for tIdx = 1:size(t_PrePost,2)
-        [~,statsTimeOverTimeUnfilt(1,tIdx)] = kstest2(sigUnfiltCh(:,tIdx,1), sigUnfiltCh(:,tIdx,2));
-        [~,statsTimeOverTimeUnfilt(2,tIdx)] =  ttest2(sigUnfiltCh(:,tIdx,1), sigUnfiltCh(:,tIdx,2), 'Vartype', 'unequal');
+%        [~,statsTimeOverTimeUnfilt(1,tIdx)] = kstest2(sigUnfiltBeforeCh(:), sigUnfiltCh(:,tIdx,2));
+        [~,statsTimeOverTimeUnfilt(2,tIdx)] =  ttest2(sigUnfiltBeforeCh(:), sigUnfiltCh(:,tIdx,2), 'Vartype', 'unequal');
+        if nUpdates
+            if ~mod(tIdx, floor(size(t_PrePost,2)/(nUpdates)))
+                disp(['Hypothesis-Testing Channel ',num2str(uchan(chIdx)),': ',...
+                      num2str(50 + 50*tIdx/(size(t_PrePost,2))),'%']);
+            end
+        end
     end
 
     fig(chIdx,3) = figure('Units','normalized', 'Position',[.1 .1 .8 .8]); 
