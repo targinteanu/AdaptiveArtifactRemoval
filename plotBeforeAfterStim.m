@@ -22,7 +22,7 @@ tBeforeTrig = nBeforeTrig/Fs;
 t_PrePost = [-tBeforeTrig:(1/Fs):0; 0:(1/Fs):tBeforeTrig]; % [before; after]
 
 d_PrePost           = cell(1, length(uchan));
-e_PrePost         = cell(size(d_PrePost));
+e_PrePost           = cell(size(d_PrePost));
 
 for chIdx = 1:length(uchan)
     gch = g(:,chIdx);
