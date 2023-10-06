@@ -1,6 +1,5 @@
-function [t_PrePost, d_PrePost, e_PrePost] = getBeforeAfterStim(tBeforeTrig, g, d, e, Fs, uchan, N)
-% Plot the filtered and unfiltered signals and their power spectra some
-% time before and after the stimulus. 
+function [t_PrePost, d_PrePost, e_PrePost] = getPrePostStim(tBeforeTrig, g, d, e, Fs, uchan, N)
+% Get the filtered and unfiltered signals some time before and after the stimulus. 
 % 
 % Inputs: 
 %   tBeforeTrig: time before/after stimulus to plot (s) 
