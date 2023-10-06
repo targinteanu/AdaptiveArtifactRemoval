@@ -1,4 +1,7 @@
 function fig = plotBeforeAfterStim(tBeforeTrig, g, d, e, Fs, uchan, N, nTrlInBatch, nUpdates)
+% 
+% TO BE REMOVED 
+% 
 % Plot the filtered and unfiltered signals and their power spectra some
 % time before and after the stimulus. 
 % 

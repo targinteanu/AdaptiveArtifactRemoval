@@ -113,10 +113,10 @@ for chIdx = 1:length(uchan)
         end
     end
 
-    sFiltBefore(chIdx,:)   = {chan, sFiltBeforeF,   sFiltBeforeT,   sFiltBefore};
-    sFiltAfter(chIdx,:)    = {chan, sFiltAfterF,    sFiltAfterT,    sFiltAfter};
-    sUnfiltBefore(chIdx,:) = {chan, sUnfiltBeforeF, sUnfiltBeforeT, sUnfiltBefore};
-    sUnfiltAfter(chIdx,:)  = {chan, sUnfiltAfterF,  sUnfiltAfterT,  sUnfiltAfter};
+    sgramFiltBefore(chIdx,:)   = {chan, sFiltBeforeF,   sFiltBeforeT,   sFiltBefore};
+    sgramFiltAfter(chIdx,:)    = {chan, sFiltAfterF,    sFiltAfterT,    sFiltAfter};
+    sgramUnfiltBefore(chIdx,:) = {chan, sUnfiltBeforeF, sUnfiltBeforeT, sUnfiltBefore};
+    sgramUnfiltAfter(chIdx,:)  = {chan, sUnfiltAfterF,  sUnfiltAfterT,  sUnfiltAfter};
     % ====================================================================
 
 

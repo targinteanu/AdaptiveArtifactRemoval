@@ -174,3 +174,9 @@ end
 
 %%
 plotBeforeAfterStim(.29, g, d, e_t_lpf, Fs, uchan, N, 150, .1*nUpdates);
+
+%%
+[t_PrePost, d_PrePost, e_PrePost] = getPrePostStim(.05, g, d, e_t_lpf, Fs, uchan, N);
+PrePostAvgAll(.2,t_PrePost,d_PrePost,e_PrePost,Fs,uchan,10);
+PrePostAvgBatch(90,t_PrePost,d_PrePost,e_PrePost,Fs,uchan);
+PrePostStats(t_PrePost,d_PrePost,e_PrePost,Fs,uchan,10);

@@ -69,8 +69,8 @@ for chIdx = 1:length(uchan)
 
     statsTimeOverTimeFilt = zeros(2, size(t_PrePost,2));
     for tIdx = 1:size(t_PrePost,2)
-%        baselineToTest = sigFiltBeforeCh(:,tIdx); % faster 
-        baselineToTest = sigFiltBeforeCh(:);      % probably more accurate 
+        baselineToTest = sigFiltBeforeCh(:,tIdx); % faster 
+%        baselineToTest = sigFiltBeforeCh(:);      % probably more accurate 
         [~,statsTimeOverTimeFilt(1,tIdx)] = kstest2(baselineToTest, sigFiltCh(:,tIdx,2));
         [~,statsTimeOverTimeFilt(2,tIdx)] =  ttest2(baselineToTest, sigFiltCh(:,tIdx,2), 'Vartype', 'unequal');
         if nUpdates
@@ -83,8 +83,8 @@ for chIdx = 1:length(uchan)
 
     statsTimeOverTimeUnfilt = zeros(2, size(t_PrePost,2));
     for tIdx = 1:size(t_PrePost,2)
-%        baselineToTest = sigUnfiltBeforeCh(:,tIdx); % faster 
-        baselineToTest = sigUnfiltBeforeCh(:);      % probably more accurate
+        baselineToTest = sigUnfiltBeforeCh(:,tIdx); % faster 
+%        baselineToTest = sigUnfiltBeforeCh(:);      % probably more accurate
         [~,statsTimeOverTimeUnfilt(1,tIdx)] = kstest2(baselineToTest, sigUnfiltCh(:,tIdx,2));
         [~,statsTimeOverTimeUnfilt(2,tIdx)] =  ttest2(baselineToTest, sigUnfiltCh(:,tIdx,2), 'Vartype', 'unequal');
         if nUpdates
@@ -96,16 +96,16 @@ for chIdx = 1:length(uchan)
     end
 
     fig(chIdx,1) = figure('Units','normalized', 'Position',[.1 .1 .8 .8]); 
-    figure(fig(chIdx,3)); sgtitle(['Channel ',num2str(uchan(chIdx)),' Before-After Comparison Statistics']);
+    figure(fig(chIdx,1)); sgtitle(['Channel ',num2str(uchan(chIdx)),' Before-After Comparison Statistics']);
 
     figure(fig(chIdx,1)); subplot(3,2,1);
-    plot(statsTimeUnfilt(:,1));
+    plot(statsTimeUnfilt(:,1:2));
     title('Unfiltered Time Domain'); grid on; 
     xlabel('Trial #'); ylabel('p value: before vs after'); 
     legend('KS Test', 'T Test');
 
     figure(fig(chIdx,1)); subplot(3,2,2);
-    plot(statsTimeFilt(:,1));
+    plot(statsTimeFilt(:,1:2));
     title('Filtered Time Domain'); grid on; 
     xlabel('Trial #'); ylabel('p value: before vs after');
     legend('KS Test', 'T Test');
