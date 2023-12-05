@@ -119,7 +119,7 @@ chB = buildChannelObj('B',-1, 1,0,'Cartesian'); % left somatosensory
 chC = buildChannelObj('C', 1,-1,0,'Cartesian'); % ?
 chD = buildChannelObj('D',-1,-1,0,'Cartesian'); % ?
 
-sig = buildSignalObj(d_unfilt, t, g, Fs, [chA; chB; chC; chD], ...
+sig = buildSignalObj([], d_unfilt, t, g, Fs, [chA; chB; chC; chD], ...
                      tTrainBnd, tTrainBnd, 2);
 
 %% pre-filtering
