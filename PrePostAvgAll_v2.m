@@ -90,7 +90,7 @@ for chIdx = 1:length(uchan)
 
     fig(chIdx,1) = figure('Units','normalized', 'Position',[.1 .1 .8 .8]); 
     figure(fig(chIdx,1)); 
-    sgtitle(['Channel ',num2str(uchan(chIdx)),' Avg. Response to Stim'], ...
+    sgtitle(['Channel ',chan.labels,' Avg. Response to Stim'], ...
         'FontSize', tlSz);
 
     figure(fig(chIdx,1)); ax(1) = subplot(2,2,1); 

@@ -24,6 +24,7 @@ function [fig] = PrePostStats(t_PrePost, d_PrePost, e_PrePost, Fs, uchan, nUpdat
 
 %% Plotting Stats
 for chIdx = 1:length(uchan)
+    chan = uchan(chIdx);
     sigFiltCh = e_PrePost{chIdx};
     sigUnfiltCh = d_PrePost{chIdx};
 
@@ -75,7 +76,7 @@ for chIdx = 1:length(uchan)
         [~,statsTimeOverTimeFilt(2,tIdx)] =  ttest2(baselineToTest, sigFiltCh(:,tIdx,2), 'Vartype', 'unequal');
         if nUpdates
             if ~mod(tIdx, floor(size(t_PrePost,2)/(nUpdates)))
-                disp(['Hypothesis-Testing Channel ',num2str(uchan(chIdx)),': ',...
+                disp(['Hypothesis-Testing Channel ',chan.labels,': ',...
                       num2str(50*tIdx/(size(t_PrePost,2))),'%']);
             end
         end
@@ -89,14 +90,14 @@ for chIdx = 1:length(uchan)
         [~,statsTimeOverTimeUnfilt(2,tIdx)] =  ttest2(baselineToTest, sigUnfiltCh(:,tIdx,2), 'Vartype', 'unequal');
         if nUpdates
             if ~mod(tIdx, floor(size(t_PrePost,2)/(nUpdates)))
-                disp(['Hypothesis-Testing Channel ',num2str(uchan(chIdx)),': ',...
+                disp(['Hypothesis-Testing Channel ',chan.labels,': ',...
                       num2str(50 + 50*tIdx/(size(t_PrePost,2))),'%']);
             end
         end
     end
 
     fig(chIdx,1) = figure('Units','normalized', 'Position',[.1 .1 .8 .8]); 
-    figure(fig(chIdx,1)); sgtitle(['Channel ',num2str(uchan(chIdx)),' Before-After Comparison Statistics']);
+    figure(fig(chIdx,1)); sgtitle(['Channel ',chan.labels,' Before-After Comparison Statistics']);
 
     figure(fig(chIdx,1)); subplot(3,2,1);
     plot(statsTimeUnfilt(:,1:2));

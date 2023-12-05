@@ -34,6 +34,7 @@ dkGreen = [  0,  85,  15] /255;
 
 %% Plotting averaged - in batches 
 for chIdx = 1:length(uchan)
+    chan = uchan(chIdx);
     sigFiltCh = e_PrePost{chIdx};
     sigUnfiltCh = d_PrePost{chIdx};
 
@@ -125,7 +126,7 @@ for chIdx = 1:length(uchan)
     % ====================================================================
 
     fig(chIdx,1) = figure('Units','normalized', 'Position',[.1 .1 .8 .8]); 
-    figure(fig(chIdx,1)); sgtitle(['Channel ',num2str(uchan(chIdx)),' Batch Responses to Stim']);
+    figure(fig(chIdx,1)); sgtitle(['Channel ',chan.labels,' Batch Responses to Stim']);
 
     % Filtered: Plots ----------------------------------------------------
     nTrl = size(sigFiltCh,1);

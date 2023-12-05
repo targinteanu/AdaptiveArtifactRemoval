@@ -96,7 +96,7 @@ for chIdx = 1:length(uchan)
         [~,~,~,sFiltAfter(:,:,trl)] = spectrogram(sigFiltCh(trl,:,2), sgramWinLen, [], sgramFQ, Fs);
         if nUpdates
             if ~mod(trl, floor(size(sigFiltCh,1)/(nUpdates)))
-                disp(['Obtaining Channel ',num2str(uchan(chIdx)),' Spectrograms: ',...
+                disp(['Obtaining Channel ',chan.labels,' Spectrograms: ',...
                       num2str(100*trl/(size(sigFiltCh,1)+size(sigUnfiltCh,1))),'%']);
             end
         end
@@ -107,7 +107,7 @@ for chIdx = 1:length(uchan)
         [~,~,~,sUnfiltAfter(:,:,trl)] = spectrogram(sigUnfiltCh(trl,:,2), sgramWinLen, [], sgramFQ, Fs);
         if nUpdates
             if ~mod(trl, floor(size(sigUnfiltCh,1)/(nUpdates)))
-                disp(['Obtaining Channel ',num2str(uchan(chIdx)),' Spectrograms: ',...
+                disp(['Obtaining Channel ',chan.labels,' Spectrograms: ',...
                       num2str(100*(size(sigFiltCh,1)+trl)/(size(sigFiltCh,1)+size(sigUnfiltCh,1))),'%']);
             end
         end
@@ -145,7 +145,7 @@ for chIdx = 1:length(uchan)
     errbSpectUnfiltAfter =  std(spectUnfiltAfterCh);
 
     fig(chIdx,1) = figure('Units','normalized', 'Position',[.1 .1 .8 .8]); 
-    figure(fig(chIdx,1)); sgtitle(['Channel ',num2str(uchan(chIdx)),' Avg. Response to Stim']);
+    figure(fig(chIdx,1)); sgtitle(['Channel ',chan.labels,' Avg. Response to Stim']);
 
     figure(fig(chIdx,1)); subplot(5,2,1); 
            plotWithDistrib(t_PrePost(1,:), meanUnfiltBefore, errbUnfiltBefore, ltRed);

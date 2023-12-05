@@ -32,11 +32,12 @@ G = zeros(size(t_train,1)-N+1, N, length(uchan));
 T = zeros(size(G)); 
 D = zeros(size(t_train,1)-N+1, length(uchan));
 for idx = 1:length(uchan)
+    ch = uchan(idx);
     D(:,idx) = d_train(N:size(t_train,1), idx);
     for nf = 1:(size(t_train,1)-N+1)
         if nUpdates
             if ~mod(nf, floor(size(t_train,1)/(nUpdates)))
-                disp(['Building Channel ',num2str(uchan(idx)),' Training Matrix: ',num2str(100*nf/size(t_train,1)),'%']);
+                disp(['Building Channel ',ch.labels,' Training Matrix: ',num2str(100*nf/size(t_train,1)),'%']);
             end
         end
         G(nf,:,idx) = g_train(nf:(nf+N-1), idx);
@@ -50,11 +51,12 @@ if nUpdates
 end
 w = zeros(N, length(uchan));
 for idx = 1:length(uchan)
+    ch = uchan(idx);
     Gidx = G(:,:,idx); Didx = D(:,idx);
     w(:,idx) = (((Gidx'*Gidx)^-1)*Gidx')*Didx;
     if nUpdates
         figure(fig); subplot(length(uchan), 1, idx); stem(w(:,idx)); grid on;
-        title(['Channel ',num2str(uchan(idx)),' training']);
+        title(['Channel ',ch.labels,' training']);
         xlabel('tap'); ylabel('weight');
         pause(eps);
     end
