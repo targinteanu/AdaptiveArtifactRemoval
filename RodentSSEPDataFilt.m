@@ -143,8 +143,9 @@ lpFilt = designfilt('lowpassiir', ...
 %fvtool(lpFilt);
 
 %% pretraining and testing 
-[w, e_train, op_train, t_train, g_train, d_train, t_test, g_test, d_test, T, G, D] = ...
-    preTrainWts(t, g, d, tTrainBnd, N, uchan, .1*nUpdates);
+[t_train, g_train, d_train, t_test, g_test, d_test, T, G, D] = ...
+    getTrainTest(t, g, d, tTrainBnd, N, uchan, .1*nUpdates);
+[w, e_train, op_train, fig] = preTrainWts(t_train, G, D, d_train, N, uchan, .1*nUpdates);
 %[e_test, op_test] = testPreTrained(w, t_test, g_test, d_test, N, uchan, .1*nUpdates);
 
 %% online LMS 
