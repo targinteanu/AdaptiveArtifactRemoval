@@ -131,7 +131,7 @@ hpFilt = designfilt('highpassiir', ...
                     'StopbandAttenuation', 60, ...
                     'SampleRate', Fs, ... 
                     'DesignMethod', 'butter');
-d         = filtfilt(hpFilt, d_unfilt);
+%d         = filtfilt(hpFilt, d_unfilt);
 %% lowpass filtering (noise removal)
 lpFilt = designfilt('lowpassiir', ...
                     'StopbandFrequency', 2000, ...
@@ -146,19 +146,19 @@ lpFilt = designfilt('lowpassiir', ...
 filtObj = buildFilterObj(hpFilt, lpFilt, N, stepsize);
 
 %% pretraining and testing 
-%%{
+%{
 [t_train, g_train, d_train, t_test, g_test, d_test] = ...
     getTrainTest(t, g, d, tTrainBnd, uchan);
 [w, e_train, op_train, fig] = preTrainWts(t_train, g_train, d_train, N, uchan, .1*nUpdates);
 %}
 %[e_test, op_test] = testPreTrained(w, t_test, g_test, d_test, N, uchan, .1*nUpdates);
-%{
+
 sig = getTrainTestWrapper(sig);
 [sig, filtObj] = preTrainWtsWrapper(filtObj, sig, .1*nUpdates);
-%}
 
 %% online LMS 
-[e_t, w_OL] = LMSonline(t, g, d, stepsize, N, uchan, w, nUpdates);
+%[e_t, w_OL] = LMSonline(t, g, d, stepsize, N, uchan, w, nUpdates);
+[sig, w_end] = LMSonlineWrapper(filtObj, sig, nUpdates);
 
 %% post-filtering
 disp('LP Filtering Train Signal')

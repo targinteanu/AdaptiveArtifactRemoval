@@ -40,7 +40,7 @@ sigObj.Data_LMS_LPF = Data_LMS_LPF;
 sigObj.Noise_Reference = Noise_Reference; 
 sigObj.Times = Times;
 sigObj.SampleRate = SampleRate; 
-sigObj.Chanels = Channels;
+sigObj.Channels = Channels;
 
 sigObj.Train_Time_Bounds = Train_Time_Bounds; 
 sigObj.Preview_Time_Bounds = Preview_Time_Bounds; 
