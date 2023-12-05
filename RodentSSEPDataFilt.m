@@ -173,7 +173,7 @@ end
 %xlim([336.1, 337.1])
 
 %%
-plotBeforeAfterStim(.29, g, d, e_t_lpf, Fs, uchan, N, 150, .1*nUpdates);
+%plotBeforeAfterStim(.29, g, d, e_t_lpf, Fs, uchan, N, 150, .1*nUpdates);
 
 %%
 [t_PrePost, d_PrePost, e_PrePost] = getPrePostStim(.05, g, d, e_t_lpf, Fs, uchan, N);
