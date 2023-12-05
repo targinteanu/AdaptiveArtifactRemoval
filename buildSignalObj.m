@@ -1,11 +1,32 @@
 function sigObj = buildSignalObj(Data_Unfiltered, Times, Noise_Reference, ...
                                  SampleRate, Channels, ...
-                                 Train_Time_Bounds, Preview_Time_Bounds, Analyze_Time_Bounds, ...
+                                 Train_Time_Bounds, Preview_Time_Bounds, Preview_Channel_Index, ... Analyze_Time_Bounds, ...
                                  Data_HPF, Data_LMS, Data_LMS_LPF, Data_BPF, ...
                                  Times_Train, Times_Test, Noise_Reference_Train, Noise_Reference_Test, ...
                                  Data_Unfiltered_Train, Data_Unfiltered_Test, ...
                                  Data_HPF_Train, Data_HPF_Test, Data_LMS_Train, Data_LMS_Test, ...
                                  Data_LMS_LPF_Train, Data_LMS_LPF_Test, Data_BPF_Train, Data_BPF_Test)
+
+if nargin < 9
+    Data_HPF = [];
+    Data_LMS = []; 
+    Data_LMS_LPF = [];
+    Data_BPF = [];
+    Times_Train = [];
+    Times_Test = [];
+    Noise_Reference_Train = [];
+    Noise_Reference_Test = [];
+    Data_Unfiltered_Train = [];
+    Data_Unfiltered_Test = [];
+    Data_HPF_Train = [];
+    Data_HPF_Test = [];
+    Data_LMS_Train = [];
+    Data_LMS_Test = [];
+    Data_LMS_LPF_Train = [];
+    Data_LMS_LPF_Test = [];
+    Data_BPF_Test = [];
+    Data_BPF_Train = [];
+end
 
 sigObj.Data_Ground_Truth = Data_Ground_Truth;
 
@@ -22,7 +43,8 @@ sigObj.Chanels = Channels;
 
 sigObj.Train_Time_Bounds = Train_Time_Bounds; 
 sigObj.Preview_Time_Bounds = Preview_Time_Bounds; 
-sigObj.Analyze_Time_Bounds = Analyze_Time_Bounds;
+%sigObj.Analyze_Time_Bounds = Analyze_Time_Bounds;
+sigObj.Preview_Channel_Index = Preview_Channel_Index;
 
 sigObj.Times_Train = Times_Train; 
 sigObj.Times_Test = Times_Test; 

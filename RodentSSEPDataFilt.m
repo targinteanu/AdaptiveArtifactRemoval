@@ -104,11 +104,23 @@ end
 
 Fs = 1/dt_mean; % Hz
 
+splIdx = floor(trainfrac*size(t,1));
+tTrainBnd = [t(1), t(splIdx)];
+
 %% cleanup 
 clear Dt dt_mean dt_resample dt_err tLen 
 clear t2 g2 d2
 clear T G dta dta_t_chan
 clear g_trl t_trl t_stim chan ch chIdx 
+
+%% signal to object 
+chA = buildChannelObj('A', 1, 1,0,'Cartesian'); % right somatosensory
+chB = buildChannelObj('B',-1, 1,0,'Cartesian'); % left somatosensory
+chC = buildChannelObj('C', 1,-1,0,'Cartesian'); % ?
+chD = buildChannelObj('D',-1,-1,0,'Cartesian'); % ?
+
+sig = buildSignalObj(d_unfilt, t, g, Fs, [chA; chB; chC; chD], ...
+                     tTrainBnd, tTrainBnd, 2);
 
 %% pre-filtering
 % highpass filtering (baseline removal) 
@@ -131,8 +143,6 @@ lpFilt = designfilt('lowpassiir', ...
 %fvtool(lpFilt);
 
 %% pretraining and testing 
-splIdx = floor(trainfrac*size(t,1));
-tTrainBnd = [t(1), t(splIdx)];
 [w, e_train, op_train, t_train, g_train, d_train, t_test, g_test, d_test, T, G, D] = ...
     preTrainWts(t, g, d, tTrainBnd, N, uchan, .1*nUpdates);
 %[e_test, op_test] = testPreTrained(w, t_test, g_test, d_test, N, uchan, .1*nUpdates);
