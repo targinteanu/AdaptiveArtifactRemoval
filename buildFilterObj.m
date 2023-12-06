@@ -1,12 +1,17 @@
-function filtObj = buildFilterObj(HPF, LPF, Num_Taps, Step_Size, ...
+function filtObj = buildFilterObj(HPF, LPF, Num_Taps, Step_Size, useFiltFilt, ...
     Starting_Weights, Current_Weights)
 
 if nargin < 5
-    Starting_Weights = [];
+    useFiltFilt = false;
 end
 if nargin < 6
+    Starting_Weights = [];
+end
+if nargin < 7
     Current_Weights = Starting_Weights;
 end
+
+filtObj.useFiltFilt = useFiltFilt;
 
 filtObj.HPF = HPF; 
 filtObj.LPF = LPF; 

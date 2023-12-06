@@ -143,7 +143,9 @@ lpFilt = designfilt('lowpassiir', ...
 %fvtool(lpFilt);
 
 %% filter to object 
-filtObj = buildFilterObj(hpFilt, lpFilt, N, stepsize);
+filtObj = buildFilterObj(hpFilt, lpFilt, N, stepsize, true);
+
+sig = doHPFilt(filtObj, sig);
 
 %% pretraining and testing 
 %{
@@ -161,6 +163,7 @@ sig = getTrainTestWrapper(sig);
 [sig, w_end] = LMSonlineWrapper(filtObj, sig, nUpdates);
 
 %% post-filtering
+%{
 disp('LP Filtering Train Signal')
 e_train_lpf = filtfilt(lpFilt, e_train);
 %disp('LP Filtering Test Signal')
@@ -169,8 +172,12 @@ disp('LP Filtering Online Signal')
 e_t_lpf     = filtfilt(lpFilt, e_t);
 disp('LP Filtering Original Signal')
 d_lpf       = filtfilt(lpFilt, d);
+%}
+
+sig = doLPFilt(filtObj, sig);
 
 %% demo final signal 
+%{
 for idx = 1:length(uchan)
     fig = figure; 
     figure(fig); plot(t(:,idx), d(:,idx), 'k', 'LineWidth', 1); hold on;
@@ -191,12 +198,15 @@ end
 %ylim([-8e-5, 8e-5])
 %xlim([336.351, 336.449])
 %xlim([336.1, 337.1])
+%}
 
 %%
 %plotBeforeAfterStim(.29, g, d, e_t_lpf, Fs, uchan, N, 150, .1*nUpdates);
 
 %%
-[t_PrePost, d_PrePost, e_PrePost] = getPrePostStim(.05, g, d, e_t_lpf, Fs, uchan, N);
-PrePostAvgAll(.2,t_PrePost,d_PrePost,e_PrePost,Fs,uchan,10);
-PrePostAvgBatch(90,t_PrePost,d_PrePost,e_PrePost,Fs,uchan);
-PrePostStats(t_PrePost,d_PrePost,e_PrePost,Fs,uchan,10);
+tBeforeTrig = .2;
+[t_PrePost, d_PrePost, e_PrePost] = getPrePostStim(tBeforeTrig, ...
+    sig.Noise_Reference, sig.Data_BPF, sig.Data_LMS_LPF, Fs, sig.Channels, N);
+PrePostAvgAll(tBeforeTrig,t_PrePost,d_PrePost,e_PrePost,Fs,sig.Channels,10);
+PrePostAvgBatch(90,t_PrePost,d_PrePost,e_PrePost,Fs,sig.Channels);
+PrePostStats(t_PrePost,d_PrePost,e_PrePost,Fs,sig.Channels,10);
