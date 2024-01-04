@@ -2,7 +2,6 @@
 TDTPATH = 'TDTMatlabSDK';
 addpath(genpath(TDTPATH));
 data = TDTbin2mat('Rodent SSEP Data/AC5-230830-130841');
-% test change 
 
 %% define parameters of stim 
 % monophasic, fixed
