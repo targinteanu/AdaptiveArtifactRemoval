@@ -41,13 +41,22 @@ for chIdx = 1:length(uchan)
         % band-restrict power spectra:
         wIdx = (wFiltBefore >= bndlim(1)) & (wFiltBefore <= bndlim(2));
         spectFiltBeforeCh = spectFiltBeforeCh(:,wIdx);
+        wFiltBefore = wFiltBefore(wIdx);
         wIdx = (wFiltAfter >= bndlim(1)) & (wFiltAfter <= bndlim(2));
         spectFiltAfterCh = spectFiltAfterCh(:,wIdx);
+        wFiltAfter = wFiltAfter(wIdx);
         wIdx = (wUnfiltBefore >= bndlim(1)) & (wUnfiltBefore <= bndlim(2));
         spectUnfiltBeforeCh = spectUnfiltBeforeCh(:,wIdx);
+        wUnfiltBefore = wUnfiltBefore(wIdx);
         wIdx = (wUnfiltAfter >= bndlim(1)) & (wUnfiltAfter <= bndlim(2));
         spectUnfiltAfterCh = spectUnfiltAfterCh(:,wIdx);
+        wUnfiltAfter = wUnfiltAfter(wIdx);
     end
+
+    % to do: make robust by handling mismatched w's 
+    % check if w's are the same >> ~sum(w1 - 12)
+    % if not, >> w = sort(unique([w1, w2]))
+    % interp/resample spects to match 
 
     % normalize power spectra: 
     spectFiltBeforeCh = spectFiltBeforeCh./sum(spectFiltBeforeCh,2);
@@ -90,7 +99,7 @@ for chIdx = 1:length(uchan)
         if nUpdates
             if ~mod(tIdx, floor(size(t_PrePost,2)/(nUpdates)))
                 disp(['Hypothesis-Testing Channel ',chan.labels,': ',...
-                      num2str(50*tIdx/(size(t_PrePost,2))),'%']);
+                      num2str(25*tIdx/(size(t_PrePost,2))),'%']);
             end
         end
     end
@@ -104,48 +113,84 @@ for chIdx = 1:length(uchan)
         if nUpdates
             if ~mod(tIdx, floor(size(t_PrePost,2)/(nUpdates)))
                 disp(['Hypothesis-Testing Channel ',chan.labels,': ',...
-                      num2str(50 + 50*tIdx/(size(t_PrePost,2))),'%']);
+                      num2str(25 + 25*tIdx/(size(t_PrePost,2))),'%']);
             end
         end
     end
 
+    statsFreqOverFreqFilt = zeros(2, length(wFiltBefore));
+    for wIdx = 1:length(wFiltBefore)
+        [~,statsFreqOverFreqFilt(1,wIdx)] = kstest2(spectUnfiltBeforeCh(:,wIdx), spectFiltAfterCh(:,wIdx));
+        [~,statsFreqOverFreqFilt(2,wIdx)] =  ttest2(spectUnfiltBeforeCh(:,wIdx), spectFiltAfterCh(:,wIdx), 'Vartype', 'unequal');
+        if nUpdates
+            if ~mod(wIdx, floor(length(wFiltBefore)/(nUpdates)))
+                disp(['Hypothesis-Testing Channel ',chan.labels,': ',...
+                      num2str(50 + 25*wIdx/(length(wFiltBefore))),'%']);
+            end
+        end
+    end
+
+    statsFreqOverFreqUnfilt = zeros(2, length(wUnfiltBefore));
+    for wIdx = 1:length(wUnfiltBefore)
+        [~,statsFreqOverFreqUnfilt(1,wIdx)] = kstest2(spectUnfiltBeforeCh(:,wIdx), spectUnfiltAfterCh(:,wIdx));
+        [~,statsFreqOverFreqUnfilt(2,wIdx)] =  ttest2(spectUnfiltBeforeCh(:,wIdx), spectUnfiltAfterCh(:,wIdx), 'Vartype', 'unequal');
+        if nUpdates
+            if ~mod(wIdx, floor(length(wFiltBefore)/(nUpdates)))
+                disp(['Hypothesis-Testing Channel ',chan.labels,': ',...
+                      num2str(75 + 25*wIdx/(length(wUnfiltBefore))),'%']);
+            end
+        end
+    end    
+
     fig(chIdx,1) = figure('Units','normalized', 'Position',[.1 .1 .8 .8]); 
     figure(fig(chIdx,1)); sgtitle(['Channel ',chan.labels,' Before-After Comparison Statistics']);
 
-    figure(fig(chIdx,1)); subplot(3,2,1);
+    figure(fig(chIdx,1)); subplot(4,2,1);
     plot(statsTimeUnfilt(:,1:2));
     title('Unfiltered Time Domain'); grid on; 
     xlabel('Trial #'); ylabel('p value: before vs after'); 
     legend('KS Test', 'T Test');
 
-    figure(fig(chIdx,1)); subplot(3,2,2);
+    figure(fig(chIdx,1)); subplot(4,2,2);
     plot(statsTimeFilt(:,1:2));
     title('Filtered Time Domain'); grid on; 
     xlabel('Trial #'); ylabel('p value: before vs after');
     legend('KS Test', 'T Test');
 
-    figure(fig(chIdx,1)); subplot(3,2,3);
+    figure(fig(chIdx,1)); subplot(4,2,3);
     plot(statsFreqUnfilt(:,1)); 
     title('Unfiltered Frequency Domain'); grid on; 
     xlabel('Trial #'); ylabel('p value: before vs after');
     legend('Wilcoxon Rank', 'Pearson Corr.', 'Spearman Corr.', 'Paired T');
 
-    figure(fig(chIdx,1)); subplot(3,2,4);
+    figure(fig(chIdx,1)); subplot(4,2,4);
     plot(statsFreqFilt(:,1)); 
     title('Filtered Frequency Domain'); grid on; 
     xlabel('Trial #'); ylabel('p value: before vs after');
     legend('Wilcoxon Rank', 'Pearson Corr.', 'Spearman Corr.', 'Paired T');
 
-    figure(fig(chIdx,1)); subplot(3,2,5);
+    figure(fig(chIdx,1)); subplot(4,2,5);
     plot(t_PrePost(2,:), statsTimeOverTimeUnfilt);
     title('Unfiltered Time Domain'); grid on; 
     xlabel('time (s)'); ylabel('p value: before vs after'); 
     legend('KS Test', 'T Test');
 
-    figure(fig(chIdx,1)); subplot(3,2,6);
+    figure(fig(chIdx,1)); subplot(4,2,6);
     plot(t_PrePost(2,:), statsTimeOverTimeFilt);
     title('Filtered Time Domain'); grid on; 
     xlabel('time (s)'); ylabel('p value: before vs after'); 
+    legend('KS Test', 'T Test');
+
+    figure(fig(chIdx,1)); subplot(4,2,7); 
+    plot(wUnfiltBefore, statsFreqOverFreqUnfilt);
+    title('Unfiltered Frequency Domain'); grid on; 
+    xlabel('Frequency (Hz)'); ylabel('p value: before vs after'); 
+    legend('KS Test', 'T Test');
+
+    figure(fig(chIdx,1)); subplot(4,2,8); 
+    plot(wUnfiltBefore, statsFreqOverFreqFilt);
+    title('Filtered Frequency Domain'); grid on; 
+    xlabel('Frequency (Hz)'); ylabel('p value: before vs after'); 
     legend('KS Test', 'T Test');
 
     pause(.25);
