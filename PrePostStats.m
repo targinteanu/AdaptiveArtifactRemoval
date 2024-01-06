@@ -1,4 +1,4 @@
-function [fig] = PrePostStats(t_PrePost, d_PrePost, e_PrePost, Fs, uchan, nUpdates)
+function [fig] = PrePostStats(t_PrePost, d_PrePost, e_PrePost, Fs, uchan, bndlim, nUpdates)
 % Plot the statistical difference between the signals and their spectra
 % before and after the stimulus. 
 % 
@@ -10,6 +10,7 @@ function [fig] = PrePostStats(t_PrePost, d_PrePost, e_PrePost, Fs, uchan, nUpdat
 %   e_PrePost: filtered value in the same format as d_PrePost 
 %   Fs: sampling rate of g, d, and e_t (Hz) 
 %   uchan: array of unique channels, same length as width of g, d, and e
+%   bndlim: frequency range to test: [lower, upper] limit (Hz) 
 %   nUpdates: how many times to display progress. 0 = no output 
 % 
 % Outputs: 
@@ -35,6 +36,18 @@ for chIdx = 1:length(uchan)
     [wFiltAfter, spectFiltAfterCh] = PowerSpectrum(sigFiltCh(:,:,2), Fs);
     [wUnfiltBefore, spectUnfiltBeforeCh] = PowerSpectrum(sigUnfiltCh(:,:,1), Fs);
     [wUnfiltAfter, spectUnfiltAfterCh] = PowerSpectrum(sigUnfiltCh(:,:,2), Fs);
+
+    if ~isempty(bndlim)
+        % band-restrict power spectra:
+        wIdx = (wFiltBefore >= bndlim(1)) & (wFiltBefore <= bndlim(2));
+        spectFiltBeforeCh = spectFiltBeforeCh(:,wIdx);
+        wIdx = (wFiltAfter >= bndlim(1)) & (wFiltAfter <= bndlim(2));
+        spectFiltAfterCh = spectFiltAfterCh(:,wIdx);
+        wIdx = (wUnfiltBefore >= bndlim(1)) & (wUnfiltBefore <= bndlim(2));
+        spectUnfiltBeforeCh = spectUnfiltBeforeCh(:,wIdx);
+        wIdx = (wUnfiltAfter >= bndlim(1)) & (wUnfiltAfter <= bndlim(2));
+        spectUnfiltAfterCh = spectUnfiltAfterCh(:,wIdx);
+    end
 
     % normalize power spectra: 
     spectFiltBeforeCh = spectFiltBeforeCh./sum(spectFiltBeforeCh,2);
