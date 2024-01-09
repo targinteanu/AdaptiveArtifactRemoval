@@ -234,7 +234,9 @@ figure;
 for ch = 1:length(n20s)
     n20 = n20s{ch};
     SNR = n20(1,:,:)./n20(3,:,:); SNR = squeeze(SNR);
+    % t test SNR filt vs unfilt 
     loc = n20(2,:,:); loc = squeeze(loc);
+    % titles and axes 
     ax1(ch) = subplot(length(n20s),2,2*(ch-1)+1); boxplot(SNR);
     ax2(ch) = subplot(length(n20s),2,2*ch); boxplot(loc);
 end
