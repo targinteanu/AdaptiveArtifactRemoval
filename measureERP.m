@@ -39,12 +39,17 @@ end
         for i = 1:length(des)
             desloc = des(i); 
             candi = cand{i};
-            tscore = abs(desloc - candi(:,2))./tRng;
-            pscore = candi(:,4)./xRng; 
-            score = pscore .* exp(-4*tscore);
-            [~,sel] = max(score);
-            lcOut(1,i) = candi(sel,1);
-            lcOut(2,i) = candi(sel,2);
+            if isempty(candi)
+                lcOut(1,i) = nan;
+                lcOut(2,i) = nan;
+            else
+                tscore = abs(desloc - candi(:,2))./tRng;
+                pscore = candi(:,4)./xRng; 
+                score = pscore .* exp(-4*tscore);
+                [~,sel] = max(score);
+                lcOut(1,i) = candi(sel,1);
+                lcOut(2,i) = candi(sel,2);
+            end
         end
     end
 
