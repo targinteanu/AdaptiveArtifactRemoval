@@ -32,7 +32,7 @@ pOut = selectPeaks(pPk, pPksList); nOut = selectPeaks(nPk, nPksList);
         end
     end
 
-    function selectPeaks(des, cand)
+    function lcOut = selectPeaks(des, cand)
         lcOut = zeros(2, length(des));
         for i = 1:length(des)
             desloc = des(i); 
