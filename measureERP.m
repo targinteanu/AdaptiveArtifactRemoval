@@ -1,8 +1,4 @@
-function [pkOut, lcOut] = measureERP(t, x, tPk, sPk, tRng)
-
-if ~(numel(tPk)==numel(sPk))
-    error('tPk and sPk must be same size.')
-end
+function [nOut, pOut] = measureERP(t, x, nPk, pPk, tRng)
 
 if ~isempty(tRng) 
     tIdx = (t >= tRng(1)) & (t <= tRng(2));
@@ -12,8 +8,8 @@ end
 tRng = max(t) - min(t);
 xRng = max(x) - min(x);
 
-lcOut = zeros(size(tPk)); 
-pkOut = zeros(size(sPk));
+pOut = zeros(size(pPk)); 
+nOut = zeros(size(nPk));
 
 [npk, nlc, nw, npr] = findpeaks( x, t, 'MinPeakProminence', .1*xRng);
 %{
@@ -22,18 +18,32 @@ subplot(212); stem(npr/xRng);
 %}
 [ppk, plc, pw, ppr] = findpeaks(-x, t, 'MinPeakProminence', .1*xRng);
 
-pkslist = cell(size(tPk));
-for idx = 1:length(tPk)
-    if sPk(idx) > 0
-        pk = npk;  lc = nlc; w = nw; pr = npr;
-    elseif sPk(idx) < 0
-        pk = -ppk; lc = plc; w = pw; pr = ppr;
+pPksList = candidatePeaks(pPk, ppk, plc, pw, ppr);
+nPksList = candidatePeaks(nPk, npk, nlc, nw, npr);
+
+pOut = selectPeaks(pPk, pPksList); nOut = selectPeaks(nPk, nPksList);
+
+    function pksList = candidatePeaks(locDesired, pk, lc, w, pr)
+        pksList = cell(size(locDesired));
+        for i = 1:length(pk)
+            tdiff = abs(lc(i) - locDesired);
+            [~,sel] = min(tdiff);
+            pksList{sel} = [pksList{sel}; pk(i), lc(i), w(i), pr(i)];
+        end
     end
-    tscore = abs(lc - tPk(idx))./tRng;
-    pscore = abs(pk)./xRng; 
-    [~,selIdx] = min(tscore);
-    clear pk lc w pr
-end
-%}
+
+    function selectPeaks(des, cand)
+        lcOut = zeros(2, length(des));
+        for i = 1:length(des)
+            desloc = des(i); 
+            candi = cand{i};
+            tscore = abs(desloc - candi(:,2))./tRng;
+            pscore = abs(candi(:,1))./xRng; 
+            score = pscore .* exp(-7*tscore);
+            [~,sel] = max(score);
+            lcOut(1,i) = candi(sel,1);
+            lcOut(2,i) = candi(sel,2);
+        end
+    end
 
 end
