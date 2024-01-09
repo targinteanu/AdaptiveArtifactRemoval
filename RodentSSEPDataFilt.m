@@ -210,3 +210,32 @@ tBeforeTrig = .2;
 PrePostAvgAll(tBeforeTrig,t_PrePost,d_PrePost,e_PrePost,Fs,sig.Channels,10);
 PrePostAvgBatch(90,t_PrePost,d_PrePost,e_PrePost,Fs,sig.Channels);
 PrePostStats(t_PrePost,d_PrePost,e_PrePost,Fs,sig.Channels,[1.5,1000],10);
+
+%% SNR 
+tPost = t_PrePost(2,:);
+n20s = cell(size(e_PrePost));
+for ch = 1:length(n20s)
+    e_PrePost_ch = e_PrePost{ch};
+    d_PrePost_ch = d_PrePost{ch};
+    nTrl = size(d_PrePost_ch,1);
+    n20 = zeros(3,nTrl,2);
+    for trl = 1:nTrl
+        n20([1,2],trl,1) = measureERP(tPost, d_PrePost_ch(trl,:,2), .02, [], [.01,.05]);
+        n20(3,trl,1) = std(d_PrePost_ch(trl,:,2));
+        n20([1,2],trl,2) = measureERP(tPost, e_PrePost_ch(trl,:,2), .02, [], [.01,.05]);
+        n20(3,trl,2) = std(e_PrePost_ch(trl,:,2));
+    end
+    n20s{ch} = n20;
+    clear n20 e_PrePost_ch d_PrePost_ch;
+end
+
+%%
+figure; 
+for ch = 1:length(n20s)
+    n20 = n20s{ch};
+    SNR = n20(1,:,:)./n20(3,:,:); SNR = squeeze(SNR);
+    loc = n20(2,:,:); loc = squeeze(loc);
+    ax1(ch) = subplot(length(n20s),2,2*(ch-1)+1); boxplot(SNR);
+    ax2(ch) = subplot(length(n20s),2,2*ch); boxplot(loc);
+end
+linkaxes(ax1,'y'); linkaxes(ax2,'y');
