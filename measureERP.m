@@ -14,11 +14,16 @@ nOut = zeros(size(nPk));
 [npk, nlc, nw, npr] = findpeaks( x, t, 'MinPeakProminence', .1*xRng);
 [ppk, plc, pw, ppr] = findpeaks(-x, t, 'MinPeakProminence', .1*xRng);
 
+if ~isempty(pPk)
 pPksList = candidatePeaks(pPk, ppk, plc, pw, ppr);
-nPksList = candidatePeaks(nPk, npk, nlc, nw, npr);
-
-pOut = selectPeaks(pPk, pPksList); nOut = selectPeaks(nPk, nPksList);
+pOut = selectPeaks(pPk, pPksList); 
 pOut(1,:) = -pOut(1,:);
+end
+
+if ~isempty(nPk)
+nPksList = candidatePeaks(nPk, npk, nlc, nw, npr);
+nOut = selectPeaks(nPk, nPksList);
+end
 
     function pksList = candidatePeaks(locDesired, pk, lc, w, pr)
         pksList = cell(size(locDesired));
