@@ -13,10 +13,6 @@ nOut = zeros(size(nPk));
 
 [npk, nlc, nw, npr] = findpeaks( x, t, 'MinPeakProminence', .1*xRng);
 [ppk, plc, pw, ppr] = findpeaks(-x, t, 'MinPeakProminence', .1*xRng);
-%{
-figure; subplot(211); findpeaks(-x, t, 'MinPeakProminence', .1*xRng, 'Annotate', 'extents');
-subplot(212); stem(ppr/xRng);
-%}
 
 pPksList = candidatePeaks(pPk, ppk, plc, pw, ppr);
 nPksList = candidatePeaks(nPk, npk, nlc, nw, npr);
@@ -40,7 +36,7 @@ pOut(1,:) = -pOut(1,:);
             candi = cand{i};
             tscore = abs(desloc - candi(:,2))./tRng;
             pscore = candi(:,4)./xRng; 
-            score = pscore .* exp(-7*tscore);
+            score = pscore .* exp(-4*tscore);
             [~,sel] = max(score);
             lcOut(1,i) = candi(sel,1);
             lcOut(2,i) = candi(sel,2);
