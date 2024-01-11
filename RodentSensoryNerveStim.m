@@ -1,33 +1,38 @@
 %% load file
-load('rat1/amplifier_data/Naive/rat1_N_CMAP_1_230731_113111'); % load the "filt" 2D array 
-load('rat1/trigger_data/Naive/rat1_N_CMAP_1_230731_113111_trigger'); % load the "board_adc_data" 1D array 
+%load('rat1/amplifier_data/Naive/rat1_N_CMAP_1_230731_113111'); % load the "filt" 2D array 
+load('D:\filtering research proj\rat1\rat1\amplifier_data\Naive\rat1_N_CMAP_1_230731_113111.mat');
+%load('rat1/trigger_data/Naive/rat1_N_CMAP_1_230731_113111_trigger'); % load the "board_adc_data" 1D array 
+load('D:\filtering research proj\rat1\rat1\trigger_data\Naive\rat1_N_CMAP_1_230731_113111_trigger.mat');
 
 %% define timing--no response yet from Kiara's team?
-Fs = 1; % samples per second 
+Fs = 20000; % samples per second 
 dt = 1/Fs; % time step (seconds) 
-t = 0:dt:length(d_unfilt); % fill this in 
+samples=1:length(filt);
+samples = samples-1;
+t = samples/Fs;
+t = t';
 
 %% processing loaded data into signal object
 % "filt" is the neural recording data, which we want to change into "d_unfilt"
 % "board_adc_data" is the noise reference data, which we want to change into "g"
-d_unfilt = cell(2, length(filt));
-for
-    i=1:length(filt);
-    d_unfilt(1,i)=filt(1,i);
-    d_unfilt(2,i)=filt(2,i);
-end
+d_unfilt = filt;
+d_unfilt = (d_unfilt-32768)*0.0003125; %filt in multiple of volt units
+d_unfilt = d_unfilt';
 
-g = cell(2, length(board_adc_data));
-for
-    i=1:length(board_adc_data);
-    g(1,i)=board_adc_data(i);
-    g(2,i)=board_adc_data(i);
-end
+g = [board_adc_data;board_adc_data];
+g = g';
 
 chA = buildChannelObj('insert_name_here', 0,0,0, 'Cartesian');
 chB = buildChannelObj('insert_name_here', 0,0,0, 'Cartesian');
 
 % (t and g should have the same number of rows as d_unfilt see repmat)
+%% define parameters for filter and training 
+trainfrac = .1;
+N = 64; % filter taps 
+stepsize = .2;
+nUpdates = 100;
+splIdx = floor(trainfrac*size(t,1));
+tTrainBnd = [t(1), t(splIdx)];
 
 sig = buildSignalObj([], d_unfilt, t, g, Fs, [chA; chB], ...
                      tTrainBnd, tTrainBnd, 2);
