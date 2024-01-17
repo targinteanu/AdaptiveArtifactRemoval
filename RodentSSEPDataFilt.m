@@ -230,14 +230,21 @@ for ch = 1:length(n20s)
 end
 
 %%
-figure; 
+figure('Units','normalized', 'Position',[.1,.1,.8,.8])
 for ch = 1:length(n20s)
     n20 = n20s{ch};
     SNR = n20(1,:,:)./n20(3,:,:); SNR = squeeze(SNR);
-    % t test SNR filt vs unfilt 
+    [~,pSNR] = ttest(SNR(:,1), SNR(:,2), 'Tail', 'left');
     loc = n20(2,:,:); loc = squeeze(loc);
+    [~,ploc] = ttest(loc(:,1), loc(:,2), 'Tail', 'both');
     % titles and axes 
     ax1(ch) = subplot(length(n20s),2,2*(ch-1)+1); boxplot(SNR);
+    grid on;
+    title(['SNR: p = ',num2str(pSNR)]); ylabel(['Channel ',sig.Channels(ch).labels]);
+    xticklabels({'Unfilt', 'Filt'});
     ax2(ch) = subplot(length(n20s),2,2*ch); boxplot(loc);
+    grid on;
+    title(['Latency: p = ',num2str(ploc)]); 
+    xticklabels({'Unfilt', 'Filt'});
 end
 linkaxes(ax1,'y'); linkaxes(ax2,'y');
