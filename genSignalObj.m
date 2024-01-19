@@ -11,9 +11,9 @@ folder = uigetdir;
 mkdir(folder,'saved_signal_obj');
 files = dir(folder);
 if contains(folder,'rat') % for Mingfeng files
-    for idx = 1:size(files)
+    for idx = 1:size(files,1)
         cd(folder); %brings loop back to the outer folder
-        load(string(files.folder(idx,1)));
+        load(files(idx,1).folder);
             %% define timing
             Fs = 20000; % samples per second 
             dt = 1/Fs; % time step (seconds) 
