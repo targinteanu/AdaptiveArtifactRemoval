@@ -8,12 +8,16 @@ load('D:\filtering research proj\rat1\rat1\amplifier_data\Naive\rat1_N_CMAP_1_23
 load('D:\filtering research proj\rat1\rat1\trigger_data\Naive\rat1_N_CMAP_1_230731_113111_trigger.mat');
 
 folder = uigetdir;
-mkdir(folder,'saved_signal_obj');
 files = dir(folder);
+%if ~ %check if mkdir already exists 
+mkdir(folder,'saved_signal_obj');
+
 if contains(folder,'rat') % for Mingfeng files
-    for idx = 1:size(files,1)
+    for idx = 3:size(files,1)
         cd(folder); %brings loop back to the outer folder
-        load(files(idx,1).folder);
+    if ~ isfolder(files(idx,1).name)
+        load(files(idx,1).name);
+        cd('C:\Users\Fausto\Documents\GitHub\AdaptiveArtifactRemoval');
             %% define timing
             Fs = 20000; % samples per second 
             dt = 1/Fs; % time step (seconds) 
@@ -43,8 +47,8 @@ if contains(folder,'rat') % for Mingfeng files
             
             sig = buildSignalObj([], d_unfilt, t, g, Fs, [chA; chB], ...
                                  tTrainBnd, tTrainBnd, 2);
-        cd([folder,'\saved_signal_obj']);
-        saveSignalObj([files(idx,1),'_saved'],sig);
+            saveSignalObj(['D:\filtering research proj\rat1\rat1\amplifier_data\Naive\saved_signal_obj\',files(idx,1).name,'_saved'],sig);
+    end
     end
 end
 cd('C:\Users\Fausto\Documents\GitHub\AdaptiveArtifactRemoval');
