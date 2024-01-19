@@ -4,7 +4,7 @@ load('D:\filtering research proj\rat1\rat1\amplifier_data\Naive\rat1_N_CMAP_1_23
 %load('rat1/trigger_data/Naive/rat1_N_CMAP_1_230731_113111_trigger'); % load the "board_adc_data" 1D array 
 load('D:\filtering research proj\rat1\rat1\trigger_data\Naive\rat1_N_CMAP_1_230731_113111_trigger.mat');
 
-%% define timing--no response yet from Kiara's team?
+%% define timing
 Fs = 20000; % samples per second 
 dt = 1/Fs; % time step (seconds) 
 samples=1:length(filt);
