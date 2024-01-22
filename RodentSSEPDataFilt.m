@@ -122,6 +122,7 @@ notch60 = designfilt('bandstopiir', ...
                      'DesignMethod', 'cheby2');
 %fvtool(notch60);
 d_unfilt_2 = filtfilt(notch60, d_unfilt);
+d_unfilt = d_unfilt_2;
 
 %% shorten - to be removed 
 d_unfilt = d_unfilt(1:2000000,:);
@@ -232,6 +233,9 @@ end
 tBeforeTrig = .2;
 [t_PrePost, d_PrePost, e_PrePost] = getPrePostStim(tBeforeTrig, ...
     sig.Noise_Reference, sig.Data_BPF, sig.Data_LMS_LPF, Fs, sig.Channels, N);
+PrePostAvgAll_v2(tBeforeTrig,t_PrePost,d_PrePost,e_PrePost,Fs,sig.Channels,10);
+
+%{
 PrePostAvgAll(tBeforeTrig,t_PrePost,d_PrePost,e_PrePost,Fs,sig.Channels,10);
 PrePostAvgBatch(90,t_PrePost,d_PrePost,e_PrePost,Fs,sig.Channels);
 PrePostStats(t_PrePost,d_PrePost,e_PrePost,Fs,sig.Channels,[1.5,1000],10);
@@ -273,3 +277,4 @@ for ch = 1:length(n20s)
     xticklabels({'Unfilt', 'Filt'});
 end
 linkaxes(ax1,'y'); linkaxes(ax2,'y');
+%}
