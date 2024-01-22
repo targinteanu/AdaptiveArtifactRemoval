@@ -66,8 +66,8 @@ N = 1024; % filter taps
 stepsize = .02;
 filtObj = buildFilterObj(hpFilt, lpFilt, N, stepsize, true);
 sig = doHPFilt(filtObj, sig);
-%sig = getTrainTestWrapper(sig);
-%[sig, filtObj] = preTrainWtsWrapper(filtObj, sig, .1*nUpdates);
+sig = getTrainTestWrapper(sig);
+[sig, filtObj] = preTrainWtsWrapper(filtObj, sig, .1*nUpdates);
 [sig, w_end] = LMSonlineWrapper(filtObj, sig, nUpdates);
 sig = doLPFilt(filtObj, sig);
 

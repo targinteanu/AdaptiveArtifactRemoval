@@ -49,8 +49,8 @@ for idx = 1:length(uchan)
 end
 
 %% define parameters for filter and training 
-trainfrac = .1;
-N = 64; % filter taps 
+trainfrac = .01;
+N = 1024; % filter taps 
 stepsize = .2;
 nUpdates = 100;
 
@@ -107,11 +107,22 @@ Fs = 1/dt_mean; % Hz
 splIdx = floor(trainfrac*size(t,1));
 tTrainBnd = [t(1), t(splIdx)];
 
+%% notch out 60Hz (& odd harmonics?)
+% +- ~15
+% to do
+
+%% shorten 
+d_unfilt = d_unfilt(1:2000000,:);
+t = t(1:2000000,:);
+g = g(1:2000000,:);
+
 %% cleanup 
+%{
 clear Dt dt_mean dt_resample dt_err tLen 
 clear t2 g2 d2
 clear T G dta dta_t_chan
 clear g_trl t_trl t_stim chan ch chIdx 
+%}
 
 %% signal to object 
 chA = buildChannelObj('A', 1, 1,0,'Cartesian'); % right somatosensory
@@ -134,8 +145,8 @@ hpFilt = designfilt('highpassiir', ...
 %d         = filtfilt(hpFilt, d_unfilt);
 %% lowpass filtering (noise removal)
 lpFilt = designfilt('lowpassiir', ...
-                    'StopbandFrequency', 2000, ...
-                    'PassbandFrequency', 1000, ...
+                    'StopbandFrequency', 6000, ...
+                    'PassbandFrequency', 5000, ...
                     'PassbandRipple', .5, ...
                     'StopbandAttenuation', 60, ...
                     'SampleRate', Fs, ... 
@@ -155,8 +166,10 @@ sig = doHPFilt(filtObj, sig);
 %}
 %[e_test, op_test] = testPreTrained(w, t_test, g_test, d_test, N, uchan, .1*nUpdates);
 
+%{
 sig = getTrainTestWrapper(sig);
 [sig, filtObj] = preTrainWtsWrapper(filtObj, sig, .1*nUpdates);
+%}
 
 %% online LMS 
 %[e_t, w_OL] = LMSonline(t, g, d, stepsize, N, uchan, w, nUpdates);
