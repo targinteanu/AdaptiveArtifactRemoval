@@ -154,7 +154,7 @@ lpFilt = designfilt('lowpassiir', ...
 %fvtool(lpFilt);
 
 %% filter to object 
-filtObj = buildFilterObj(hpFilt, lpFilt, N, stepsize, true);
+filtObj = buildFilterObj(hpFilt, lpFilt, N, stepsize, true, true);
 
 sig = doHPFilt(filtObj, sig);
 

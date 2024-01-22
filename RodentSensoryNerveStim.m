@@ -64,7 +64,7 @@ lpFilt = designfilt('lowpassiir', ...
                     'DesignMethod', 'cheby2');
 N = 1024; % filter taps 
 stepsize = .02;
-filtObj = buildFilterObj(hpFilt, lpFilt, N, stepsize, true);
+filtObj = buildFilterObj(hpFilt, lpFilt, N, stepsize, true, true);
 sig = doHPFilt(filtObj, sig);
 sig = getTrainTestWrapper(sig);
 [sig, filtObj] = preTrainWtsWrapper(filtObj, sig, .1*nUpdates);
