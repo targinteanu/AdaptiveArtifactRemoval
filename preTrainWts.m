@@ -1,5 +1,5 @@
 function [w, e_train, op_train, fig] = ...
-    preTrainWts(t_train, g_train, d_train, N, uchan, nUpdates)
+    preTrainWts(t_train, g_train, d_train, N, uchan, nUpdates, dLMS)
 % Use a subset of the signal to train optimal LMS weights. 
 %
 % Inputs: 
@@ -11,6 +11,7 @@ function [w, e_train, op_train, fig] = ...
 %   nUpdates: how many times to display progress and whether or not to plot weights. 
 %             0 = no output and no plots 
 %             Default = 10
+%   dLMS: if false, does LMS; if true, does dLMS. Default false
 % 
 % Outputs: 
 %   w: trained weights, as columns, from oldest --> current time 
@@ -18,6 +19,9 @@ function [w, e_train, op_train, fig] = ...
 %   op_train: LMS output signal for training period 
 %   fig: matlab figure with the trained weights of each channel
 
+if nargin < 7
+    dLMS = false;
+end
 %{
 if nargin < 7
     nUpdates = 10;
@@ -53,7 +57,12 @@ w = zeros(N, length(uchan));
 for idx = 1:length(uchan)
     ch = uchan(idx);
     Gidx = G(:,:,idx); Didx = D(:,idx);
-    w(:,idx) = (((Gidx'*Gidx)^-1)*Gidx')*Didx;
+    dG = diff(Gidx); dD = diff(Didx);
+    if ~dLMS
+        w(:,idx) = (((Gidx'*Gidx)^-1)*Gidx')*Didx;
+    else
+        w(:,idx) = (((dG'*dG)^-1)*dG')*dD;
+    end
     if nUpdates
         figure(fig); subplot(length(uchan), 1, idx); stem(w(:,idx)); grid on;
         title(['Channel ',ch.labels,' training']);

@@ -21,7 +21,7 @@ g_train = sigObj.Noise_Reference_Train;
 N = filtObj.Num_Taps; 
 
 [w, e_train, op_train] = ...
-    preTrainWts(t_train, g_train, sigUnfilt, N, uchan, nUpdates);
+    preTrainWts(t_train, g_train, sigUnfilt, N, uchan, nUpdates, filtObj.useDLMS);
 
 filtObj.Current_Weights = w;
 sigObj.Data_LMS_Train = e_train; 
