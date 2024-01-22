@@ -62,8 +62,8 @@ lpFilt = designfilt('lowpassiir', ...
                     'StopbandAttenuation', 60, ...
                     'SampleRate', Fs, ... 
                     'DesignMethod', 'cheby2');
-N = 512; % filter taps 
-stepsize = .01;
+N = 1024; % filter taps 
+stepsize = .02;
 filtObj = buildFilterObj(hpFilt, lpFilt, N, stepsize, true);
 sig = doHPFilt(filtObj, sig);
 %sig = getTrainTestWrapper(sig);
