@@ -166,7 +166,7 @@ sig = doHPFilt(filtObj, sig);
 %}
 %[e_test, op_test] = testPreTrained(w, t_test, g_test, d_test, N, uchan, .1*nUpdates);
 
-%{
+%%{
 sig = getTrainTestWrapper(sig);
 [sig, filtObj] = preTrainWtsWrapper(filtObj, sig, .1*nUpdates);
 %}
