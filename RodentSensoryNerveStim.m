@@ -19,13 +19,16 @@ d_unfilt = filt;
 d_unfilt = (d_unfilt-32768)*0.0003125; %filt in multiple of volt units
 d_unfilt = d_unfilt';
 
-g = [board_adc_data;board_adc_data];
+%g = [board_adc_data;board_adc_data];
+g = board_adc_data;
 g = g';
 
 chA = buildChannelObj('Chan1', 0,0,0, 'Cartesian');
 chB = buildChannelObj('Chan2', 0,0,0, 'Cartesian');
 
 % (t and g should have the same number of rows as d_unfilt see repmat)
+t = repmat(t, 1, size(d_unfilt,2));
+g = repmat(g, 1, size(d_unfilt,2));
 %% define parameters for filter and training 
 trainfrac = .1;
 nUpdates = 100;
@@ -53,14 +56,16 @@ lpFilt = designfilt('lowpassiir', ...
                     'SampleRate', Fs, ... 
                     'DesignMethod', 'cheby2');
 N = 64; % filter taps 
-stepsize = .05;
+stepsize = .01;
 filtObj = buildFilterObj(hpFilt, lpFilt, N, stepsize, true);
 sig = doHPFilt(filtObj, sig);
+sig = getTrainTestWrapper(sig);
+[sig, filtObj] = preTrainWtsWrapper(filtObj, sig, .1*nUpdates);
 [sig, w_end] = LMSonlineWrapper(filtObj, sig, nUpdates);
 sig = doLPFilt(filtObj, sig);
 
 %%
-plotwindow1 = 1:600000;
+plotwindow1 = 1:1100000;
 plotwindow2 = plotwindow1 + N;
 figure('Units','normalized', 'Position',[.1,.1,.8,.8]); 
 ax(1) = subplot(211);
