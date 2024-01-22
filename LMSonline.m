@@ -74,7 +74,7 @@ for idx = 1:length(uchan)
                 wplot.YData = w(:,idx); 
                 edata = e_t(:,idx);
                 if dLMS
-                    edata = [0,diff(edata)];
+                    edata = [0;diff(edata)];
                 end
                 eplot.YData = movmean(edata.^2, 5000);
                 disp(['Online Channel ',ch.labels,': ',num2str(100*ep/size(t,1)),'%'])
