@@ -16,6 +16,13 @@ t = t';
 % "filt" is the neural recording data, which we want to change into "d_unfilt"
 % "board_adc_data" is the noise reference data, which we want to change into "g"
 d_unfilt = filt;
+
+% introduce delay in signal compared to noise reference 
+padT = .005; % delay dur (s); should be at least .0005
+padL = floor(padT*Fs); 
+dPad = d_unfilt(:,1).*ones(1,padL);
+d_unfilt = [dPad, d_unfilt(:,1:(end-padL))];
+
 d_unfilt = (d_unfilt-32768)*0.0003125; %filt in multiple of volt units
 d_unfilt = d_unfilt';
 
@@ -55,12 +62,12 @@ lpFilt = designfilt('lowpassiir', ...
                     'StopbandAttenuation', 60, ...
                     'SampleRate', Fs, ... 
                     'DesignMethod', 'cheby2');
-N = 64; % filter taps 
+N = 512; % filter taps 
 stepsize = .01;
 filtObj = buildFilterObj(hpFilt, lpFilt, N, stepsize, true);
 sig = doHPFilt(filtObj, sig);
-sig = getTrainTestWrapper(sig);
-[sig, filtObj] = preTrainWtsWrapper(filtObj, sig, .1*nUpdates);
+%sig = getTrainTestWrapper(sig);
+%[sig, filtObj] = preTrainWtsWrapper(filtObj, sig, .1*nUpdates);
 [sig, w_end] = LMSonlineWrapper(filtObj, sig, nUpdates);
 sig = doLPFilt(filtObj, sig);
 
@@ -69,9 +76,11 @@ plotwindow1 = 1:1100000;
 plotwindow2 = plotwindow1 + N;
 figure('Units','normalized', 'Position',[.1,.1,.8,.8]); 
 ax(1) = subplot(211);
-plot(sig.Times(plotwindow1), sig.Data_BPF(plotwindow1,2));
+%plot(sig.Times(plotwindow1), sig.Data_BPF(plotwindow1,2));
+plot(sig.Times(plotwindow1), sig.Data_HPF(plotwindow1,2));
 hold on; 
-plot(sig.Times(plotwindow2), sig.Data_LMS_LPF(plotwindow1,2));
+%plot(sig.Times(plotwindow2), sig.Data_LMS_LPF(plotwindow1,2));
+plot(sig.Times(plotwindow2), sig.Data_LMS(plotwindow1,2));
 legend('Unfiltered', 'Filtered');
 xlabel('time (s)'); ylabel('Volts'); title('signal');
 grid on;

@@ -48,12 +48,15 @@ for idx = 1:length(uchan)
         xlabel('timepoint'); ylabel('e^2');
         pause(.5);
     end
+    Gprev = zeros(1,N); Eprev = zeros(1,N);
     for ep = (N:size(t,1))-N+1
         Gidx = g((1:N)+ep-1, idx)';
         E = d(ep+N-1,idx) - Gidx*w(:,idx);
         e_t(ep, idx) = E;
-        dw = E*Gidx';
+        %dw = E*Gidx'; % LMS
+        dw = (E-Eprev) * (Gidx-Gprev)'; % dLMS
         w(:,idx) = w(:,idx) + stepsize*dw;
+        Gprev = Gidx; Eprev = E;
         if nUpdates
             if ~mod(ep, floor(size(t,1)/nUpdates))
                 wplot.YData = w(:,idx); eplot.YData = movmean(e_t(:,idx).^2, 5000);
