@@ -50,7 +50,7 @@ end
 
 %% define parameters for filter and training 
 trainfrac = .01;
-N = 1024; % filter taps 
+N = 2048; % filter taps 
 stepsize = .2;
 nUpdates = 100;
 
@@ -107,34 +107,35 @@ Fs = 1/dt_mean; % Hz
 splIdx = floor(trainfrac*size(t,1));
 tTrainBnd = [t(1), t(splIdx)];
 
+%% shorten - to be removed 
+d_unfilt = d_unfilt(1:1000000,:);
+t = t(1:1000000,:);
+g = g(1:1000000,:);
+
 %% notch out 60Hz (& odd harmonics?)
 % +- ~15
 % to do
 %%{
-notchfreq = 60; 
+notchfreq = 500; 
 d_unfilt_2 = flipud(d_unfilt);
-while notchfreq < 2000
-notch60 = designfilt('bandstopiir', ...
+while notchfreq < 61
+notchfreq
+notch60 = designfilt('bandstopfir', ...
                      'PassbandFrequency1', notchfreq-15, ...
-                     'StopbandFrequency1', notchfreq-1, ...
-                     'StopbandFrequency2', notchfreq+1, ...
+                     'StopbandFrequency1', notchfreq-5, ...
+                     'StopbandFrequency2', notchfreq+5, ...
                      'PassbandFrequency2', notchfreq+15, ...
                      'PassbandRipple1', .1, ...
                      'PassbandRipple2', .1, ...
                      'StopbandAttenuation', 20, ...
                      'SampleRate', Fs, ...
-                     'DesignMethod', 'cheby2');
+                     'DesignMethod', 'equiripple');
 %fvtool(notch60);
 d_unfilt_2 = filter(notch60, d_unfilt_2);
 notchfreq = notchfreq + 120;
 end
-d_unfilt = flipud(d_unfilt_2);
+d_unfilt_2 = flipud(d_unfilt_2);
 %}
-
-%% shorten - to be removed 
-d_unfilt = d_unfilt(1:1000000,:);
-t = t(1:1000000,:);
-g = g(1:1000000,:);
 
 %% cleanup 
 %{
