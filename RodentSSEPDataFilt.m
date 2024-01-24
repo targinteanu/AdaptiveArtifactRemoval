@@ -116,11 +116,11 @@ g = g(1:1000000,:);
 % +- ~15
 % to do
 %%{
-notchfreq = 500; 
+notchfreq = 60; 
 d_unfilt_2 = flipud(d_unfilt);
-while notchfreq < 61
+while notchfreq < 500
 notchfreq
-notch60 = designfilt('bandstopfir', ...
+notch60 = designfilt('bandstopiir', ...
                      'PassbandFrequency1', notchfreq-15, ...
                      'StopbandFrequency1', notchfreq-5, ...
                      'StopbandFrequency2', notchfreq+5, ...
@@ -129,12 +129,12 @@ notch60 = designfilt('bandstopfir', ...
                      'PassbandRipple2', .1, ...
                      'StopbandAttenuation', 20, ...
                      'SampleRate', Fs, ...
-                     'DesignMethod', 'equiripple');
+                     'DesignMethod', 'cheby2');
 %fvtool(notch60);
 d_unfilt_2 = filter(notch60, d_unfilt_2);
 notchfreq = notchfreq + 120;
 end
-d_unfilt_2 = flipud(d_unfilt_2);
+d_unfilt = flipud(d_unfilt_2);
 %}
 
 %% cleanup 
