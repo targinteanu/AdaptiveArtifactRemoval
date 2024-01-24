@@ -89,3 +89,58 @@ plot(sig.Times(plotwindow1), sig.Noise_Reference(plotwindow1,2));
 xlabel('time (s)'); ylabel('current (amps?)'); title('noise reference');
 grid on;
 linkaxes(ax,'x');
+
+%%
+tBeforeTrig = .03;
+[t_PrePost, d_PrePost, e_PrePost] = getPrePostStim(tBeforeTrig, ...
+    sig.Noise_Reference, sig.Data_BPF, sig.Data_LMS_LPF, Fs, sig.Channels, N);
+PrePostAvgAll_v2(tBeforeTrig,t_PrePost,d_PrePost,e_PrePost,Fs,sig.Channels,10);
+
+%%{
+PrePostAvgAll(tBeforeTrig,t_PrePost,d_PrePost,e_PrePost,Fs,sig.Channels,10);
+PrePostAvgBatch(90,t_PrePost,d_PrePost,e_PrePost,Fs,sig.Channels);
+PrePostStats(t_PrePost,d_PrePost,e_PrePost,Fs,sig.Channels,[1.5,1000],10);
+%}
+
+%% SNR 
+tPost = t_PrePost(2,:);
+p10s = cell(size(e_PrePost));
+n14s = cell(size(p10s));
+for ch = 1:length(p10s)
+    e_PrePost_ch = e_PrePost{ch};
+    d_PrePost_ch = d_PrePost{ch};
+    nTrl = size(d_PrePost_ch,1);
+    p10 = zeros(3,nTrl,2); n14 = p10;
+    for trl = 1:nTrl
+        p10n14 = measureERP(tPost, d_PrePost_ch(trl,:,2), .01, .014, [0,.03]);
+        [p10([1,2],trl,1), n14([1,2],trl,1)] = ...
+            measureERP(tPost, d_PrePost_ch(trl,:,2), .01, .014, [0,.25]);
+        p10(3,trl,1) = std(d_PrePost_ch(trl,:,2));
+        [p10([1,2],trl,2), n14([1,2],trl,2)] = ...
+            measureERP(tPost, e_PrePost_ch(trl,:,2), .01, .014, [0,.25]);
+        p10(3,trl,2) = std(e_PrePost_ch(trl,:,2));
+    end
+    p10s{ch} = p10; n14s{ch} = n14;
+    clear p10 n14 e_PrePost_ch d_PrePost_ch;
+end
+
+%%
+figure('Units','normalized', 'Position',[.1,.1,.8,.8])
+for ch = 1:length(p10s)
+    p10 = p10s{ch}; n14 = n14s{ch};
+    SNR = (n14(1,:,:) - p10(1,:,:))./p10(3,:,:); SNR = squeeze(SNR);
+    [~,pSNR] = ttest(SNR(:,1), SNR(:,2), 'Tail', 'left');
+    loc = p10(2,:,:); loc = squeeze(loc);
+    [~,ploc] = ttest(loc(:,1), loc(:,2), 'Tail', 'both');
+    % titles and axes 
+    ax1(ch) = subplot(length(p10s),2,2*(ch-1)+1); boxplot(SNR);
+    grid on;
+    title(['SNR: p = ',num2str(pSNR)]); ylabel(['Channel ',sig.Channels(ch).labels]);
+    xticklabels({'Unfilt', 'Filt'});
+    ax2(ch) = subplot(length(p10s),2,2*ch); boxplot(loc);
+    grid on;
+    title(['Latency: p = ',num2str(ploc)]); 
+    xticklabels({'Unfilt', 'Filt'});
+end
+linkaxes(ax1,'y'); linkaxes(ax2,'y');
+%}

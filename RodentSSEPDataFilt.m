@@ -108,9 +108,11 @@ splIdx = floor(trainfrac*size(t,1));
 tTrainBnd = [t(1), t(splIdx)];
 
 %% shorten - to be removed 
+%{
 d_unfilt = d_unfilt(1:1000000,:);
 t = t(1:1000000,:);
 g = g(1:1000000,:);
+%}
 
 %% notch out 60Hz (& odd harmonics?)
 % +- ~15
@@ -245,7 +247,7 @@ tBeforeTrig = .5;
     sig.Noise_Reference, sig.Data_BPF, sig.Data_LMS_LPF, Fs, sig.Channels, N);
 PrePostAvgAll_v2(tBeforeTrig,t_PrePost,d_PrePost,e_PrePost,Fs,sig.Channels,10);
 
-%{
+%%{
 PrePostAvgAll(tBeforeTrig,t_PrePost,d_PrePost,e_PrePost,Fs,sig.Channels,10);
 PrePostAvgBatch(90,t_PrePost,d_PrePost,e_PrePost,Fs,sig.Channels);
 PrePostStats(t_PrePost,d_PrePost,e_PrePost,Fs,sig.Channels,[1.5,1000],10);
