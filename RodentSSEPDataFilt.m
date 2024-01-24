@@ -50,7 +50,7 @@ end
 
 %% define parameters for filter and training 
 trainfrac = .01;
-N = 2048; % filter taps 
+N = 1024; % filter taps 
 stepsize = .2;
 nUpdates = 100;
 
@@ -240,7 +240,7 @@ end
 %plotBeforeAfterStim(.29, g, d, e_t_lpf, Fs, uchan, N, 150, .1*nUpdates);
 
 %%
-tBeforeTrig = .2;
+tBeforeTrig = .5;
 [t_PrePost, d_PrePost, e_PrePost] = getPrePostStim(tBeforeTrig, ...
     sig.Noise_Reference, sig.Data_BPF, sig.Data_LMS_LPF, Fs, sig.Channels, N);
 PrePostAvgAll_v2(tBeforeTrig,t_PrePost,d_PrePost,e_PrePost,Fs,sig.Channels,10);
@@ -249,6 +249,7 @@ PrePostAvgAll_v2(tBeforeTrig,t_PrePost,d_PrePost,e_PrePost,Fs,sig.Channels,10);
 PrePostAvgAll(tBeforeTrig,t_PrePost,d_PrePost,e_PrePost,Fs,sig.Channels,10);
 PrePostAvgBatch(90,t_PrePost,d_PrePost,e_PrePost,Fs,sig.Channels);
 PrePostStats(t_PrePost,d_PrePost,e_PrePost,Fs,sig.Channels,[1.5,1000],10);
+%}
 
 %% SNR 
 tPost = t_PrePost(2,:);
