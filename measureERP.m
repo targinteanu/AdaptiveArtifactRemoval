@@ -52,10 +52,15 @@ end
 
 if showPlot
 % plot (for debugging)  
-figure; plot(t, x); grid on; 
+figure; 
+plot(t, x); grid on; 
 hold on; 
-plot(nOut(2,:),nOut(1,:),'^');
-plot(pOut(2,:),pOut(1,:),'v');
+if numel(nOut)
+    plot(nOut(2,:),nOut(1,:),'^');
+end
+if numel(pOut)
+    plot(pOut(2,:),pOut(1,:),'v');
+end
 xlabel('time'); ylabel('amplitude');
 legend('signal', 'n peak(s)', 'p peak(s)');
 end
