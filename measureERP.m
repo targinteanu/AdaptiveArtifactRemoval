@@ -25,6 +25,14 @@ nPksList = candidatePeaks(nPk, npk, nlc, nw, npr);
 nOut = selectPeaks(nPk, nPksList);
 end
 
+% plotting: add input to enable 
+%{
+figure; plot(t, x); grid on; 
+hold on; 
+plot(nOut(2,:),nOut(1,:),'^');
+plot(pOut(2,:),pOut(1,:),'v');
+%}
+
     function pksList = candidatePeaks(locDesired, pk, lc, w, pr)
         pksList = cell(size(locDesired));
         for i = 1:length(pk)

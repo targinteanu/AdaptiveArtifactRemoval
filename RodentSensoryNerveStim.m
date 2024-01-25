@@ -97,9 +97,9 @@ tBeforeTrig = .03;
 PrePostAvgAll_v2(tBeforeTrig,t_PrePost,d_PrePost,e_PrePost,Fs,sig.Channels,10);
 
 %%{
-PrePostAvgAll(tBeforeTrig,t_PrePost,d_PrePost,e_PrePost,Fs,sig.Channels,10);
-PrePostAvgBatch(90,t_PrePost,d_PrePost,e_PrePost,Fs,sig.Channels);
-PrePostStats(t_PrePost,d_PrePost,e_PrePost,Fs,sig.Channels,[1.5,1000],10);
+%PrePostAvgAll(tBeforeTrig,t_PrePost,d_PrePost,e_PrePost,Fs,sig.Channels,10);
+PrePostAvgBatch(10,t_PrePost,d_PrePost,e_PrePost,Fs,sig.Channels);
+%PrePostStats(t_PrePost,d_PrePost,e_PrePost,Fs,sig.Channels,[1.5,1000],10);
 %}
 
 %% SNR 
@@ -112,12 +112,11 @@ for ch = 1:length(p10s)
     nTrl = size(d_PrePost_ch,1);
     p10 = zeros(3,nTrl,2); n14 = p10;
     for trl = 1:nTrl
-        p10n14 = measureERP(tPost, d_PrePost_ch(trl,:,2), .01, .014, [0,.03]);
         [p10([1,2],trl,1), n14([1,2],trl,1)] = ...
-            measureERP(tPost, d_PrePost_ch(trl,:,2), .01, .014, [0,.25]);
+            measureERP(tPost, d_PrePost_ch(trl,:,2), .01, .014, [.007,.25]);
         p10(3,trl,1) = std(d_PrePost_ch(trl,:,2));
         [p10([1,2],trl,2), n14([1,2],trl,2)] = ...
-            measureERP(tPost, e_PrePost_ch(trl,:,2), .01, .014, [0,.25]);
+            measureERP(tPost, e_PrePost_ch(trl,:,2), .01, .014, [.007,.25]);
         p10(3,trl,2) = std(e_PrePost_ch(trl,:,2));
     end
     p10s{ch} = p10; n14s{ch} = n14;
