@@ -129,7 +129,7 @@ for ch = 1:length(p10s)
     p10 = p10s{ch}; n14 = n14s{ch};
     SNR = (n14(1,:,:) - p10(1,:,:))./p10(3,:,:); SNR = squeeze(SNR);
     [~,pSNR] = ttest(SNR(:,1), SNR(:,2), 'Tail', 'left');
-    loc = p10(2,:,:); loc = squeeze(loc);
+    loc = n14(2,:,:); loc = squeeze(loc);
     [~,ploc] = ttest(loc(:,1), loc(:,2), 'Tail', 'both');
     % titles and axes 
     ax1(ch) = subplot(length(p10s),2,2*(ch-1)+1); boxplot(SNR);
