@@ -4,15 +4,22 @@
 
 folder = uigetdir;
 files = dir(folder);
-%if ~ %check if mkdir already exists 
-mkdir(folder,'saved_signal_obj');
+%check if mkdir already exists 
+if isfolder([folder,'/','saved_signal_obj']) | isfolder([folder,'\','saved_signal_obj'])
+    error('already saved')
+else
+    mkdir(folder,'saved_signal_obj');
+end
+
+codedir = cd;
+savedir = [folder,'/','saved_signal_obj/'];
 
 if contains(folder,'rat') % for Kiara files
     for idx = 3:size(files,1)
         cd(folder); %brings loop back to the outer folder
     if ~ isfolder(files(idx,1).name)
         load(files(idx,1).name);
-        cd('C:\Users\Fausto\Documents\GitHub\AdaptiveArtifactRemoval');
+        cd(codedir);
             %% define timing
             Fs = 20000; % samples per second 
             dt = 1/Fs; % time step (seconds) 
@@ -42,10 +49,10 @@ if contains(folder,'rat') % for Kiara files
             
             sig = buildSignalObj([], d_unfilt, t, g, Fs, [chA; chB], ...
                                  tTrainBnd, tTrainBnd, 2);
-            saveSignalObj(['D:\filtering research proj\rat1\rat1\amplifier_data\Naive\saved_signal_obj\',files(idx,1).name,'_saved'],sig);
+            saveSignalObj([savedir,files(idx,1).name,'_saved'],sig);
     end
     end
-cd('C:\Users\Fausto\Documents\GitHub\AdaptiveArtifactRemoval');
+cd(codedir);
 
 else %for Mingfeng files 
 TDTPATH = 'TDTMatlabSDK';
@@ -59,51 +66,52 @@ DelayA  = 0;    % ms
 ChanA   = 1;
 
 for index = 3:size(files,1)
-        cd(folder); %brings loop back to the outer folder
+    cd(folder); %brings loop back to the outer folder
     fname = files(index,1).name;
-        if isfolder([fname,'\',fname])
+    if isfolder([fname,'\',fname])
         data = TDTbin2mat([fname,'\',fname]);
-        cd('C:\Users\Fausto\Documents\GitHub\AdaptiveArtifactRemoval');
+        cd(codedir);
 
 
-dta = data.snips.SSEP.data; 
-t_stim = data.snips.SSEP.ts;
-fs = data.snips.SSEP.fs;
-chan = data.snips.SSEP.chan; uchan = unique(chan);
+        dta = data.snips.SSEP.data;
+        t_stim = data.snips.SSEP.ts;
+        fs = data.snips.SSEP.fs;
+        chan = data.snips.SSEP.chan; uchan = unique(chan);
 
-dta_t_chan = cell(2, length(uchan));
-for idx = 1:length(uchan)
-    ch = uchan(idx);
-    chIdx = chan == ch;
-    dta_t_chan{1, idx} =  dta(chIdx,:);
-    dta_t_chan{2, idx} = t_stim(chIdx);
-end
+        dta_t_chan = cell(2, length(uchan));
+        for idx = 1:length(uchan)
+            ch = uchan(idx);
+            chIdx = chan == ch;
+            dta_t_chan{1, idx} =  dta(chIdx,:);
+            dta_t_chan{2, idx} = t_stim(chIdx);
+        end
 
-dta = zeros([size(dta_t_chan{1,1}), length(uchan)]);
-t_stim = zeros([length(dta_t_chan{2,1}), length(uchan)]);
-for idx = 1:length(uchan)
-    dta(:,:,idx)  = dta_t_chan{1, idx};
-    t_stim(:,idx) = dta_t_chan{2, idx};
-end
+        dta = zeros([size(dta_t_chan{1,1}), length(uchan)]);
+        t_stim = zeros([length(dta_t_chan{2,1}), length(uchan)]);
+        for idx = 1:length(uchan)
+            dta(:,:,idx)  = dta_t_chan{1, idx};
+            t_stim(:,idx) = dta_t_chan{2, idx};
+        end
 
-t_trl = (1:size(dta, 2))/fs - .3; % ~ -.3 to +1 s
-g_trl = (AmpA/1000)*((t_trl >= 0)&(t_trl < DurA/1000)); % noise reference, mA
-G = repmat(g_trl, size(dta,1), 1, size(dta,3));
+        t_trl = (1:size(dta, 2))/fs - .3; % ~ -.3 to +1 s
+        g_trl = (AmpA/1000)*((t_trl >= 0)&(t_trl < DurA/1000)); % noise reference, mA
+        G = repmat(g_trl, size(dta,1), 1, size(dta,3));
 
-T = zeros(size(dta));
-for idx = 1:length(uchan)
-    T(:,:,idx) = t_stim(:,idx) + t_trl;
-end
+        T = zeros(size(dta));
+        for idx = 1:length(uchan)
+            T(:,:,idx) = t_stim(:,idx) + t_trl;
+        end
 
-chA = buildChannelObj('A', 1, 1,0,'Cartesian'); % right somatosensory
-chB = buildChannelObj('B',-1, 1,0,'Cartesian'); % left somatosensory
-chC = buildChannelObj('C', 1,-1,0,'Cartesian'); % ?
-chD = buildChannelObj('D',-1,-1,0,'Cartesian'); % ?
+        chA = buildChannelObj('A', 1, 1,0,'Cartesian'); % right somatosensory
+        chB = buildChannelObj('B',-1, 1,0,'Cartesian'); % left somatosensory
+        chC = buildChannelObj('C', 1,-1,0,'Cartesian'); % ?
+        chD = buildChannelObj('D',-1,-1,0,'Cartesian'); % ?
 
-sig = buildSignalObj([], d_unfilt, t, g, Fs, [chA; chB; chC; chD], ...
-                     tTrainBnd, tTrainBnd, 2);
-      
-        saveSignalObj(['D:\filtering research proj\mingfeng data\saved_signal_obj\',files(index,1).name,'_saved'],sig);
+        sig = buildSignalObj([], d_unfilt, t, g, Fs, [chA; chB; chC; chD], ...
+            tTrainBnd, tTrainBnd, 2);
+
+        saveSignalObj([savedir,files(index,1).name,'_saved'],sig);
     end
 end
-end  
+
+end
