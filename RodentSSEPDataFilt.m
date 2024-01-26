@@ -108,7 +108,7 @@ splIdx = floor(trainfrac*size(t,1));
 tTrainBnd = [t(1), t(splIdx)];
 
 %% shorten - to be removed 
-%{
+%%{
 d_unfilt = d_unfilt(1:1000000,:);
 t = t(1:1000000,:);
 g = g(1:1000000,:);
@@ -170,8 +170,8 @@ hpFilt = designfilt('highpassiir', ...
 %d         = filtfilt(hpFilt, d_unfilt);
 %% lowpass filtering (noise removal)
 lpFilt = designfilt('lowpassiir', ...
-                    'StopbandFrequency', 6000, ...
-                    'PassbandFrequency', 5000, ...
+                    'StopbandFrequency', 250, ...
+                    'PassbandFrequency', 200, ...
                     'PassbandRipple', .5, ...
                     'StopbandAttenuation', 60, ...
                     'SampleRate', Fs, ... 
@@ -247,7 +247,7 @@ tBeforeTrig = .5;
     sig.Noise_Reference, sig.Data_BPF, sig.Data_LMS_LPF, Fs, sig.Channels, N);
 PrePostAvgAll_v2(tBeforeTrig,t_PrePost,d_PrePost,e_PrePost,Fs,sig.Channels,10);
 
-%%{
+%{
 PrePostAvgAll(tBeforeTrig,t_PrePost,d_PrePost,e_PrePost,Fs,sig.Channels,10);
 PrePostAvgBatch(90,t_PrePost,d_PrePost,e_PrePost,Fs,sig.Channels);
 PrePostStats(t_PrePost,d_PrePost,e_PrePost,Fs,sig.Channels,[1.5,1000],10);
@@ -262,10 +262,14 @@ for ch = 1:length(n20s)
     nTrl = size(d_PrePost_ch,1);
     n20 = zeros(3,nTrl,2);
     for trl = 1:nTrl
-        n20([1,2],trl,1) = measureERP(tPost, d_PrePost_ch(trl,:,2), .02, [], [.01,.05]);
+        %figure; subplot(211); 
+        n20([1,2],trl,1) = measureERP(tPost, d_PrePost_ch(trl,:,2), .02, [], [.005,.1], false);
+        %title('unfilt'); 
         n20(3,trl,1) = std(d_PrePost_ch(trl,:,2));
-        n20([1,2],trl,2) = measureERP(tPost, e_PrePost_ch(trl,:,2), .02, [], [.01,.05]);
+        %subplot(212); 
+        n20([1,2],trl,2) = measureERP(tPost, e_PrePost_ch(trl,:,2), .02, [], [.005,.1], false);
         n20(3,trl,2) = std(e_PrePost_ch(trl,:,2));
+        %title('filt');
     end
     n20s{ch} = n20;
     clear n20 e_PrePost_ch d_PrePost_ch;
