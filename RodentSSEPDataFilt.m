@@ -253,45 +253,79 @@ PrePostAvgBatch(90,t_PrePost,d_PrePost,e_PrePost,Fs,sig.Channels);
 PrePostStats(t_PrePost,d_PrePost,e_PrePost,Fs,sig.Channels,[1.5,1000],10);
 %}
 
-%% SNR 
+%% SNR (signal : noise ratio)
 tPost = t_PrePost(2,:);
-n20s = cell(size(e_PrePost));
-for ch = 1:length(n20s)
+ERPvals = cell(2, length(e_PrePost)); % rows = unfilt vs filt; cols = channel
+
+% calculate values for all channels 
+for ch = 1:length(size(ERPvals,2))
+
+    % get filtered and unfiltered waveforms at this channel for each trial
     e_PrePost_ch = e_PrePost{ch};
     d_PrePost_ch = d_PrePost{ch};
+
+    % get number of trials 
     nTrl = size(d_PrePost_ch,1);
-    n20 = zeros(3,nTrl,2);
+
+    % setup tables for calculated values 
+    tblFilt = table('Size',[nTrl,6],...
+                    'VariableTypes',["double","double","double","double","double","double"], ...
+                    'VariableNames',{'n20amp','n20lat','n40amp','n40lat', 'mean','SD'});
+    tblUnfilt = tblFilt;
+
+    % calculate values for each trial 
     for trl = 1:nTrl
-        %figure; subplot(211); 
-        n20([1,2],trl,1) = measureERP(tPost, d_PrePost_ch(trl,:,2), .02, [], [.005,.1], false);
-        %title('unfilt'); 
-        n20(3,trl,1) = std(d_PrePost_ch(trl,:,2));
-        %subplot(212); 
-        n20([1,2],trl,2) = measureERP(tPost, e_PrePost_ch(trl,:,2), .02, [], [.005,.1], false);
-        n20(3,trl,2) = std(e_PrePost_ch(trl,:,2));
-        %title('filt');
+
+        % populate row trl of table with n20 & n40 amps and latencies and stats (mean & SD)
+        [n20n40,~,stat] = measureERP(tPost, d_PrePost_ch(trl,:,2), [.02 .04], [], [.01,.1]);
+        tblUnfilt.n20amp(trl) = n20n40(1,1); tblUnfilt.n20lat(trl) = n20n40(2,1); % [amplitude; latency]
+        tblUnfilt.n40amp(trl) = n20n40(1,2); tblUnfilt.n40lat(trl) = n20n40(2,2); % [amplitude; latency]
+        tblUnfilt.mean(trl) = stat(1); tblUnfilt.SD(trl) = std(d_PrePost_ch(trl,:,2)); 
+            % mean = only within selected time range
+            % noise = std thru all times
+        clear n20n40 stat
+
+        % do the same for filtered data 
+        [n20n40,~,stat] = measureERP(tPost, e_PrePost_ch(trl,:,2), [.02 .04], [], [.01,.1]);
+        tblFilt.n20amp(trl) = n20n40(1,1); tblFilt.n20lat(trl) = n20n40(2,1); % [amplitude; latency]
+        tblFilt.n40amp(trl) = n20n40(1,2); tblFilt.n40lat(trl) = n20n40(2,2); % [amplitude; latency]
+        tblFilt.mean(trl) = stat(1); tblFilt.SD(trl) = std(e_PrePost_ch(trl,:,2)); 
+        clear n20n40 stat
     end
-    n20s{ch} = n20;
-    clear n20 e_PrePost_ch d_PrePost_ch;
+
+    % store tables in cell array 
+    ERPvals{1, ch} = tblUnfilt; ERPvals{2, ch} = tblFilt;
+    clear tblFilt tblUnfilt e_PrePost_ch d_PrePost_ch;
 end
 
 %%
 figure('Units','normalized', 'Position',[.1,.1,.8,.8])
-for ch = 1:length(n20s)
-    n20 = n20s{ch};
-    SNR = n20(1,:,:)./n20(3,:,:); SNR = squeeze(SNR);
-    [~,pSNR] = ttest(SNR(:,1), SNR(:,2), 'Tail', 'left');
-    loc = n20(2,:,:); loc = squeeze(loc);
-    [~,ploc] = ttest(loc(:,1), loc(:,2), 'Tail', 'both');
-    % titles and axes 
-    ax1(ch) = subplot(length(n20s),2,2*(ch-1)+1); boxplot(SNR);
+for ch = 1:size(ERPvals,2)
+    % get tables for this channel 
+    tblUnfilt = ERPvals{1,ch}; tblFilt = ERPvals{2,ch}; 
+    % "Signal" = n20 amplitude - mean for [unfilt, filt]
+    SNR_S = [tblUnfilt.n20amp, tblFilt.n20amp] - [tblUnfilt.mean, tblFilt.mean];
+    % "Noise" = SD for [unfilt, filt]
+    SNR_N = [tblUnfilt.SD, tblFilt.SD];
+    % SNR = S / N
+    SNR = SNR_S./SNR_N; 
+    % hypothesis test whether unfilt has greater SNR than filt 
+    [~,pSNR] = ttest(SNR(:,1), SNR(:,2), 'Tail', 'right');
+    % loc = n20, n40 latency for unfilt, filt 
+    loc = [tblUnfilt.n20lat, tblFilt.n20lat, tblUnfilt.n40lat, tblFilt.n40lat];
+    % hypothesis test whether unfilt and filt have different locs 
+    [~,ploc20] = ttest(loc(:,1), loc(:,2), 'Tail', 'both');
+    [~,ploc40] = ttest(loc(:,3), loc(:,4), 'Tail', 'both');
+
+    % box plot results with p values displayed  
+    ax1(ch) = subplot(size(ERPvals,2),2,2*(ch-1)+1); boxplot(SNR);
     grid on;
     title(['SNR: p = ',num2str(pSNR)]); ylabel(['Channel ',sig.Channels(ch).labels]);
     xticklabels({'Unfilt', 'Filt'});
-    ax2(ch) = subplot(length(n20s),2,2*ch); boxplot(loc);
+    ax2(ch) = subplot(size(ERPvals,2),2,2*ch); boxplot(loc);
     grid on;
-    title(['Latency: p = ',num2str(ploc)]); 
-    xticklabels({'Unfilt', 'Filt'});
+    title(['Latency: p = ',num2str(ploc20),' (n20), ',num2str(ploc40),' (n40)']); 
+    xticklabels({'Unfilt n20', 'Filt n20', 'Unfilt n40', 'Filt n40'});
 end
 linkaxes(ax1,'y'); linkaxes(ax2,'y');
 %}

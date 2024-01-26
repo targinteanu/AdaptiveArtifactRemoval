@@ -1,4 +1,4 @@
-function [nOut, pOut] = measureERP(t, x, nPk, pPk, tRng, showPlot)
+function [nOut, pOut, xstats] = measureERP(t, x, nPk, pPk, tRng, showPlot)
 % 
 % Find peak latencies and properties from an ERP evoked potential signal.
 % Input desired/approximate latencies; returns found peaks prioritizing
@@ -9,12 +9,14 @@ function [nOut, pOut] = measureERP(t, x, nPk, pPk, tRng, showPlot)
 %   x: signal corresponding to t
 %   nPk: approximate latencies of upward-convex peaks 
 %   pPk: approximate latencies of downward-convex peaks
-%   tRng: range of possible latencies to search, in same units as t
+%   tRng: range of possible latencies to search, in same units as t. 
+%         Leave blank to use full range of input t 
 %   showPlot: if true, displays plot of identified peaks. (default = false)
 % 
 % Outputs: 
 %   nOut: found nPk as [amplitudes; latencies] 
 %   pOut: found pPk as [amplitudes; latencies]
+%   xstats: [mean; SD] of x within tRng 
 
 if nargin < 6
     % default: if showPlot not specified, do not show 
@@ -29,6 +31,8 @@ if ~isempty(tRng)
 end
 tRng = max(t) - min(t); % domain of all times 
 xRng = max(x) - min(x); % range of signal 
+
+xstats = [mean(x); std(x)];
 
 pOut = zeros(size(pPk)); 
 nOut = zeros(size(nPk));
