@@ -52,7 +52,6 @@ end
 
 if showPlot
 % plot (for debugging)  
-figure; 
 plot(t, x); grid on; 
 hold on; 
 if numel(nOut)
