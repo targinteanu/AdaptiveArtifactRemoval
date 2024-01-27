@@ -320,6 +320,7 @@ for ch = 1:size(ERPvals,2)
     [~,pSNR] = ttest(SNR(:,1), SNR(:,2), 'Tail', 'left');
     % loc = n20, n40 latency for unfilt, filt 
     loc = [tblUnfilt.n20lat, tblFilt.n20lat, tblUnfilt.n40lat, tblFilt.n40lat];
+    numfound = sum(~isnan(loc));
     % hypothesis test whether unfilt and filt have different locs 
     [~,ploc20] = ttest(loc(:,1), loc(:,2), 'Tail', 'both');
     [~,ploc40] = ttest(loc(:,3), loc(:,4), 'Tail', 'both');
@@ -332,7 +333,9 @@ for ch = 1:size(ERPvals,2)
     ax2(ch) = subplot(size(ERPvals,2),2,2*ch); boxplot(loc);
     grid on;
     title(['Latency: p = ',num2str(ploc20),' (n20), ',num2str(ploc40),' (n40)']); 
-    xticklabels({'Unfilt n20', 'Filt n20', 'Unfilt n40', 'Filt n40'});
+    xtl = {'Unfilt n20', 'Filt n20', 'Unfilt n40', 'Filt n40'};
+    xtl = arrayfun(@(i) [xtl{i},': N=',num2str(numfound(i))], 1:length(xtl), 'UniformOutput',false);
+    xticklabels(xtl);
 end
 linkaxes(ax1,'y'); linkaxes(ax2,'y');
 %}
