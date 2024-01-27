@@ -50,7 +50,7 @@ end
 
 %% define parameters for filter and training 
 trainfrac = .01;
-N = 1024; % filter taps 
+N = 2048; % filter taps 
 stepsize = .2;
 nUpdates = 100;
 
@@ -170,8 +170,8 @@ hpFilt = designfilt('highpassiir', ...
 %d         = filtfilt(hpFilt, d_unfilt);
 %% lowpass filtering (noise removal)
 lpFilt = designfilt('lowpassiir', ...
-                    'StopbandFrequency', 250, ...
-                    'PassbandFrequency', 200, ...
+                    'StopbandFrequency', 1000, ...
+                    'PassbandFrequency', 800, ...
                     'PassbandRipple', .5, ...
                     'StopbandAttenuation', 60, ...
                     'SampleRate', Fs, ... 
@@ -242,7 +242,7 @@ end
 %plotBeforeAfterStim(.29, g, d, e_t_lpf, Fs, uchan, N, 150, .1*nUpdates);
 
 %%
-tBeforeTrig = .5;
+tBeforeTrig = .05;
 [t_PrePost, d_PrePost, e_PrePost] = getPrePostStim(tBeforeTrig, ...
     sig.Noise_Reference, sig.Data_BPF, sig.Data_LMS_LPF, Fs, sig.Channels, N);
 PrePostAvgAll_v2(tBeforeTrig,t_PrePost,d_PrePost,e_PrePost,Fs,sig.Channels,10);
@@ -310,7 +310,7 @@ for ch = 1:size(ERPvals,2)
     % SNR = S / N
     SNR = SNR_S./SNR_N; 
     % hypothesis test whether unfilt has greater SNR than filt 
-    [~,pSNR] = ttest(SNR(:,1), SNR(:,2), 'Tail', 'right');
+    [~,pSNR] = ttest(SNR(:,1), SNR(:,2), 'Tail', 'left');
     % loc = n20, n40 latency for unfilt, filt 
     loc = [tblUnfilt.n20lat, tblFilt.n20lat, tblUnfilt.n40lat, tblFilt.n40lat];
     % hypothesis test whether unfilt and filt have different locs 
