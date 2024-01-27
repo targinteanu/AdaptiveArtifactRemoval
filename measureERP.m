@@ -1,4 +1,4 @@
-function [nOut, pOut, xstats] = measureERP(t, x, nPk, pPk, tRng, showPlot)
+function [nOut, pOut, xstats] = measureERP(t, x, nPk, pPk, tRng, avgwinlen, showPlot)
 % 
 % Find peak latencies and properties from an ERP evoked potential signal.
 % Input desired/approximate latencies; returns found peaks prioritizing
@@ -11,6 +11,8 @@ function [nOut, pOut, xstats] = measureERP(t, x, nPk, pPk, tRng, showPlot)
 %   pPk: approximate latencies of downward-convex peaks
 %   tRng: range of possible latencies to search, in same units as t. 
 %         Leave blank to use full range of input t 
+%   avgwinlen: Window length for moving-average. If 0 or empty, no
+%              averaging. Default = 0
 %   showPlot: if true, displays plot of identified peaks. (default = false)
 % 
 % Outputs: 
@@ -18,9 +20,12 @@ function [nOut, pOut, xstats] = measureERP(t, x, nPk, pPk, tRng, showPlot)
 %   pOut: found pPk as [amplitudes; latencies]
 %   xstats: [mean; SD] of x within tRng 
 
-if nargin < 6
+if nargin < 7
     % default: if showPlot not specified, do not show 
     showPlot = false;
+    if nargin < 6
+        avgwinlen = 0;
+    end
 end
 
 if ~isempty(tRng) 
@@ -34,14 +39,18 @@ xRng = max(x) - min(x); % range of signal
 
 xstats = [mean(x); std(x)];
 
+if ~( isempty(avgwinlen) | (avgwinlen==0) )
+    x = movmean(x, avgwinlen);
+end
+
 pOut = zeros(size(pPk)); 
 nOut = zeros(size(nPk));
 
 % get n peak candidates that exceed promience threshold compared to signal
 % range (excludes very small peaks/oscillations) 
-[npk, nlc, nw, npr] = findpeaks( x, t, 'MinPeakProminence', .1*xRng);
+[npk, nlc, nw, npr] = findpeaks( x, t, 'MinPeakProminence', .01*xRng, 'MinPeakWidth', .001);
 % flip the signal to get p peak candidates 
-[ppk, plc, pw, ppr] = findpeaks(-x, t, 'MinPeakProminence', .1*xRng);
+[ppk, plc, pw, ppr] = findpeaks(-x, t, 'MinPeakProminence', .01*xRng, 'MinPeakWidth', .001);
 
 if ~isempty(pPk)
 pPksList = candidatePeaks(pPk, ppk, plc, pw, ppr);
