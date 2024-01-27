@@ -242,7 +242,7 @@ end
 %plotBeforeAfterStim(.29, g, d, e_t_lpf, Fs, uchan, N, 150, .1*nUpdates);
 
 %%
-tBeforeTrig = .05;
+tBeforeTrig = .06;
 [t_PrePost, d_PrePost, e_PrePost] = getPrePostStim(tBeforeTrig, ...
     sig.Noise_Reference, sig.Data_BPF, sig.Data_LMS_LPF, Fs, sig.Channels, N);
 PrePostAvgAll_v2(tBeforeTrig,t_PrePost,d_PrePost,e_PrePost,Fs,sig.Channels,10);
@@ -276,7 +276,7 @@ for ch = 1:length(size(ERPvals,2))
     % calculate values for each trial 
     for trl = 1:nTrl
 
-        figure; subplot(211); 
+        %figure; subplot(211); 
 
         % populate row trl of table with n20 & n40 amps and latencies and stats (mean & SD)
         [n20n40,~,stat] = measureERP(tPost, d_PrePost_ch(trl,:,2), [.02 .04], [], [.01,.1], 200, false);
@@ -287,8 +287,8 @@ for ch = 1:length(size(ERPvals,2))
             % noise = std thru all times
         clear n20n40 stat
 
-        title('unfilt');
-        subplot(212); 
+        %title('unfilt');
+        %subplot(212); 
 
         % do the same for filtered data 
         [n20n40,~,stat] = measureERP(tPost, e_PrePost_ch(trl,:,2), [.02 .04], [], [.01,.1], 200, false);
@@ -297,7 +297,7 @@ for ch = 1:length(size(ERPvals,2))
         tblFilt.mean(trl) = stat(1); tblFilt.SD(trl) = std(e_PrePost_ch(trl,:,2)); 
         clear n20n40 stat
 
-        title('filt');
+        %title('filt');
     end
 
     % store tables in cell array 
