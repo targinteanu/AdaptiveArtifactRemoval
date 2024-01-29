@@ -117,7 +117,7 @@ g = g(1:1000000,:);
 %% notch out 60Hz (& odd harmonics?)
 % +- ~15
 % to do
-%{
+%%{
 notchfreq = 60; 
 d_unfilt_2 = flipud(d_unfilt); 
 while notchfreq < 600
@@ -139,13 +139,6 @@ notchfreq = notchfreq + 120;
 end
 d_unfilt = flipud(d_unfilt_2);
 %}
-notchfreq = 60;
-filtord = Fs/notchfreq; 
-filtord = round(filtord);
-[combN,combD] = iircomb(filtord,.1);
-d_unfilt_2 = flipud(d_unfilt); 
-d_unfilt_2 = filter(combN, combD, d_unfilt_2);
-d_unfilt = flipud(d_unfilt_2);
 
 %% cleanup 
 %{
