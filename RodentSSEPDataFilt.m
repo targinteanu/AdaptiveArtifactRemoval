@@ -124,14 +124,17 @@ while notchfreq < 600
 notchfreq
 %notchw = notchfreq/40;
 notchw = 2;
+%{
 notch60 = designfilt('bandstopiir', ...
                      'HalfPowerFrequency1', notchfreq-notchw, ...
                      'HalfPowerFrequency2', notchfreq+notchw, ...
                      'FilterOrder', 2, ...
                      'SampleRate', Fs, ...
                      'DesignMethod', 'butter');
+%}
+[notchN,notchD] = iirnotch(notchfreq/(Fs/2), notchw/(Fs/2));
 %fvtool(notch60);
-d_unfilt_2 = filter(notch60, d_unfilt_2);
+d_unfilt_2 = filter(notchN, notchD, d_unfilt_2);
 notchfreq = notchfreq + 120;
 end
 d_unfilt = flipud(d_unfilt_2);
