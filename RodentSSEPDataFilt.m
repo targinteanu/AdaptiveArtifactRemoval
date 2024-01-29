@@ -119,22 +119,21 @@ g = g(1:1000000,:);
 % to do
 %%{
 notchfreq = 60; 
-d_unfilt_2 = flipud(d_unfilt); d_hum = zeros(size(d_unfilt_2));
-while notchfreq < 1000
+d_unfilt_2 = flipud(d_unfilt); 
+while notchfreq < 600
 notchfreq
-notchw = notchfreq/40;
-%notchw = 2;
-notch60 = designfilt('bandpassiir', ...
+%notchw = notchfreq/40;
+notchw = 2;
+notch60 = designfilt('bandstopiir', ...
                      'HalfPowerFrequency1', notchfreq-notchw, ...
                      'HalfPowerFrequency2', notchfreq+notchw, ...
                      'FilterOrder', 2, ...
                      'SampleRate', Fs, ...
                      'DesignMethod', 'butter');
 %fvtool(notch60);
-d_hum = d_hum + filter(notch60, d_unfilt_2);
+d_unfilt_2 = filter(notch60, d_unfilt_2);
 notchfreq = notchfreq + 120;
 end
-d_unfilt_2 = d_unfilt_2 - d_hum;
 d_unfilt = flipud(d_unfilt_2);
 %}
 
