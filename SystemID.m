@@ -51,18 +51,18 @@ lpFilt = designfilt('lowpassiir', ...
 filts = [buildFilterObj([notches, hpFilt], lpFilt, N, stepsize, ...
                         [-1*ones(size(notches)), 0], 0, true); ...
          buildFilterObj([notches, hpFilt], lpFilt, N, stepsize, ...
-                             [+1*ones(size(notches)), 0], 0, false)];
+                        [+1*ones(size(notches)), 0], 0, true)];
 sigs = [sig; sig];
 
 for idx = 1:length(filts)
-filti = filts(idx);
-sigi = doPreFilt(filti, sig);
-sigi = getTrainTestWrapper(sigi); 
-[sigi, filti] = preTrainWtsWrapper(filti, sigi, .1*nUpdates);
-sigi = LMSonlineWrapper(filti, sigi, .1*nUpdates); 
-sigi = doPostFilt(filti, sigi);
-sigs(idx) = sigi; filts(idx) = filti;
-clear sigi filti
+    filti = filts(idx);
+    sigi = doPreFilt(filti, sig);
+    sigi = getTrainTestWrapper(sigi);
+    [sigi, filti] = preTrainWtsWrapper(filti, sigi, .1*nUpdates);
+    sigi = LMSonlineWrapper(filti, sigi, .1*nUpdates);
+    sigi = doPostFilt(filti, sigi);
+    sigs(idx) = sigi; filts(idx) = filti;
+    clear sigi filti
 end
 
 %% split into pre, post 
@@ -72,5 +72,10 @@ tBeforeTrig = .06;
 [tPre,  dPre,  ePre ] = getPrePostStim(tBeforeTrig, ...
     sigs(2).Noise_Reference, sigs(2).Data_BPF, sigs(2).Data_LMS_LPF, Fs, sigs(1).Channels, N);
 
-PrePostAvgAll_v2(tBeforeTrig,tPost,dPost,ePost,Fs,sigs(1).Channels,10);
-PrePostAvgAll_v2(tBeforeTrig,tPre,dPre,ePre,Fs,sigs(2).Channels,10);
+dStitch = cell(size(dPost)); eStitch = cell(size(ePost));
+for ch = 1:length(eStitch)
+    dStitch{ch} = cat(3, dPre{ch}(:,:,1), dPost{ch}(:,:,2));
+    eStitch{ch} = cat(3, ePre{ch}(:,:,1), ePost{ch}(:,:,2));
+end
+
+PrePostAvgAll_v2(tBeforeTrig,tPost,dStitch,eStitch,Fs,sig.Channels,10);
