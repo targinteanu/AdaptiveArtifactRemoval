@@ -4,6 +4,7 @@ addpath(genpath(TDTPATH));
 foldername = 'Rodent SSEP Data/AC5-230830-130841'; 
 
 sig = RodentSSEPtoSig(foldername);
+Fs = sig.SampleRate;
 
 %% define parameters for filter 
 N = 2048; % filter taps 
@@ -31,9 +32,9 @@ lpFilt = designfilt('lowpassiir', ...
 %fvtool(lpFilt);
 
 %% filter to object 
-filtObj = buildFilterObj(hpFilt, lpFilt, N, stepsize, true, true);
+filtObj = buildFilterObj(hpFilt, lpFilt, N, stepsize, 0, 0, true);
 
-sig = doHPFilt(filtObj, sig);
+sig = doPreFilt(filtObj, sig);
 
 %% pretraining and testing 
 %{
@@ -64,7 +65,7 @@ disp('LP Filtering Original Signal')
 d_lpf       = filtfilt(lpFilt, d);
 %}
 
-sig = doLPFilt(filtObj, sig);
+sig = doPostFilt(filtObj, sig);
 
 %% demo final signal 
 %{

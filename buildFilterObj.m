@@ -1,24 +1,27 @@
-function filtObj = buildFilterObj(HPF, LPF, Num_Taps, Step_Size, useFiltFilt, useDLMS, ...
+function filtObj = buildFilterObj(preFilt, postFilt, Num_Taps, Step_Size, ...
+    preFiltDir, postFiltDir, useDLMS, ...
     Starting_Weights, Current_Weights)
 
 if nargin < 5
-    useFiltFilt = false;
-end
-if nargin < 6
-    useDLMS = false;
+    preFiltDir = ones(size(preFilt)); 
+    postFiltDir = ones(size(postFilt));
 end
 if nargin < 7
-    Starting_Weights = [];
+    useDLMS = false;
 end
 if nargin < 8
+    Starting_Weights = [];
+end
+if nargin < 9
     Current_Weights = Starting_Weights;
 end
 
-filtObj.useFiltFilt = useFiltFilt;
+filtObj.preFiltDir = preFiltDir;
+filtObj.postFiltDir = postFiltDir;
 filtObj.useDLMS = useDLMS;
 
-filtObj.HPF = HPF; 
-filtObj.LPF = LPF; 
+filtObj.preFilt = preFilt; 
+filtObj.postFilt = postFilt; 
 
 filtObj.Num_Taps = Num_Taps;
 filtObj.Step_Size = Step_Size;

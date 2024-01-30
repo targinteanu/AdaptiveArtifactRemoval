@@ -64,12 +64,12 @@ lpFilt = designfilt('lowpassiir', ...
                     'DesignMethod', 'cheby2');
 N = 1024; % filter taps 
 stepsize = .02;
-filtObj = buildFilterObj(hpFilt, lpFilt, N, stepsize, true, true);
-sig = doHPFilt(filtObj, sig);
+filtObj = buildFilterObj(hpFilt, lpFilt, N, stepsize, 0, 0, true);
+sig = doPreFilt(filtObj, sig);
 sig = getTrainTestWrapper(sig);
 [sig, filtObj] = preTrainWtsWrapper(filtObj, sig, .1*nUpdates);
 [sig, w_end] = LMSonlineWrapper(filtObj, sig, nUpdates);
-sig = doLPFilt(filtObj, sig);
+sig = doPostFilt(filtObj, sig);
 
 %%
 plotwindow1 = 1:1100000;
