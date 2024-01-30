@@ -43,8 +43,8 @@ hpFilt = designfilt('highpassiir', ...
                     'StopbandAttenuation', 60, ...
                     'SampleRate', Fs, ... 
                     'DesignMethod', 'butter');
-%d         = filtfilt(hpFilt, d_unfilt);
-%% lowpass filtering (noise removal)
+
+% lowpass filtering (noise removal)
 lpFilt = designfilt('lowpassiir', ...
                     'StopbandFrequency', 3000, ...
                     'PassbandFrequency', 2000, ...
@@ -52,71 +52,23 @@ lpFilt = designfilt('lowpassiir', ...
                     'StopbandAttenuation', 60, ...
                     'SampleRate', Fs, ... 
                     'DesignMethod', 'cheby2');
-%fvtool(lpFilt);
 
 %% filter to object 
 filtObj = buildFilterObj([notches, hpFilt], lpFilt, N, stepsize, ...
                          [-1*ones(size(notches)), 0], 0, true);
 
+%% pre-filtering 
 sig = doPreFilt(filtObj, sig);
 
-%% pretraining and testing 
-%{
-[t_train, g_train, d_train, t_test, g_test, d_test] = ...
-    getTrainTest(t, g, d, tTrainBnd, uchan);
-[w, e_train, op_train, fig] = preTrainWts(t_train, g_train, d_train, N, uchan, .1*nUpdates);
-%}
-%[e_test, op_test] = testPreTrained(w, t_test, g_test, d_test, N, uchan, .1*nUpdates);
-
-%%{
+%% pretraining 
 sig = getTrainTestWrapper(sig);
 [sig, filtObj] = preTrainWtsWrapper(filtObj, sig, .1*nUpdates);
-%}
 
 %% online LMS 
-%[e_t, w_OL] = LMSonline(t, g, d, stepsize, N, uchan, w, nUpdates);
 [sig, w_end] = LMSonlineWrapper(filtObj, sig, nUpdates);
 
 %% post-filtering
-%{
-disp('LP Filtering Train Signal')
-e_train_lpf = filtfilt(lpFilt, e_train);
-%disp('LP Filtering Test Signal')
-%e_test_lpf  = filtfilt(lpFilt, e_test);
-disp('LP Filtering Online Signal')
-e_t_lpf     = filtfilt(lpFilt, e_t);
-disp('LP Filtering Original Signal')
-d_lpf       = filtfilt(lpFilt, d);
-%}
-
 sig = doPostFilt(filtObj, sig);
-
-%% demo final signal 
-%{
-for idx = 1:length(uchan)
-    fig = figure; 
-    figure(fig); plot(t(:,idx), d(:,idx), 'k', 'LineWidth', 1); hold on;
-%    figure(fig); plot(t_train(:,idx), e_train_lpf(:,idx)); plot(t_test(:,idx), e_test_lpf(:,idx));
-    figure(fig); plot(t(N:end,idx), e_t_lpf(:,idx)); 
-    grid on;
-    xlabel('time (s)'); ylabel('filtered signal (V)');
-%    legend('original', 'train', 'test', 'online');
-    legend('original', 'adaptive filtered');
-    title(['channel ',num2str(uchan(idx))])
-    
-    %xlim([1410.1, 1411.4])
-    xlim([1410.351, 1410.449])
-    %xlim([336.1, 337.1])
-    ylim([-8e-5, 8e-5])
-end
-
-%ylim([-8e-5, 8e-5])
-%xlim([336.351, 336.449])
-%xlim([336.1, 337.1])
-%}
-
-%%
-%plotBeforeAfterStim(.29, g, d, e_t_lpf, Fs, uchan, N, 150, .1*nUpdates);
 
 %%
 tBeforeTrig = .06;
