@@ -12,6 +12,29 @@ stepsize = .2;
 nUpdates = 100;
 
 %% pre-filtering
+% notch out 60Hz (& odd harmonics)
+notches = [];
+%%{
+notchfreq = 60; 
+while notchfreq < 600
+notchfreq
+%notchw = notchfreq/40;
+notchw = 2;
+%%{
+notch60 = designfilt('bandstopiir', ...
+                     'HalfPowerFrequency1', notchfreq-notchw, ...
+                     'HalfPowerFrequency2', notchfreq+notchw, ...
+                     'FilterOrder', 2, ...
+                     'SampleRate', Fs, ...
+                     'DesignMethod', 'butter');
+%}
+%[notchN,notchD] = iirnotch(notchfreq/(Fs/2), notchw/(Fs/2));
+%fvtool(notch60);
+notches = [notches, notch60];
+notchfreq = notchfreq + 120;
+end
+%}
+
 % highpass filtering (baseline removal) 
 hpFilt = designfilt('highpassiir', ...
                     'StopbandFrequency', .5, ...
@@ -32,7 +55,8 @@ lpFilt = designfilt('lowpassiir', ...
 %fvtool(lpFilt);
 
 %% filter to object 
-filtObj = buildFilterObj(hpFilt, lpFilt, N, stepsize, 0, 0, true);
+filtObj = buildFilterObj([notches, hpFilt], lpFilt, N, stepsize, ...
+                         [-1*ones(size(notches)), 0], 0, true);
 
 sig = doPreFilt(filtObj, sig);
 
