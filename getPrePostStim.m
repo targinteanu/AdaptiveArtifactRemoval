@@ -28,8 +28,10 @@ e_PrePost           = cell(size(d_PrePost));
 
 for chIdx = 1:length(uchan)
     gch = g(:,chIdx);
-    trig = [0; abs(diff(gch))];
-    trig = trig > .1*max(trig); trig = find(trig);
+    grng = max(gch) - min(gch);
+    [trigval, trig] = findpeaks(gch, 'MinPeakProminence',.1*grng);
+    %trig = [0; abs(diff(gch))];
+    %trig = trig > .1*max(trig); trig = find(trig);
 
     d_PrePost_ch           = nan(length(trig), nBeforeTrig+1, 2);
     e_PrePost_ch           = nan(size(d_PrePost_ch));
