@@ -12,6 +12,25 @@ samples = samples-1;
 t = samples/Fs;
 t = t';
 
+%% fix noise reference 
+% each amplitude: 10 pulses 
+ampvals = [20:2:120, ...   % 2 uA => 20uA – 120uA
+           125:5:300, ...  % 5 uA => 125uA – 300uA
+           310:10:500, ... % 10 uA => 310uA – 500uA
+           550:50:750];    % 50 uA => 550uA - 750uA
+[trigval, trigloc] = findpeaks(g, 'MinPeakProminence', .1*max(g));
+
+[idx,C] = kmeans(trigloc', length(trigloc)/10);
+[Cidx,CC] = kmeans(C, 4);
+typs = unique(idx)';
+mkr = {'o', 's', '^', 'd'};
+figure; plot(g); hold on;
+for idx2 = 1:length(typs)
+    typ = typs(idx2); Ctyp = Cidx(idx2);
+    typidx = idx == typ;
+    plot(trigloc(typidx), trigval(typidx), mkr{Ctyp});
+end
+
 %% processing loaded data into signal object
 % "filt" is the neural recording data, which we want to change into "d_unfilt"
 % "board_adc_data" is the noise reference data, which we want to change into "g"
@@ -62,7 +81,7 @@ lpFilt = designfilt('lowpassiir', ...
                     'StopbandAttenuation', 60, ...
                     'SampleRate', Fs, ... 
                     'DesignMethod', 'cheby2');
-N = 1024; % filter taps 
+N = 512; % filter taps 
 stepsize = .02;
 filtObj = buildFilterObj(hpFilt, lpFilt, N, stepsize, 0, 0, true);
 sig = doPreFilt(filtObj, sig);
@@ -89,6 +108,12 @@ plot(sig.Times(plotwindow1), sig.Noise_Reference(plotwindow1,2));
 xlabel('time (s)'); ylabel('current (amps?)'); title('noise reference');
 grid on;
 linkaxes(ax,'x');
+
+%% Sys ID 
+t = sig.Times(N:end,1); u = sig.Noise_Reference(N:end,1); 
+y1 = sig.Data_LMS(:,1); y2 = sig.Data_LMS(:,2); 
+TT = timetable(seconds(t),u,y1,y2);
+sys = ssest(TT,'InputName','u','OutputName',["y1","y2"]);
 
 %%
 tBeforeTrig = .03;
