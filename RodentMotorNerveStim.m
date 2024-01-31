@@ -37,8 +37,8 @@ pulsesGap = diff(pulsesGap, [], 2);
 [~,ord] = sort(pulsesGap);
 ord = ord(1:3); ord = sort(ord);
 groupFirstLast = [[0;ord]+1, [ord;length(C)]];
-groupSz = diff(groupFirstLast, [], 2);
-[ampvalSz, groupSz];
+%groupSz = diff(groupFirstLast, [], 2);
+groupSz = zeros(size(groupFirstLast,1),1);
 
 mkr = {'o', '^', 's', 'd', 'v', 'x', '+', '*'};
 figure; plot(g); hold on;
@@ -47,7 +47,9 @@ for idx = 1:size(groupFirstLast,1)
     pulsesIdx = pulseFirstLast(groupIdx(1):groupIdx(2), :);
     trigidx = (trigloc >= pulsesIdx(1,1)) & (trigloc <= pulsesIdx(end,end));
     plot(trigloc(trigidx), trigval(trigidx), mkr{idx});
+    groupSz(idx) = sum(trigidx)/10;
 end
+[ampvalSz, groupSz]
 
 figure; plot(g); hold on;
 for idx = 1:size(pulsesIdx,1)
