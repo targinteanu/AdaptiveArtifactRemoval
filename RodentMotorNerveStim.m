@@ -19,10 +19,14 @@ ampvals = {20:2:120, ...   % 2 uA => 20uA – 120uA
            310:10:500, ... % 10 uA => 310uA – 500uA
            550:50:750};    % 50 uA => 550uA - 750uA
 ampvalSz = arrayfun(@(i) length(ampvals{i}), 1:length(ampvals))';
+ampvals = cell2mat(ampvals);
 
-%g = g./max(g);
+g = g0; % reset 
+g = g./max(g);
+% find actual recorded number of pulses 
 [trigval, trigloc] = findpeaks(g, 'MinPeakProminence', .1*max(g));
 
+% split pulses into groups of 10 
 [k,C] = kmeans(trigloc', length(trigloc)/10);
 [Cord,ord] = sort(C); ku = unique(k); kuord = ku(ord);
 pulseFirstLast = zeros(length(C), 2);
@@ -31,32 +35,72 @@ for idx = 1:length(C)
     trigidx = trigloc(k==kIdx);
     pulseFirstLast(idx,1) = min(trigidx); pulseFirstLast(idx,2) = max(trigidx);
 end
+pulsesGap0 = [pulseFirstLast(2:end,1), pulseFirstLast(1:(end-1),2)];
+pulsesBnd = mean(pulsesGap0, 2)'; 
 
-pulsesGap = [pulseFirstLast(2:end,1), pulseFirstLast(1:(end-1),2)];
-pulsesGap = diff(pulsesGap, [], 2);
+if sum(ampvalSz) == length(C)
+    % There are the same number of expected and recorded pulses. Proceed
+    % assigning amplitude from beginning. 
+    startFromEnd = false; 
+else
+    % There is a mismatch between expected vs recorded number of pulses.
+    % Decide how to assign amplitudes. 
+
+pulsesGap = diff(pulsesGap0, [], 2);
 [~,ord] = sort(pulsesGap);
 ord = ord(1:3); ord = sort(ord);
 groupFirstLast = [[0;ord]+1, [ord;length(C)]];
 %groupSz = diff(groupFirstLast, [], 2);
 groupSz = zeros(size(groupFirstLast,1),1);
 
-mkr = {'o', '^', 's', 'd', 'v', 'x', '+', '*'};
-figure; plot(g); hold on;
 for idx = 1:size(groupFirstLast,1)
     groupIdx = groupFirstLast(idx,:);
     pulsesIdx = pulseFirstLast(groupIdx(1):groupIdx(2), :);
     trigidx = (trigloc >= pulsesIdx(1,1)) & (trigloc <= pulsesIdx(end,end));
-    plot(trigloc(trigidx), trigval(trigidx), mkr{idx});
     groupSz(idx) = sum(trigidx)/10;
 end
-[ampvalSz, groupSz]
 
-figure; plot(g); hold on;
-for idx = 1:size(pulsesIdx,1)
-    trigidx = (trigloc >= pulsesIdx(idx,1)) & (trigloc <= pulsesIdx(idx,2));
-    plot(trigloc(trigidx), trigval(trigidx), mkr{idx});
+mismatchSz = ampvalSz - groupSz; 
+if (mismatchSz(1) <= 0) & (mismatchSz(end) <= 0)
+    % error is in the middle? 
+    error('Unable to resolve discrepancy between expected and recorded stimuli.')
+elseif mismatchSz(1) <= 0
+    % end is cut off but beginning is not. 
+    startFromEnd = false;
+elseif mismatchSz(end) <= 0
+    % beginning is cut off but end is not. 
+    startFromEnd = true;
+else
+    % mismatch at both beginning and end
+    if abs(mismatchSz(1)) <= abs(mismatchSz(end))
+        startFromEnd = false;
+        ampvals = ampvals(abs(mismatchSz(1)):end);
+    else
+        startFromEnd = true;
+        ampvals = ampvals(1:(end-abs(mismatchSz(end))));
+    end
 end
-xlim([4.9e6, 5.3e6]);
+
+end
+
+if ~startFromEnd
+    bnd1 = 1; idx = 1;
+    pulsesBnd = [pulsesBnd, length(g)];
+    for bnd2 = pulsesBnd
+        g(bnd1:bnd2) = g(bnd1:bnd2) * ampvals(idx);
+        idx = idx + 1; bnd1 = bnd2+1;
+    end
+else
+    bnd2 = length(g); idx = 1; 
+    ampvals = fliplr(ampvals);
+    pulsesBnd = [1, pulsesBnd];
+    for bnd1 = fliplr(pulsesBnd)
+        g(bnd1:bnd2) = g(bnd1:bnd2) * ampvals(idx);
+        idx = idx + 1; bnd2 = bnd1-1;
+    end
+end
+
+figure; plot(g)
 
 %% processing loaded data into signal object
 % "filt" is the neural recording data, which we want to change into "d_unfilt"
