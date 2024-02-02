@@ -34,7 +34,7 @@ subplot(212); plot(g0);
 %% define timing
 Fs = 20000; % samples per second 
 dt = 1/Fs; % time step (seconds) 
-samples=1:length(filt);
+samples=1:length(d0);
 samples = samples-1;
 t = samples/Fs;
 t = t';
@@ -152,7 +152,7 @@ d_unfilt = (d_unfilt-32768)*0.0003125; %filt in multiple of volt units
 d_unfilt = d_unfilt';
 
 %g = [board_adc_data;board_adc_data];
-g = board_adc_data;
+%g = board_adc_data;
 g = g';
 
 chA = buildChannelObj('Chan1', 0,0,0, 'Cartesian');
@@ -188,7 +188,7 @@ lpFilt = designfilt('lowpassiir', ...
                     'SampleRate', Fs, ... 
                     'DesignMethod', 'cheby2');
 N = 512; % filter taps 
-stepsize = .02;
+stepsize = .000001;
 filtObj = buildFilterObj(hpFilt, lpFilt, N, stepsize, 0, 0, true);
 sig = doPreFilt(filtObj, sig);
 sig = getTrainTestWrapper(sig);
