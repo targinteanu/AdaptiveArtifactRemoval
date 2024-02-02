@@ -1,8 +1,35 @@
-%% load file
+%% load files
+%{
 load('rat1/amplifier_data/Naive/rat1_N_CMAP_1_230731_113111'); % load the "filt" 2D array 
 %load('D:\filtering research proj\rat1\rat1\amplifier_data\Naive\rat1_N_CMAP_1_230731_113111.mat');
 load('rat1/trigger_data/Naive/rat1_N_CMAP_1_230731_113111_trigger'); % load the "board_adc_data" 1D array 
 %load('D:\filtering research proj\rat1\rat1\trigger_data\Naive\rat1_N_CMAP_1_230731_113111_trigger.mat');
+%}
+foldername = 'rat1/amplifier_data/Naive';
+files = dir(foldername);
+files = files(~[files.isdir]);
+d0 = []; g0 = [];
+for f = 1:length(files)
+    files(f).name
+    load([foldername,'/',files(f).name]);
+    d0 = [d0, filt];
+end
+foldername = 'rat1/trigger_data/Naive';
+files = dir(foldername);
+files = files(~[files.isdir]);
+for f = 1:length(files)
+    files(f).name
+    load([foldername,'/',files(f).name]);
+    g0 = [g0, board_adc_data];
+end
+
+clear filt board_adc_data
+
+%{
+figure; 
+subplot(211); plot(d0);
+subplot(212); plot(g0);
+%}
 
 %% define timing
 Fs = 20000; % samples per second 
@@ -27,18 +54,26 @@ g = g./max(g);
 [trigval, trigloc] = findpeaks(g, 'MinPeakProminence', .1*max(g));
 
 % split pulses into groups of 10 
-[k,C] = kmeans(trigloc', length(trigloc)/10);
+nInGrp = 10;
+ngrp = length(trigloc)/nInGrp;
+pulseFirstLast = zeros(nInGrp,ngrp);
+pulseFirstLast(:) = trigloc(:);
+pulseFirstLast = pulseFirstLast';
+pulseFirstLast = pulseFirstLast(:,[1,end]);
+%{
+pulseFirstLast = zeros(ngrp, 2);
+[k,C] = kmeans(trigloc', ngrp);
 [Cord,ord] = sort(C); ku = unique(k); kuord = ku(ord);
-pulseFirstLast = zeros(length(C), 2);
-for idx = 1:length(C)
+for idx = 1:ngrp
     kIdx = kuord(idx); Cidx = Cord(idx);
     trigidx = trigloc(k==kIdx);
     pulseFirstLast(idx,1) = min(trigidx); pulseFirstLast(idx,2) = max(trigidx);
 end
+%}
 pulsesGap0 = [pulseFirstLast(2:end,1), pulseFirstLast(1:(end-1),2)];
 pulsesBnd = mean(pulsesGap0, 2)'; 
 
-if sum(ampvalSz) == length(C)
+if sum(ampvalSz) == ngrp
     % There are the same number of expected and recorded pulses. Proceed
     % assigning amplitude from beginning. 
     startFromEnd = false; 
@@ -49,7 +84,7 @@ else
 pulsesGap = diff(pulsesGap0, [], 2);
 [~,ord] = sort(pulsesGap);
 ord = ord(1:3); ord = sort(ord);
-groupFirstLast = [[0;ord]+1, [ord;length(C)]];
+groupFirstLast = [[0;ord]+1, [ord;ngrp]];
 %groupSz = diff(groupFirstLast, [], 2);
 groupSz = zeros(size(groupFirstLast,1),1);
 
@@ -105,7 +140,7 @@ figure; plot(g)
 %% processing loaded data into signal object
 % "filt" is the neural recording data, which we want to change into "d_unfilt"
 % "board_adc_data" is the noise reference data, which we want to change into "g"
-d_unfilt = filt;
+d_unfilt = d0;
 
 % introduce delay in signal compared to noise reference 
 padT = .005; % delay dur (s); should be at least .0005
