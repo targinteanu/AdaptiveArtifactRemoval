@@ -162,7 +162,7 @@ chB = buildChannelObj('Chan2', 0,0,0, 'Cartesian');
 t = repmat(t, 1, size(d_unfilt,2));
 g = repmat(g, 1, size(d_unfilt,2));
 %% define parameters for filter and training 
-trainfrac = .1;
+trainfrac = .02;
 nUpdates = 100;
 splIdx = floor(trainfrac*size(t,1));
 tTrainBnd = [t(1), t(splIdx)];
@@ -192,7 +192,7 @@ stepsize = .000001;
 filtObj = buildFilterObj(hpFilt, lpFilt, N, stepsize, 0, 0, true);
 sig = doPreFilt(filtObj, sig);
 sig = getTrainTestWrapper(sig);
-%[sig, filtObj] = preTrainWtsWrapper(filtObj, sig, .1*nUpdates);
+[sig, filtObj] = preTrainWtsWrapper(filtObj, sig, .1*nUpdates);
 [sig, w_end] = LMSonlineWrapper(filtObj, sig, nUpdates);
 sig = doPostFilt(filtObj, sig);
 
@@ -237,11 +237,13 @@ for ch = 1:length(p10s)
     nTrl = size(d_PrePost_ch,1);
     p10 = zeros(3,nTrl,2); n14 = p10;
     for trl = 1:nTrl
+        %figure; subplot(211);
         [p10([1,2],trl,1), n14([1,2],trl,1)] = ...
-            measureERP(tPost, d_PrePost_ch(trl,:,2), .01, .014, [.007,.25]);
+            measureERP(tPost, d_PrePost_ch(trl,:,2), .01, .014, [.009,.25], 200, false);
         p10(3,trl,1) = std(d_PrePost_ch(trl,:,2));
+        %subplot(212);
         [p10([1,2],trl,2), n14([1,2],trl,2)] = ...
-            measureERP(tPost, e_PrePost_ch(trl,:,2), .01, .014, [.007,.25]);
+            measureERP(tPost, e_PrePost_ch(trl,:,2), .01, .014, [.009,.25], 200, false);
         p10(3,trl,2) = std(e_PrePost_ch(trl,:,2));
     end
     p10s{ch} = p10; n14s{ch} = n14;
