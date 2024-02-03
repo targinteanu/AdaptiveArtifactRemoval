@@ -215,12 +215,6 @@ xlabel('time (s)'); ylabel('current (amps?)'); title('noise reference');
 grid on;
 linkaxes(ax,'x');
 
-%% Sys ID 
-t = sig.Times(N:end,1); u = sig.Noise_Reference(N:end,1); 
-y1 = sig.Data_LMS(:,1); y2 = sig.Data_LMS(:,2); 
-TT = timetable(seconds(t),u,y1,y2);
-sys = ssest(TT,'InputName','u','OutputName',["y1","y2"]);
-
 %%
 tBeforeTrig = .03;
 [t_PrePost, d_PrePost, e_PrePost] = getPrePostStim(tBeforeTrig, ...
@@ -274,3 +268,9 @@ for ch = 1:length(p10s)
 end
 linkaxes(ax1,'y'); linkaxes(ax2,'y');
 %}
+
+%% Sys ID 
+t = sig.Times(N:end,1); u = sig.Noise_Reference(N:end,1); 
+y1 = sig.Data_LMS(:,1); y2 = sig.Data_LMS(:,2); 
+TT = timetable(seconds(t),u,y1,y2);
+sys = ssest(TT,'InputName','u','OutputName',["y1","y2"]);
