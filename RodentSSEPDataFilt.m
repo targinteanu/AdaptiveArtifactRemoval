@@ -87,7 +87,7 @@ tPost = t_PrePost(2,:);
 ERPvals = cell(2, length(e_PrePost)); % rows = unfilt vs filt; cols = channel
 
 % calculate values for all channels 
-for ch = 1:length(size(ERPvals,2))
+for ch = 1:size(ERPvals,2)
 
     % get filtered and unfiltered waveforms at this channel for each trial
     e_PrePost_ch = e_PrePost{ch};
