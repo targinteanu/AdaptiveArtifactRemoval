@@ -52,6 +52,13 @@ nOut = zeros(size(nPk));
 % flip the signal to get p peak candidates 
 [ppk, plc, pw, ppr] = findpeaks(-x, t, 'MinPeakProminence', .01*xRng, 'MinPeakWidth', .001);
 
+% debugging to remove ------------------------------------------------
+figure; subplot(312);
+findpeaks(-x, t, 'MinPeakProminence', .01*xRng, 'MinPeakWidth', .001, 'Annotate','extents');
+subplot(311); plot(t, x); grid on; xlim([min(t), max(t)]);
+subplot(313);
+% ====================================================================
+
 if ~isempty(pPk)
 pPksList = candidatePeaks(pPk, ppk, plc, pw, ppr);
 pOut = selectPeaks(pPk, pPksList); 
@@ -107,7 +114,7 @@ end
                 % normalized to amplitude range (pscore) and exponentially 
                 % penalizing latency distance normalized to time range (tscore)
                 tscore = abs(desloc - candi(:,2))./tRng;
-                pscore = candi(:,4)./xRng; 
+                pscore = candi(:,4)./xRng;
                 score = pscore .* exp(-4*tscore);
                 [~,sel] = max(score);
                 lcOut(1,i) = candi(sel,1);
