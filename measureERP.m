@@ -52,13 +52,6 @@ nOut = zeros(size(nPk));
 % flip the signal to get p peak candidates 
 [ppk, plc, pw, ppr] = findpeaks(-x, t, 'MinPeakProminence', .01*xRng, 'MinPeakWidth', .001);
 
-% debugging to remove ------------------------------------------------
-figure; subplot(312);
-findpeaks(-x, t, 'MinPeakProminence', .01*xRng, 'MinPeakWidth', .001, 'Annotate','extents');
-subplot(311); plot(t, x); grid on; xlim([min(t), max(t)]);
-subplot(313);
-% ====================================================================
-
 if ~isempty(pPk)
 pPksList = candidatePeaks(pPk, ppk, plc, pw, ppr);
 pOut = selectPeaks(pPk, pPksList); 

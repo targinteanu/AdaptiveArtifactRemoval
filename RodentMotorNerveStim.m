@@ -244,11 +244,6 @@ for ch = 1:size(ERPvals,2)
     e_PrePost_ch = e_PrePost{ch};
     d_PrePost_ch = d_PrePost{ch};
 
-    % to remove? -----------------------
-    e_PrePost_ch = flipud(e_PrePost_ch);
-    d_PrePost_ch = flipud(d_PrePost_ch);
-    % ==================================
-
     % get number of trials 
     nTrl = size(d_PrePost_ch,1);
 
@@ -261,10 +256,10 @@ for ch = 1:size(ERPvals,2)
     % calculate values for each trial 
     for trl = 1:nTrl
 
-        figure; subplot(211); 
+        %figure; subplot(211); 
 
         % populate row trl of table with n20 & n40 amps and latencies and stats (mean & SD)
-        [n14,p10,stat] = measureERP(tPost, d_PrePost_ch(trl,:,2), .014, .01, [.008,.25], 10, true);
+        [n14,p10,stat] = measureERP(tPost, d_PrePost_ch(trl,:,2), .014, .01, [.008,.25], 10, false);
         p10n14 = [p10, n14];
         tblUnfilt.p10amp(trl) = p10n14(1,1); tblUnfilt.p10lat(trl) = p10n14(2,1); % [amplitude; latency]
         tblUnfilt.n14amp(trl) = p10n14(1,2); tblUnfilt.n14lat(trl) = p10n14(2,2); % [amplitude; latency]
@@ -273,20 +268,20 @@ for ch = 1:size(ERPvals,2)
             % noise = std thru all times
         clear p10n14 stat p10 n14
 
-        hold on; plot(tPost, d_PrePost_ch(trl,:,2));
-        title('unfilt');
-        subplot(212); 
+        %hold on; plot(tPost, d_PrePost_ch(trl,:,2));
+        %title('unfilt');
+        %subplot(212); 
 
         % do the same for filtered data 
-        [n14,p10,stat] = measureERP(tPost, e_PrePost_ch(trl,:,2), .014, .01, [.008,.25], 10, true);
+        [n14,p10,stat] = measureERP(tPost, e_PrePost_ch(trl,:,2), .014, .01, [.008,.25], 10, false);
         p10n14 = [p10, n14];
         tblFilt.p10amp(trl) = p10n14(1,1); tblFilt.p10lat(trl) = p10n14(2,1); % [amplitude; latency]
         tblFilt.n14amp(trl) = p10n14(1,2); tblFilt.n14lat(trl) = p10n14(2,2); % [amplitude; latency]
         tblFilt.mean(trl) = stat(1); tblFilt.SD(trl) = std(e_PrePost_ch(trl,:,2)); 
         clear p10n14 stat p10 n14
 
-        hold on; plot(tPost, e_PrePost_ch(trl,:,2));
-        title('filt');
+        %hold on; plot(tPost, e_PrePost_ch(trl,:,2));
+        %title('filt');
     end
 
     % store tables in cell array 
