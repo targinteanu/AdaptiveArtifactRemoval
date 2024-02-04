@@ -25,11 +25,15 @@ end
 
 clear filt board_adc_data
 
-%{
+%%{
 figure; 
-subplot(211); plot(d0);
+subplot(211); plot(d0');
 subplot(212); plot(g0);
 %}
+
+%% truncate signal 
+d0 = d0(:,1:3450000);
+g0 = g0(:,1:3450000);
 
 %% define timing
 Fs = 20000; % samples per second 
@@ -187,7 +191,7 @@ lpFilt = designfilt('lowpassiir', ...
                     'StopbandAttenuation', 60, ...
                     'SampleRate', Fs, ... 
                     'DesignMethod', 'cheby2');
-N = 512; % filter taps 
+N = 256; % filter taps 
 stepsize = .000001;
 filtObj = buildFilterObj(hpFilt, lpFilt, N, stepsize, 0, 0, true);
 sig = doPreFilt(filtObj, sig);
@@ -197,8 +201,10 @@ sig = getTrainTestWrapper(sig);
 sig = doPostFilt(filtObj, sig);
 
 %%
-plotwindow1 = 1:1100000;
-plotwindow2 = plotwindow1 + N;
+%plotwindow1 = 1:1100000;
+plotwindow2 = 3450000 - ((1e6):(-1):0);
+plotwindow1 = plotwindow2 - N;
+%plotwindow2 = plotwindow1 + N;
 figure('Units','normalized', 'Position',[.1,.1,.8,.8]); 
 ax(1) = subplot(211);
 %plot(sig.Times(plotwindow1), sig.Data_BPF(plotwindow1,2));
@@ -282,7 +288,7 @@ for ch = 1:size(ERPvals,2)
 end
 
 %%
-figure('Units','normalized', 'Position',[.1,.1,.8,.8])
+figure('Units','normalized', 'Position',[.05,.1,.9,.8])
 for ch = 1:size(ERPvals,2)
     % get tables for this channel 
     tblUnfilt = ERPvals{1,ch}; tblFilt = ERPvals{2,ch}; 
@@ -294,30 +300,42 @@ for ch = 1:size(ERPvals,2)
     SNR = SNR_S./SNR_N; 
     % hypothesis test whether unfilt has greater SNR than filt 
     [~,pSNR] = ttest(SNR(:,1), SNR(:,2), 'Tail', 'left');
-    % loc = n20, n40 latency for unfilt, filt 
+    % amp = p10, n14 amplitude for unfilt, filt 
+    amp = [tblUnfilt.p10amp, tblFilt.p10amp, tblUnfilt.n14amp, tblFilt.n14amp];
+    % loc = p10, n14 latency for unfilt, filt 
     loc = [tblUnfilt.p10lat, tblFilt.p10lat, tblUnfilt.n14lat, tblFilt.n14lat];
     numfound = sum(~isnan(loc));
-    % hypothesis test whether unfilt and filt have different locs 
+    % hypothesis test whether unfilt and filt have different locs, amps 
     [~,ploc10] = ttest(loc(:,1), loc(:,2), 'Tail', 'both');
     [~,ploc14] = ttest(loc(:,3), loc(:,4), 'Tail', 'both');
+    [~,pamp10] = ttest(amp(:,1), amp(:,2), 'Tail', 'both');
+    [~,pamp14] = ttest(amp(:,3), amp(:,4), 'Tail', 'both');
 
     % box plot results with p values displayed  
-    ax1(ch) = subplot(size(ERPvals,2),2,2*(ch-1)+1); boxplot(SNR);
+    ax1(ch) = subplot(size(ERPvals,2),3,3*(ch-1)+1); boxplot(SNR);
     grid on;
     title(['SNR: p = ',num2str(pSNR)]); ylabel(['Channel ',sig.Channels(ch).labels]);
     xticklabels({'Unfilt', 'Filt'});
-    ax2(ch) = subplot(size(ERPvals,2),2,2*ch); boxplot(loc);
-    grid on;
-    title(['Latency: p = ',num2str(ploc10),' (p10), ',num2str(ploc14),' (n14)']); 
+    ax2(ch) = subplot(size(ERPvals,2),3,3*ch-1); boxplot(amp);
+    grid on; 
+    title(['Amplitude: p = ',num2str(pamp10),' (p10), ',num2str(pamp14),' (n14)']); 
     xtl = {'Unfilt p10', 'Filt p10', 'Unfilt n14', 'Filt n14'};
     xtl = arrayfun(@(i) [xtl{i},': N=',num2str(numfound(i))], 1:length(xtl), 'UniformOutput',false);
+    xticklabels(xtl);
+    ax3(ch) = subplot(size(ERPvals,2),3,3*ch); boxplot(loc);
+    grid on;
+    title(['Latency: p = ',num2str(ploc10),' (p10), ',num2str(ploc14),' (n14)']); 
+    %xtl = {'Unfilt p10', 'Filt p10', 'Unfilt n14', 'Filt n14'};
+    %xtl = arrayfun(@(i) [xtl{i},': N=',num2str(numfound(i))], 1:length(xtl), 'UniformOutput',false);
     xticklabels(xtl);
 end
 linkaxes(ax1,'y'); linkaxes(ax2,'y');
 %}
 
 %% Sys ID 
+%{
 t = sig.Times(N:end,1); u = sig.Noise_Reference(N:end,1); 
 y1 = sig.Data_LMS(:,1); y2 = sig.Data_LMS(:,2); 
 TT = timetable(seconds(t),u,y1,y2);
 sys = ssest(TT,'InputName','u','OutputName',["y1","y2"]);
+%}
