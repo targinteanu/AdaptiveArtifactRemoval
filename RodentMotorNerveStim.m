@@ -191,7 +191,7 @@ lpFilt = designfilt('lowpassiir', ...
                     'StopbandAttenuation', 60, ...
                     'SampleRate', Fs, ... 
                     'DesignMethod', 'cheby2');
-N = 256; % filter taps 
+N = 150; % filter taps 
 stepsize = .000001;
 filtObj = buildFilterObj(hpFilt, lpFilt, N, stepsize, 0, 0, true);
 sig = doPreFilt(filtObj, sig);
@@ -222,7 +222,7 @@ grid on;
 linkaxes(ax,'x');
 
 %%
-tBeforeTrig = .03;
+tBeforeTrig = .02;
 [t_PrePost, d_PrePost, e_PrePost] = getPrePostStim(tBeforeTrig, ...
     sig.Noise_Reference, sig.Data_BPF, sig.Data_LMS_LPF, Fs, sig.Channels, N);
 PrePostAvgAll_v2(tBeforeTrig,t_PrePost,d_PrePost,e_PrePost,Fs,sig.Channels,10);
@@ -335,9 +335,20 @@ linkaxes(ax1,'y'); linkaxes(ax2,'y');
 %}
 
 %% Sys ID 
-%{
-t = sig.Times(N:end,1); u = sig.Noise_Reference(N:end,1); 
-y1 = sig.Data_LMS(:,1); y2 = sig.Data_LMS(:,2); 
+%%{
+startIdx = 3400000;
+t = sig.Times(startIdx:end,1); u = sig.Noise_Reference(startIdx:end,1); 
+y1 = sig.Data_LMS_LPF((startIdx-N+1):end,1); y2 = sig.Data_LMS_LPF((startIdx-N+1):end,2); 
 TT = timetable(seconds(t),u,y1,y2);
 sys = ssest(TT,'InputName','u','OutputName',["y1","y2"]);
 %}
+%% Sys eval 
+sys1 = sys(1); sys2 = sys(2);
+figure; 
+subplot(222); lsim(sys1, u, t); hold on; plot(t, y1); 
+subplot(224); lsim(sys2, u, t); hold on; plot(t, y2);
+idx2 = 3350000; 
+t2 = sig.Times(idx2:startIdx,1); u2 = sig.Noise_Reference(idx2:startIdx,1); 
+y12 = sig.Data_LMS_LPF((idx2-N+1):(startIdx-N+1),1); y22 = sig.Data_LMS_LPF((idx2-N+1):(startIdx-N+1),2); 
+subplot(221); lsym(sys1, u2, t2); hold on; plot(t2, y12);
+subplot(223); lsim(sys2, u2, t2); hold on; plot(t2, y22);
