@@ -343,12 +343,10 @@ TT = timetable(seconds(t),u,y1,y2);
 sys = ssest(TT,'InputName','u','OutputName',["y1","y2"]);
 %}
 %% Sys eval 
-sys1 = sys(1); sys2 = sys(2);
-figure; 
-subplot(222); lsim(sys1, u, t); hold on; plot(t, y1); 
-subplot(224); lsim(sys2, u, t); hold on; plot(t, y2);
 idx2 = 3350000; 
 t2 = sig.Times(idx2:startIdx,1); u2 = sig.Noise_Reference(idx2:startIdx,1); 
-y12 = sig.Data_LMS_LPF((idx2-N+1):(startIdx-N+1),1); y22 = sig.Data_LMS_LPF((idx2-N+1):(startIdx-N+1),2); 
-subplot(221); lsym(sys1, u2, t2); hold on; plot(t2, y12);
-subplot(223); lsim(sys2, u2, t2); hold on; plot(t2, y22);
+y12 = sig.Data_LMS_LPF((idx2-N+1):(startIdx-N+1),1); y22 = sig.Data_LMS_LPF((idx2-N+1):(startIdx-N+1),2);
+TT2 = timetable(seconds(t2), u2, y12, y22);
+TT2.Properties.VariableNames = TT.Properties.VariableNames;
+figure; compare(TT, sys); % training validation 
+figure; compare(TT2, sys); % testing validation
