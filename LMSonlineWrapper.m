@@ -34,4 +34,10 @@ end
 
 sigObj.Data_LMS = e_t;
 
+trainTimeBounds = sigObj.Train_Time_Bounds;
+[t_train, g_train, e_train, t_test, g_test, e_test] = ...
+        getTrainTest(t(N:end,:), g(N:end,:), e_t, trainTimeBounds, uchan); 
+sigObj.Data_LMS_Train = e_train;
+sigObj.Data_LMS_Test = e_test;
+
 end

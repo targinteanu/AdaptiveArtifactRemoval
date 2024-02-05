@@ -52,4 +52,25 @@ else
 
 end
 
+
+% if train/test parameters are revised after adaptive filtering: 
+
+d = sigObj.Data_LMS;
+if numel(d)
+    N = size(sigObj.Data_Unfiltered,1) - size(d,1) + 1;
+    [t_train, g_train, d_train, t_test, g_test, d_test] = ...
+        getTrainTest(t(N:end,:), g(N:end,:), d, trainTimeBounds, uchan);
+    sigObj.Data_LMS_Train = d_train;
+    sigObj.Data_LMS_Test = d_test;
+end
+
+d = sigObj.Data_LMS_LPF;
+if numel(d)
+    N = size(sigObj.Data_Unfiltered,1) - size(d,1) + 1;
+    [t_train, g_train, d_train, t_test, g_test, d_test] = ...
+        getTrainTest(t(N:end,:), g(N:end,:), d, trainTimeBounds, uchan);
+    sigObj.Data_LMS_LPF_Train = d_train;
+    sigObj.Data_LMS_LPF_Test = d_test;
+end
+
 end
