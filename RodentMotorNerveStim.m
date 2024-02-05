@@ -56,6 +56,7 @@ ampvals = cell2mat(ampvals);
 
 g = g0; % reset 
 g = g./max(g);
+g = g.*(g > .1);
 % find actual recorded number of pulses 
 [trigval, trigloc] = findpeaks(g, 'MinPeakProminence', .1*max(g));
 
