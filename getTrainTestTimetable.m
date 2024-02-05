@@ -46,13 +46,18 @@ else
     error('No data found.')
 end
 
-tTr = tTr(N:end,:);
 t = t(N:end,:);
+if tTr(1) <= t(1)
+    tTr = tTr(N:end,:);
+end
 u = u(N:end,:);
-uTr = interp1(t, u, tTr);
 if numel(tTe)
+    if tTe(1) <= t(1)
+        tTe = tTe(N:end,:);
+    end
     uTe = interp1(t, u, tTe);
 end
+uTr = interp1(t, u, tTr);
 
 makeTT = @(t,u,y) [timetable(seconds(t),u), array2table(y)];
 

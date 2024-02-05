@@ -339,11 +339,17 @@ linkaxes(ax1,'y'); linkaxes(ax2,'y');
 %}
 
 %% Sys ID 
-splIdx = 1e6;
-tTrainBnd = [t(1), t(splIdx)];
+splIdx = round(length(t)/2);
+tTrainBnd = [t(splIdx-5e5), t(splIdx+5e5)];
 sig.Train_Time_Bounds = tTrainBnd;
 sig = getTrainTestWrapper(sig);
 [TTtrain,TTtest,TT] = getTrainTestTimetable(sig, filtObj); 
-sys = n4sid(TTtrain, 'OutputName',["y1","y2"],'InputName','u'); 
-figure; compare(TTtrain, sys);
-figure; compare(TTtest, sys);
+sysLin = n4sid(TTtrain,10, 'OutputName',["y1","y2"],'InputName','u'); 
+figure; compare(TTtrain, sysLin);
+figure; compare(TT, sysLin);
+%%
+sysHW = nlhw(TTtrain, sysLin);
+figure; compare(TTtrain, sysHW); 
+% try idSigmoidNetwork input, idWaveletNetwork output 
+% network of 1 faster?
+figure; compare(TT, sysHW);
