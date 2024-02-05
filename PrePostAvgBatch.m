@@ -64,22 +64,22 @@ for chIdx = 1:length(uchan)
 
         % before
         curBatch = sigFiltCh(curBatchTrlIdx, :, 1);  
-        meanFiltBefore(batchIdx,:) = mean(curBatch); 
-        errbFiltBefore(batchIdx,:) =  std(curBatch);
+        meanFiltBefore(batchIdx,:) = mean(curBatch, 1); 
+        errbFiltBefore(batchIdx,:) =  std(curBatch, [], 1);
 
         % after
         curBatch = sigFiltCh(curBatchTrlIdx, :, 2); 
-        meanFiltAfter(batchIdx,:) = mean(curBatch); 
-        errbFiltAfter(batchIdx,:) =  std(curBatch);
+        meanFiltAfter(batchIdx,:) = mean(curBatch, 1); 
+        errbFiltAfter(batchIdx,:) =  std(curBatch, [], 1);
 
         % Spect 
         %%{
         curBatch = spectFiltBeforeCh(curBatchTrlIdx,:);
-        meanSpectFiltBefore(batchIdx,:) = mean(curBatch); 
-        errbSpectFiltBefore(batchIdx,:) =  std(curBatch);
+        meanSpectFiltBefore(batchIdx,:) = mean(curBatch, 1); 
+        errbSpectFiltBefore(batchIdx,:) =  std(curBatch, [], 1);
         curBatch = spectFiltAfterCh(curBatchTrlIdx,:);
-        meanSpectFiltAfter(batchIdx,:) = mean(curBatch); 
-        errbSpectFiltAfter(batchIdx,:) =  std(curBatch);
+        meanSpectFiltAfter(batchIdx,:) = mean(curBatch, 1); 
+        errbSpectFiltAfter(batchIdx,:) =  std(curBatch, [], 1);
         %}
     end
     % ====================================================================
@@ -105,22 +105,22 @@ for chIdx = 1:length(uchan)
 
         % before
         curBatch = sigUnfiltCh(curBatchTrlIdx, :, 1);  
-        meanUnfiltBefore(batchIdx,:) = mean(curBatch); 
-        errbUnfiltBefore(batchIdx,:) =  std(curBatch);
+        meanUnfiltBefore(batchIdx,:) = mean(curBatch, 1); 
+        errbUnfiltBefore(batchIdx,:) =  std(curBatch, [], 1);
 
         % after
         curBatch = sigUnfiltCh(curBatchTrlIdx, :, 2); 
-        meanUnfiltAfter(batchIdx,:) = mean(curBatch); 
-        errbUnfiltAfter(batchIdx,:) =  std(curBatch);
+        meanUnfiltAfter(batchIdx,:) = mean(curBatch, 1); 
+        errbUnfiltAfter(batchIdx,:) =  std(curBatch, [], 1);
 
         % Spect 
         %%{
         curBatch = spectUnfiltBeforeCh(curBatchTrlIdx,:);
-        meanSpectUnfiltBefore(batchIdx,:) = mean(curBatch); 
-        errbSpectUnfiltBefore(batchIdx,:) =  std(curBatch);
+        meanSpectUnfiltBefore(batchIdx,:) = mean(curBatch, 1); 
+        errbSpectUnfiltBefore(batchIdx,:) =  std(curBatch, [], 1);
         curBatch = spectUnfiltAfterCh(curBatchTrlIdx,:);
-        meanSpectUnfiltAfter(batchIdx,:) = mean(curBatch); 
-        errbSpectUnfiltAfter(batchIdx,:) =  std(curBatch);
+        meanSpectUnfiltAfter(batchIdx,:) = mean(curBatch, 1); 
+        errbSpectUnfiltAfter(batchIdx,:) =  std(curBatch, [], 1);
         %}
     end
     % ====================================================================
