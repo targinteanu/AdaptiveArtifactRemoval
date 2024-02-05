@@ -12,7 +12,7 @@ else
 end
 
 codedir = cd;
-savedir = [folder,'/','saved_signal_obj/'];
+savedir = [folder,'\','saved_signal_obj\'];
 
 if contains(folder,'rat') % for Kiara files
     for idx = 3:size(files,1)
@@ -61,10 +61,10 @@ addpath(genpath(TDTPATH));
 for index = 3:size(files,1)
 %    cd(folder); %brings loop back to the outer folder
     fname = files(index,1).name;
-    if isfolder([fname,'\',fname])
+    if isfolder([folder,'\',fname])
 %        cd(codedir);
 
-        sig = RodentSSEPtoSig([folder,'\',fname,'\',fname]);
+        sig = RodentSSEPtoSig([folder,'\',fname]);
 
         saveSignalObj([savedir,files(index,1).name,'_saved'],sig);
     end
