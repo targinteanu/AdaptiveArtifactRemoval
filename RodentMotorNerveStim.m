@@ -348,8 +348,9 @@ sysLin = n4sid(TTtrain,10, 'OutputName',["y1","y2"],'InputName','u');
 figure; compare(TTtrain, sysLin);
 figure; compare(TT, sysLin);
 %%
-sysHW = nlhw(TTtrain, sysLin);
+sigmoidIn = idSigmoidNetwork(1); waveletOut = idWaveletNetwork(1);
+sysHW = nlhw(TTtrain, sysLin, sigmoidIn, waveletOut);
 figure; compare(TTtrain, sysHW); 
 % try idSigmoidNetwork input, idWaveletNetwork output 
 % network of 1 faster?
-figure; compare(TT, sysHW);
+%figure; compare(TT, sysHW);
