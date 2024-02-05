@@ -34,6 +34,8 @@ subplot(212); plot(g0);
 %% truncate signal 
 d0 = d0(:,1:3450000);
 g0 = g0(:,1:3450000);
+% d0 = d0(:,1:500000);
+% g0 = g0(:,1:500000);
 
 %% define timing
 Fs = 20000; % samples per second 
@@ -340,7 +342,7 @@ startIdx = 3400000;
 t = sig.Times(startIdx:end,1); u = sig.Noise_Reference(startIdx:end,1); 
 y1 = sig.Data_LMS_LPF((startIdx-N+1):end,1); y2 = sig.Data_LMS_LPF((startIdx-N+1):end,2); 
 TT = timetable(seconds(t),u,y1,y2);
-sys = ssest(TT,'InputName','u','OutputName',["y1","y2"]);
+sys = n4sid(TT,10,'InputName','u','OutputName',["y1","y2"]);
 %}
 %% Sys eval 
 idx2 = 3350000; 
