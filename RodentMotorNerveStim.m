@@ -168,9 +168,10 @@ chB = buildChannelObj('Chan2', 0,0,0, 'Cartesian');
 t = repmat(t, 1, size(d_unfilt,2));
 g = repmat(g, 1, size(d_unfilt,2));
 %% define parameters for filter and training 
-trainfrac = .02;
+%trainfrac = .02;
 nUpdates = 100;
-splIdx = floor(trainfrac*size(t,1));
+%splIdx = floor(trainfrac*size(t,1));
+splIdx = 14e4;
 tTrainBnd = [t(1), t(splIdx)];
 
 sig = buildSignalObj([], d_unfilt, t, g, Fs, [chA; chB], ...
@@ -337,18 +338,7 @@ linkaxes(ax1,'y'); linkaxes(ax2,'y');
 %}
 
 %% Sys ID 
-%%{
-startIdx = 3400000;
-t = sig.Times(startIdx:end,1); u = sig.Noise_Reference(startIdx:end,1); 
-y1 = sig.Data_LMS_LPF((startIdx-N+1):end,1); y2 = sig.Data_LMS_LPF((startIdx-N+1):end,2); 
-TT = timetable(seconds(t),u,y1,y2);
-sys = n4sid(TT,10,'InputName','u','OutputName',["y1","y2"]);
-%}
-%% Sys eval 
-idx2 = 3350000; 
-t2 = sig.Times(idx2:startIdx,1); u2 = sig.Noise_Reference(idx2:startIdx,1); 
-y12 = sig.Data_LMS_LPF((idx2-N+1):(startIdx-N+1),1); y22 = sig.Data_LMS_LPF((idx2-N+1):(startIdx-N+1),2);
-TT2 = timetable(seconds(t2), u2, y12, y22);
-TT2.Properties.VariableNames = TT.Properties.VariableNames;
-figure; compare(TT, sys); % training validation 
-figure; compare(TT2, sys); % testing validation
+[TTtrain,TTtest,TT] = getTrainTestTimetable(sig, filtObj); 
+sys = n4sid(TTtrain, 'OutputName',["y1","y2"],'InputName','u'); 
+figure; compare(TTtrain, sys);
+figure; compare(TTtest, sys);

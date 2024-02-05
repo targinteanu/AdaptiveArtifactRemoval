@@ -46,7 +46,7 @@ else
     error('No data found.')
 end
 
-tTe = tTe(N:end,:);
+tTr = tTr(N:end,:);
 t = t(N:end,:);
 u = u(N:end,:);
 uTr = interp1(t, u, tTr);
@@ -54,12 +54,14 @@ if numel(tTe)
     uTe = interp1(t, u, tTe);
 end
 
-TT = timetable(seconds(t), u, yTe);
+makeTT = @(t,u,y) [timetable(seconds(t),u), array2table(y)];
+
+TT = makeTT(t, u, y);
 VN = TT.Properties.VariableNames;
-TTtrain = timetable(seconds(tTr), uTr, yTr);
+TTtrain = makeTT(tTr, uTr, yTr);
 TTtrain.Properties.VariableNames = VN;
 if numel(tTe)
-    TTtest = timetable(seconds(tTe), uTe, yTe);
+    TTtest = makeTT(tTe, uTe, yTe);
     TTtest.Properties.VariableNames = VN;
 end
 
