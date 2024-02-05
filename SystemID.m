@@ -1,7 +1,7 @@
 %% load file
 TDTPATH = 'TDTMatlabSDK';
 addpath(genpath(TDTPATH));
-foldername = 'Rodent SSEP Data/AC5-230830-130841'; 
+foldername = uigetdir; 
 
 sig = RodentSSEPtoSig(foldername);
 Fs = sig.SampleRate;
