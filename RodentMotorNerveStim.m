@@ -338,6 +338,10 @@ linkaxes(ax1,'y'); linkaxes(ax2,'y');
 %}
 
 %% Sys ID 
+splIdx = 1e6;
+tTrainBnd = [t(1), t(splIdx)];
+sig.Train_Time_Bounds = tTrainBnd;
+sig = getTrainTestWrapper(sig);
 [TTtrain,TTtest,TT] = getTrainTestTimetable(sig, filtObj); 
 sys = n4sid(TTtrain, 'OutputName',["y1","y2"],'InputName','u'); 
 figure; compare(TTtrain, sys);
