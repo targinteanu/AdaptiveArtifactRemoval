@@ -1,3 +1,13 @@
+%% setup
+codedir = cd;
+folder = uigetdir; 
+cd(folder);
+files = dir('*_sigObj.mat');
+cd(codedir);
+sig = loadSignalObj([folder,'\',files(1).name]);
+Fs = sig.SampleRate;
+clear sig
+
 %% define parameters for filter 
 % to do: change this to load a saved filter from file 
 
@@ -43,7 +53,6 @@ filtObj = buildFilterObj([notches, hpFilt], lpFilt, N, stepsize, ...
                          [-1*ones(size(notches)), 0], 0, true);
 
 %% loop 
-folder = uigetdir; 
 savename = 'filtered_signal_obj';
 if isfolder([folder,'/',savename]) | isfolder([folder,'\',savename])
     error('already saved')
@@ -51,11 +60,13 @@ else
     mkdir(folder,savename);
 end
 cd(folder);
-files = dir('*_sigObj.mat');
 savedir = [folder,'\',savename,'\'];
-cd;
+cd(codedir);
 for f = 1:length(files)
     sig = loadSignalObj([folder,'\',files(f).name]);
+    if ~(sig.SampleRate == Fs)
+        error('Sample rates are not equal.')
+    end
 
     sig = doPreFilt(filtObj, sig);
     sig = getTrainTestWrapper(sig);
@@ -63,5 +74,6 @@ for f = 1:length(files)
     [sig, w_end] = LMSonlineWrapper(filtObj, sig, nUpdates);
     sig = doPostFilt(filtObj, sig);
 
-    saveSignalObj([savedir,files(index,1).name,'_filtered'],sig);
+    saveSignalObj([savedir,files(f,1).name,'_filtered'],sig);
+    clear sig
 end
