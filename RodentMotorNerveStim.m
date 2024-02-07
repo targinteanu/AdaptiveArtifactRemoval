@@ -344,10 +344,12 @@ tTrainBnd = [t(splIdx-5e5), t(splIdx+5e5)];
 sig.Train_Time_Bounds = tTrainBnd;
 sig = getTrainTestWrapper(sig);
 [TTtrain,TTtest,TT] = getTrainTestTimetable(sig, filtObj); 
-sysLin = n4sid(TTtrain,10, 'OutputName',["y1","y2"],'InputName','u'); 
+sysLin = n4sid(TTtrain,4, 'OutputName',["y1","y2"],'InputName','u'); 
 figure; compare(TTtrain, sysLin);
 figure; compare(TT, sysLin);
 %%
+sysHW0 = nlhw(TTtrain,sysLin); 
+figure; compare(TTtrain, sysHW0); 
 sigmoidIn = idSigmoidNetwork(1); waveletOut = idWaveletNetwork(1);
 sysHW = nlhw(TTtrain, sysLin, sigmoidIn, waveletOut);
 figure; compare(TTtrain, sysHW); 
