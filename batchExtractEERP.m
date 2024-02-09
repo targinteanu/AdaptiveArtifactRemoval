@@ -6,13 +6,16 @@ files = dir('*_filtered_sigObj.mat');
 cd(codedir);
 
 tblNcol = 19;
+%{
 tblBlank = table('Size',[length(files),tblNcol], ...
                  'VariableTypes',repmat("double",[1,tblNcol]), ...
                  'RowNames',{files.name});
-ERPtables = cell(2, 2); % rows = unfilt vs filt; cols = channel
+%}
+ERPtables = cell(2, 4); % rows = unfilt vs filt; cols = channel
 for r = 1:size(ERPtables,1)
     for c = 1:size(ERPtables,2)
-        ERPtables{r,c} = tblBlank;
+        %ERPtables{r,c} = tblBlank;
+        ERPtables{r,c} = table;
     end
 end
 clear r c 
@@ -110,9 +113,9 @@ for ch = 1:size(ERPvals,2)
     bigTblUnfilt.snrSD(subjname) = std( (tblUnfilt.n20amp-tblUnfilt.mean)./tblUnfilt.SD, 'omitnan' );
     bigTblUnfilt.noiseSD(subjname) = std(tblUnfilt.SD); 
 
-    bigTblUnfilt.n10num = sum(~isnan(tblUnfilt.n10lat));
-    bigTblUnfilt.n20num = sum(~isnan(tblUnfilt.n20lat));
-    bigTblUnfilt.n40num = sum(~isnan(tblUnfilt.n40lat));
+    bigTblUnfilt.n10num(subjname) = sum(~isnan(tblUnfilt.n10lat));
+    bigTblUnfilt.n20num(subjname) = sum(~isnan(tblUnfilt.n20lat));
+    bigTblUnfilt.n40num(subjname) = sum(~isnan(tblUnfilt.n40lat));
 
 
     bigTblFilt.n10ampMean(subjname) = mean(tblFilt.n10amp - tblFilt.mean, 'omitnan');
@@ -133,9 +136,9 @@ for ch = 1:size(ERPvals,2)
     bigTblFilt.snrSD(subjname) = std( (tblFilt.n20amp-tblFilt.mean)./tblFilt.SD, 'omitnan' );
     bigTblFilt.noiseSD(subjname) = std(tblFilt.SD); 
 
-    bigTblFilt.n10num = sum(~isnan(tblFilt.n10lat));
-    bigTblFilt.n20num = sum(~isnan(tblFilt.n20lat));
-    bigTblFilt.n40num = sum(~isnan(tblFilt.n40lat));
+    bigTblFilt.n10num(subjname) = sum(~isnan(tblFilt.n10lat));
+    bigTblFilt.n20num(subjname) = sum(~isnan(tblFilt.n20lat));
+    bigTblFilt.n40num(subjname) = sum(~isnan(tblFilt.n40lat));
 
     ERPtables{1,ch} = bigTblUnfilt; ERPtables{2,ch} = bigTblFilt;
     clear bigTblFilt bigTblUnfilt tblFilt tblUnfilt
@@ -153,6 +156,8 @@ for r = 1:size(ERPtables,1)
     for c = 1:size(ERPtables,2)
         sheetname = ['Channel ',sig.Channels(c).labels,' ',rnames{r}]
         erpTbl = ERPtables{r,c};
+        erpTbl = [erpTbl.Properties.RowNames, erpTbl];
+        erpTbl.Properties.VariableNames{1} = 'SubjName';
         writetable(erpTbl,saveFileName,'Sheet',sheetname)
         clear erpTbl sheetname
     end
