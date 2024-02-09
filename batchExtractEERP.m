@@ -17,14 +17,15 @@ for r = 1:size(ERPtables,1)
 end
 clear r c 
 
+%%
 for f = 1:length(files)
 %% get all trials 
-subjname = files(f).name;
+subjname = files(f).name
 sig = loadSignalObj([folder,'/',files(f).name]);
 
 tBeforeTrig = .06;
 [t_PrePost, d_PrePost, e_PrePost] = getPrePostStim(tBeforeTrig, ...
-    sig.Noise_Reference, sig.Data_BPF, sig.Data_LMS_LPF, Fs, sig.Channels, N);
+    sig.Noise_Reference, sig.Data_Unfiltered, sig.Data_LMS_LPF, sig.SampleRate, sig.Channels, N);
 %PrePostAvgAll_v2(tBeforeTrig,t_PrePost,d_PrePost,e_PrePost,Fs,sig.Channels,10);
 
 %% SNR (signal : noise ratio) - measure ERP peaks 
