@@ -62,6 +62,8 @@ end
 cd(folder);
 savedir = [folder,'\',savename,'\'];
 cd(codedir);
+
+%%
 for f = 1:length(files)
     sig = loadSignalObj([folder,'\',files(f).name]);
     if ~(sig.SampleRate == Fs)
