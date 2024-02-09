@@ -1,8 +1,9 @@
 %% setup before loop 
+codedir = cd;
 folder = uigetdir; 
 cd(folder);
 files = dir('*_filtered_sigObj.mat');
-cd;
+cd(codedir);
 
 tblNcol = 19;
 tblBlank = table('Size',[length(files),tblNcol], ...
@@ -19,7 +20,7 @@ clear r c
 for f = 1:length(files)
 %% get all trials 
 subjname = files(f).name;
-sig = loadSignalObj([folder,'\',files(f).name]);
+sig = loadSignalObj([folder,'/',files(f).name]);
 
 tBeforeTrig = .06;
 [t_PrePost, d_PrePost, e_PrePost] = getPrePostStim(tBeforeTrig, ...
