@@ -20,8 +20,10 @@ clear r c
 %%
 for f = 1:length(files)
 %% get all trials 
-subjname = files(f).name
-sig = loadSignalObj([folder,'/',files(f).name]);
+subjname = files(f).name; subjname = subjname(1:(end-37))
+sig = loadSignalObj([folder,'\',files(f).name]);
+
+N = size(sig.Data_Unfiltered,1) - size(sig.Data_LMS_LPF,1) + 1;
 
 tBeforeTrig = .06;
 [t_PrePost, d_PrePost, e_PrePost] = getPrePostStim(tBeforeTrig, ...
