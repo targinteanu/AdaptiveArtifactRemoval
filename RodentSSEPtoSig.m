@@ -100,7 +100,8 @@ end
 
 Fs = 1/dt_mean; % Hz
 
-splIdx = floor(trainfrac*size(t,1));
+%splIdx = floor(trainfrac*size(t,1));
+splIdx = 2.2e5;
 tTrainBnd = [t(1), t(splIdx)];
 
 %% shorten - to be removed 
