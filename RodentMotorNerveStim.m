@@ -345,14 +345,18 @@ sig.Train_Time_Bounds = tTrainBnd;
 sig = getTrainTestWrapper(sig);
 [TTtrain,TTtest,TT] = getTrainTestTimetable(sig, filtObj); 
 sysLin = n4sid(TTtrain,4, 'OutputName',["y1","y2"],'InputName','u'); 
+sysTF = tfest(TTtrain,2, 'OutputName',["y1","y2"],'InputName','u');
 figure; compare(TTtrain, sysLin);
 figure; compare(TT, sysLin);
-%%
 sysHW0 = nlhw(TTtrain,sysLin); 
 figure; compare(TTtrain, sysHW0); 
+sysGB = idnlgrey(TTtrain,sysLin);
+% seems like a good idea but takes too long 
+%{
 sigmoidIn = idSigmoidNetwork(1); waveletOut = idWaveletNetwork(1);
 sysHW = nlhw(TTtrain, sysLin, sigmoidIn, waveletOut);
 figure; compare(TTtrain, sysHW); 
+%}
 % try idSigmoidNetwork input, idWaveletNetwork output 
 % network of 1 faster?
 %figure; compare(TT, sysHW);
