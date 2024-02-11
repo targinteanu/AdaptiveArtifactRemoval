@@ -105,10 +105,10 @@ splIdx = 2.2e5;
 tTrainBnd = [t(1), t(splIdx)];
 
 %% shorten - to be removed 
-%{
-d_unfilt = d_unfilt(1:1000000,:);
-t = t(1:1000000,:);
-g = g(1:1000000,:);
+%%{
+d_unfilt = d_unfilt(1:2500000,:);
+t = t(1:2500000,:);
+g = g(1:2500000,:);
 %}
 
 %% cleanup 
@@ -128,6 +128,6 @@ chD = buildChannelObj('D',-1,-1,0,'Cartesian'); % ?
 sig = buildSignalObj([], d_unfilt, t, g, Fs, [chA; chB; chC; chD], ...
                      tTrainBnd, tTrainBnd, 2);
 
-% sig = extractChannel(sig, 2); % to remove 
+sig = extractChannel(sig, 2); % to remove 
 
 end
