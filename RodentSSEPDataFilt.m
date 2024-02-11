@@ -74,14 +74,14 @@ sig = doPostFilt(filtObj, sig);
 figure; 
 plot(sig.Times, sig.Data_HPF); 
 hold on; grid on; 
-%plot(sig.Times(N:end), sig.Data_LMS); 
-plot(sig.Times(N:end), sig.Data_LMS_LPF); 
+%plot(sig.Times(N:end,:), sig.Data_LMS); 
+plot(sig.Times(N:end,:), sig.Data_LMS_LPF); 
 xlabel('t (s)'); ylabel('Signal (V)');
 
 %%
 tBeforeTrig = .06;
 [t_PrePost, d_PrePost, e_PrePost] = getPrePostStim(tBeforeTrig, ...
-    sig.Noise_Reference, sig.Data_BPF, sig.Data_LMS_LPF, Fs, sig.Channels, N);
+    sig.Noise_Reference, sig.Data_Unfiltered, sig.Data_LMS_LPF, Fs, sig.Channels, N);
 PrePostAvgAll_v2(tBeforeTrig,t_PrePost,d_PrePost,e_PrePost,Fs,sig.Channels,10);
 
 %{
@@ -143,7 +143,7 @@ for ch = 1:size(ERPvals,2)
 end
 
 %%
-figure('Units','normalized', 'Position',[.1,.1,.8,.8])
+figure('Units','normalized', 'Position',[.05,.1,.9,.8])
 for ch = 1:size(ERPvals,2)
     % get tables for this channel 
     tblUnfilt = ERPvals{1,ch}; tblFilt = ERPvals{2,ch}; 
@@ -157,22 +157,30 @@ for ch = 1:size(ERPvals,2)
     [~,pSNR] = ttest(SNR(:,1), SNR(:,2), 'Tail', 'left');
     % loc = n20, n40 latency for unfilt, filt 
     loc = [tblUnfilt.n20lat, tblFilt.n20lat, tblUnfilt.n40lat, tblFilt.n40lat];
+    amp = [tblUnfilt.n20amp, tblFilt.n20amp, tblUnfilt.n40amp, tblFilt.n40amp] - ...
+          [tblUnfilt.mean,   tblFilt.mean,   tblUnfilt.mean,   tblFilt.mean];
     numfound = sum(~isnan(loc));
     % hypothesis test whether unfilt and filt have different locs 
     [~,ploc20] = ttest(loc(:,1), loc(:,2), 'Tail', 'both');
     [~,ploc40] = ttest(loc(:,3), loc(:,4), 'Tail', 'both');
+    [~,pamp20] = ttest(amp(:,1), amp(:,2), 'Tail', 'both');
+    [~,pamp40] = ttest(amp(:,3), amp(:,4), 'Tail', 'both');
 
     % box plot results with p values displayed  
-    ax1(ch) = subplot(size(ERPvals,2),2,2*(ch-1)+1); boxplot(SNR);
+    ax1(ch) = subplot(size(ERPvals,2),3,3*(ch-1)+1); boxplot(SNR);
     grid on;
     title(['SNR: p = ',num2str(pSNR)]); ylabel(['Channel ',sig.Channels(ch).labels]);
     xticklabels({'Unfilt', 'Filt'});
-    ax2(ch) = subplot(size(ERPvals,2),2,2*ch); boxplot(loc);
-    grid on;
-    title(['Latency: p = ',num2str(ploc20),' (n20), ',num2str(ploc40),' (n7)']); 
+    ax2(ch) = subplot(size(ERPvals,2),3,3*(ch-1)+2); boxplot(amp);
     xtl = {'Unfilt n20', 'Filt n20', 'Unfilt n7', 'Filt n7'};
     xtl = arrayfun(@(i) [xtl{i},': N=',num2str(numfound(i))], 1:length(xtl), 'UniformOutput',false);
+    grid on;
+    title(['Amplitude: p = ',num2str(ploc20),' (n20), ',num2str(ploc40),' (n7)']); 
+    xticklabels(xtl);
+    ax3(ch) = subplot(size(ERPvals,2),3,3*ch); boxplot(loc);
+    grid on;
+    title(['Latency: p = ',num2str(ploc20),' (n20), ',num2str(ploc40),' (n7)']); 
     xticklabels(xtl);
 end
-linkaxes(ax1,'y'); linkaxes(ax2,'y');
+linkaxes(ax1,'y'); linkaxes(ax2,'y'); linkaxes(ax3,'y');
 %}
