@@ -66,6 +66,14 @@ for idx = 1:length(filts)
     clear sigi filti
 end
 
+%% Preview 
+figure; 
+plot(sigs(1).Times, sigs(1).Data_HPF); 
+hold on; grid on; 
+%plot(sigs(1).Times(N:end), sigs(1).Data_LMS); 
+plot(sigs(1).Times(N:end), sigs(1).Data_LMS_LPF); 
+xlabel('t (s)'); ylabel('Signal (V)');
+
 %% split into pre, post 
 tBeforeTrig = .02;
 [tPost, dPost, ePost] = getPrePostStim(tBeforeTrig, ...
