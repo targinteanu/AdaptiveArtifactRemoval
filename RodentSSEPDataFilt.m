@@ -116,7 +116,7 @@ for ch = 1:size(ERPvals,2)
         %figure; subplot(211); 
 
         % populate row trl of table with n20 & n40 amps and latencies and stats (mean & SD)
-        [n20n40,~,stat] = measureERP(tPost, d_PrePost_ch(trl,:,2), [.02 .04], [], [.01,.1], 200, false);
+        [n20n40,~,stat] = measureERP(tPost, d_PrePost_ch(trl,:,2), [.015 .007], [], [.004,.1], 200, false);
         tblUnfilt.n20amp(trl) = n20n40(1,1); tblUnfilt.n20lat(trl) = n20n40(2,1); % [amplitude; latency]
         tblUnfilt.n40amp(trl) = n20n40(1,2); tblUnfilt.n40lat(trl) = n20n40(2,2); % [amplitude; latency]
         tblUnfilt.mean(trl) = stat(1); tblUnfilt.SD(trl) = std(d_PrePost_ch(trl,:,2)); 
@@ -128,7 +128,7 @@ for ch = 1:size(ERPvals,2)
         %subplot(212); 
 
         % do the same for filtered data 
-        [n20n40,~,stat] = measureERP(tPost, e_PrePost_ch(trl,:,2), [.02 .04], [], [.01,.1], 200, false);
+        [n20n40,~,stat] = measureERP(tPost, e_PrePost_ch(trl,:,2), [.015 .007], [], [.004,.1], 200, false);
         tblFilt.n20amp(trl) = n20n40(1,1); tblFilt.n20lat(trl) = n20n40(2,1); % [amplitude; latency]
         tblFilt.n40amp(trl) = n20n40(1,2); tblFilt.n40lat(trl) = n20n40(2,2); % [amplitude; latency]
         tblFilt.mean(trl) = stat(1); tblFilt.SD(trl) = std(e_PrePost_ch(trl,:,2)); 
@@ -169,8 +169,8 @@ for ch = 1:size(ERPvals,2)
     xticklabels({'Unfilt', 'Filt'});
     ax2(ch) = subplot(size(ERPvals,2),2,2*ch); boxplot(loc);
     grid on;
-    title(['Latency: p = ',num2str(ploc20),' (n20), ',num2str(ploc40),' (n40)']); 
-    xtl = {'Unfilt n20', 'Filt n20', 'Unfilt n40', 'Filt n40'};
+    title(['Latency: p = ',num2str(ploc20),' (n20), ',num2str(ploc40),' (n7)']); 
+    xtl = {'Unfilt n20', 'Filt n20', 'Unfilt n7', 'Filt n7'};
     xtl = arrayfun(@(i) [xtl{i},': N=',num2str(numfound(i))], 1:length(xtl), 'UniformOutput',false);
     xticklabels(xtl);
 end
