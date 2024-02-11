@@ -106,9 +106,9 @@ tTrainBnd = [t(1), t(splIdx)];
 
 %% shorten - to be removed 
 %%{
-d_unfilt = d_unfilt(1:500000,:);
-t = t(1:500000,:);
-g = g(1:500000,:);
+d_unfilt = d_unfilt(1:2500000,:);
+t = t(1:2500000,:);
+g = g(1:2500000,:);
 %}
 
 %% cleanup 

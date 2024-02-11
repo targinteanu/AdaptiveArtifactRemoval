@@ -10,7 +10,7 @@ Fs = sig.SampleRate;
 %% define parameters for filter 
 N = 128; % filter taps 
 stepsize = .2;
-nUpdates = 100;
+nUpdates = 0;
 
 %% pre-filtering
 % notch out 60Hz (& odd harmonics)
@@ -50,9 +50,9 @@ lpFilt = designfilt('lowpassiir', ...
 %% signal filtering 
 
 filts = [buildFilterObj([notches, hpFilt], lpFilt, N, stepsize, ...
-                        [-1*ones(size(notches)), 0], 0, false); ...
+                        [-1*ones(size(notches)), 0], 0, true); ...
          buildFilterObj([notches, hpFilt], lpFilt, N, stepsize, ...
-                        [+1*ones(size(notches)), 0], 0, false)];
+                        [+1*ones(size(notches)), 0], 0, true)];
 sigs = [sig; sig];
 
 for idx = 1:length(filts)
@@ -80,4 +80,4 @@ for ch = 1:length(eStitch)
 end
 
 PrePostAvgAll_v2(tBeforeTrig,tPost,dStitch,eStitch,Fs,sig.Channels,10);
-PrePostAvgBatch(1,tPost,dStitch,eStitch,Fs,sig.Channels);
+%PrePostAvgBatch(1,tPost,dStitch,eStitch,Fs,sig.Channels);
