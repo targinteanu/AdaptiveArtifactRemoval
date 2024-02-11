@@ -77,9 +77,9 @@ xlabel('t (s)'); ylabel('Signal (V)');
 %% split into pre, post 
 tBeforeTrig = .02;
 [tPost, dPost, ePost] = getPrePostStim(tBeforeTrig, ...
-    sigs(1).Noise_Reference, sigs(1).Data_HPF, sigs(1).Data_LMS, Fs, sigs(1).Channels, N);
+    sigs(1).Noise_Reference, sigs(1).Data_HPF, sigs(1).Data_LMS_LPF, Fs, sigs(1).Channels, N);
 [tPre,  dPre,  ePre ] = getPrePostStim(tBeforeTrig, ...
-    sigs(2).Noise_Reference, sigs(2).Data_HPF, sigs(2).Data_LMS, Fs, sigs(2).Channels, N);
+    sigs(2).Noise_Reference, sigs(2).Data_HPF, sigs(2).Data_LMS_LPF, Fs, sigs(2).Channels, N);
 
 dStitch = cell(size(dPost)); eStitch = cell(size(ePost));
 for ch = 1:length(eStitch)
