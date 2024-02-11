@@ -3,6 +3,7 @@ TDTPATH = 'TDTMatlabSDK';
 addpath(genpath(TDTPATH));
 foldername = uigetdir; 
 
+%%
 sig = RodentSSEPtoSig(foldername);
 Fs = sig.SampleRate;
 
@@ -66,7 +67,7 @@ for idx = 1:length(filts)
 end
 
 %% split into pre, post 
-tBeforeTrig = .06;
+tBeforeTrig = .02;
 [tPost, dPost, ePost] = getPrePostStim(tBeforeTrig, ...
     sigs(1).Noise_Reference, sigs(1).Data_HPF, sigs(1).Data_LMS, Fs, sigs(1).Channels, N);
 [tPre,  dPre,  ePre ] = getPrePostStim(tBeforeTrig, ...
