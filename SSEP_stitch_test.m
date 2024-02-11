@@ -8,9 +8,9 @@ sig = RodentSSEPtoSig(foldername);
 Fs = sig.SampleRate;
 
 %% define parameters for filter 
-N = 128; % filter taps 
+N = 64; % filter taps 
 stepsize = .2;
-nUpdates = 0;
+nUpdates = 100;
 
 %% pre-filtering
 % notch out 60Hz (& odd harmonics)
@@ -71,7 +71,7 @@ tBeforeTrig = .02;
 [tPost, dPost, ePost] = getPrePostStim(tBeforeTrig, ...
     sigs(1).Noise_Reference, sigs(1).Data_HPF, sigs(1).Data_LMS, Fs, sigs(1).Channels, N);
 [tPre,  dPre,  ePre ] = getPrePostStim(tBeforeTrig, ...
-    sigs(2).Noise_Reference, sigs(2).Data_HPF, sigs(2).Data_LMS, Fs, sigs(1).Channels, N);
+    sigs(2).Noise_Reference, sigs(2).Data_HPF, sigs(2).Data_LMS, Fs, sigs(2).Channels, N);
 
 dStitch = cell(size(dPost)); eStitch = cell(size(ePost));
 for ch = 1:length(eStitch)
