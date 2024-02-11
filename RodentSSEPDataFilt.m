@@ -70,6 +70,14 @@ sig = getTrainTestWrapper(sig);
 %% post-filtering
 sig = doPostFilt(filtObj, sig);
 
+%% Preview 
+figure; 
+plot(sig.Times, sig.Data_HPF); 
+hold on; grid on; 
+%plot(sig.Times(N:end), sig.Data_LMS); 
+plot(sig.Times(N:end), sig.Data_LMS_LPF); 
+xlabel('t (s)'); ylabel('Signal (V)');
+
 %%
 tBeforeTrig = .06;
 [t_PrePost, d_PrePost, e_PrePost] = getPrePostStim(tBeforeTrig, ...
