@@ -113,10 +113,10 @@ for ch = 1:size(ERPvals,2)
     % calculate values for each trial 
     for trl = 1:nTrl
 
-        figure; subplot(211); 
+        %figure; subplot(211); 
 
         % populate row trl of table with n20 & n40 amps and latencies and stats (mean & SD)
-        [n20n40,~,stat] = measureERP(tPost, d_PrePost_ch(trl,:,2), [.015 .007], [], [.004,.1], 100, true);
+        [n20n40,~,stat] = measureERP(tPost, d_PrePost_ch(trl,:,2), [.015 .007 .04], [], [.004,.1], 100, false);
         tblUnfilt.n20amp(trl) = n20n40(1,1); tblUnfilt.n20lat(trl) = n20n40(2,1); % [amplitude; latency]
         tblUnfilt.n40amp(trl) = n20n40(1,2); tblUnfilt.n40lat(trl) = n20n40(2,2); % [amplitude; latency]
         tblUnfilt.mean(trl) = stat(1); tblUnfilt.SD(trl) = std(d_PrePost_ch(trl,:,2)); 
@@ -125,18 +125,18 @@ for ch = 1:size(ERPvals,2)
         clear n20n40 stat
 
         %hold on; plot(tPost, d_PrePost_ch(trl,:,2));
-        title('unfilt');
-        subplot(212); 
+        %title('unfilt');
+        %subplot(212); 
 
         % do the same for filtered data 
-        [n20n40,~,stat] = measureERP(tPost, e_PrePost_ch(trl,:,2), [.015 .007], [], [.004,.1], 100, true);
+        [n20n40,~,stat] = measureERP(tPost, e_PrePost_ch(trl,:,2), [.015 .007 .04], [], [.004,.1], 100, false);
         tblFilt.n20amp(trl) = n20n40(1,1); tblFilt.n20lat(trl) = n20n40(2,1); % [amplitude; latency]
         tblFilt.n40amp(trl) = n20n40(1,2); tblFilt.n40lat(trl) = n20n40(2,2); % [amplitude; latency]
         tblFilt.mean(trl) = stat(1); tblFilt.SD(trl) = std(e_PrePost_ch(trl,:,2)); 
         clear n20n40 stat
 
-        hold on; plot(tPost, e_PrePost_ch(trl,:,2));
-        title('filt');
+        %hold on; plot(tPost, e_PrePost_ch(trl,:,2));
+        %title('filt');
     end
 
     % store tables in cell array 
