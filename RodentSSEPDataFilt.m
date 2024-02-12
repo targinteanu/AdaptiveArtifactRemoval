@@ -81,7 +81,7 @@ xlabel('t (s)'); ylabel('Signal (V)');
 %%
 tBeforeTrig = .06;
 [t_PrePost, d_PrePost, e_PrePost] = getPrePostStim(tBeforeTrig, ...
-    sig.Noise_Reference, sig.Data_Unfiltered, sig.Data_LMS_LPF, Fs, sig.Channels, N);
+    sig.Noise_Reference, sig.Data_HPF, sig.Data_LMS_LPF, Fs, sig.Channels, N);
 PrePostAvgAll_v2(tBeforeTrig,t_PrePost,d_PrePost,e_PrePost,Fs,sig.Channels,10);
 
 %{
