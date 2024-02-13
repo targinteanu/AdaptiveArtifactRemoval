@@ -76,6 +76,6 @@ for f = 1:length(files)
     [sig, w_end] = LMSonlineWrapper(filtObj, sig, nUpdates);
     sig = doPostFilt(filtObj, sig);
 
-    saveSignalObj([savedir,files(f,1).name,'_filtered'],sig);
+    saveSignalCompact([savedir,files(f,1).name,'_filtered'],sig);
     clear sig
 end
