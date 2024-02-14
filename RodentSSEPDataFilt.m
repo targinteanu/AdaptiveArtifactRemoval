@@ -3,7 +3,7 @@ TDTPATH = 'TDTMatlabSDK';
 addpath(genpath(TDTPATH));
 foldername = 'Rodent SSEP Data/AC5-230830-130841'; 
 
-sig = RodentSSEPtoSig(foldername, true);
+sig = RodentSSEPtoSig(foldername);
 Fs = sig.SampleRate;
 
 %% define parameters for filter 
@@ -55,7 +55,7 @@ lpFilt = designfilt('lowpassiir', ...
 
 %% filter to object 
 filtObj = buildFilterObj([notches, hpFilt], lpFilt, N, stepsize, ...
-                         [-1*ones(size(notches)), 0], 0, false);
+                         [-1*ones(size(notches)), 0], 0, true);
 
 %% pre-filtering 
 sig = doPreFilt(filtObj, sig);
@@ -77,7 +77,6 @@ hold on; grid on;
 %plot(sig.Times(N:end,:), sig.Data_LMS); 
 plot(sig.Times(N:end,:), sig.Data_LMS_LPF); 
 xlabel('t (s)'); ylabel('Signal (V)');
-legend('Unfiltered', 'Filtered');
 
 %%
 tBeforeTrig = .06;
