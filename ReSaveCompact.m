@@ -9,6 +9,7 @@ cd(codedir);
 for f = 1:length(files)
     curfilename = [folder,'\',files(f).name]
     sig = loadSignalObj(curfilename);
-    saveSignalCompact(curfilename);
+    curfilename = curfilename(1:(end-11));
+    saveSignalCompact(curfilename, sig);
     clear sig
 end
