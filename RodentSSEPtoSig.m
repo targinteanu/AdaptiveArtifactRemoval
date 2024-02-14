@@ -1,4 +1,25 @@
-function sig = RodentSSEPtoSig(foldername)
+function sig = RodentSSEPtoSig(foldername, truncateSig)
+% Return signal object from Rodent SSEP experiments (Mingfeng). 
+% 
+% Inputs
+%   foldername: name of folder in which TDT binary files are located 
+%               if empty or blank, folder will be selected with ui 
+%   truncateSig: if true, will shorten the signal length and select one
+%                channel. Use if previewing or debugging to save time by 
+%                avoiding filtering the entire signal. Default = false
+% 
+% Outputs 
+%   sig: signal object 
+
+if nargin < 2
+    truncateSig = false;
+    if nargin < 1
+        foldername = [];
+    end
+end
+if isempty(foldername)
+    foldername = uigetdir;
+end
 
 data = TDTbin2mat(foldername);
 
@@ -104,12 +125,14 @@ Fs = 1/dt_mean; % Hz
 splIdx = 2.2e5;
 tTrainBnd = [t(1), t(splIdx)];
 
-%% shorten - to be removed 
-%{
+%% shorten - to be removed?
+if truncateSig
+%%{
 d_unfilt = d_unfilt(1:2500000,:);
 t = t(1:2500000,:);
 g = g(1:2500000,:);
 %}
+end
 
 %% cleanup 
 %{
@@ -128,6 +151,8 @@ chD = buildChannelObj('D',-1,-1,0,'Cartesian'); % ?
 sig = buildSignalObj([], d_unfilt, t, g, Fs, [chA; chB; chC; chD], ...
                      tTrainBnd, tTrainBnd, 2);
 
-% sig = extractChannel(sig, 2); % to remove 
+if truncateSig
+    sig = extractChannel(sig, 2); % to remove?
+end
 
 end
