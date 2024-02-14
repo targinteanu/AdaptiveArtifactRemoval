@@ -1,4 +1,4 @@
-function fig = PrePostAvgBatch(nTrlInBatch, t_PrePost, d_PrePost, e_PrePost, Fs, uchan)
+function fig = PrePostAvgBatch(nTrlInBatch, t_PrePost, d_PrePost, e_PrePost, Fs, uchan, nToShow)
 % Plot the filtered and unfiltered signals and their power spectra/spectrograms 
 % before and after the stimulus, averaged in batches of trials of specified size.   
 % 
@@ -11,6 +11,7 @@ function fig = PrePostAvgBatch(nTrlInBatch, t_PrePost, d_PrePost, e_PrePost, Fs,
 %   e_PrePost: filtered value in the same format as d_PrePost 
 %   Fs: sampling rate of g, d, and e_t (Hz) 
 %   uchan: array of unique channels, same length as width of g, d, and e
+%   nToShow: Only show up to this many. [] or default = show all (no limit). 
 % 
 % Outputs: 
 %   fig: matlab figure, 4x2, showing time and spectrum
@@ -19,6 +20,10 @@ function fig = PrePostAvgBatch(nTrlInBatch, t_PrePost, d_PrePost, e_PrePost, Fs,
 
 
 % TO DO: more outputs?  
+
+if nargin < 7
+    nToShow = [];
+end
 
 %% colors: 
 dkBlue  = [  1,  50, 130] /255;
@@ -131,6 +136,24 @@ for chIdx = 1:length(uchan)
     % Filtered: Plots ----------------------------------------------------
     nTrl = size(sigFiltCh,1);
     nBatch = floor(nTrl/nTrlInBatch);
+    if ~isempty(nToShow)
+        idxToShow = randperm(nBatch);
+        nBatch = min(nBatch, nToShow);
+        idxToShow = idxToShow(1:nBatch);
+        idxToShow = sort(idxToShow);
+        
+        varnames = {'meanFiltBefore', ...
+                    'errbFiltBefore', ...
+                    'meanFiltAfter', ...
+                    'errbFiltAfter', ...
+                    'meanSpectFiltBefore', ...
+                    'errbSpectFiltBefore', ...
+                    'meanSpectFiltAfter', ...
+                    'errbSpectFiltAfter'};
+        for v = varnames
+            eval([v{:},' = ',v{:},'(idxToShow,:);']);
+        end
+    end
 
     figure(fig(chIdx,1)); subplot(4,2,1); hold on;
     for batchIdx = 1:nBatch
@@ -176,6 +199,24 @@ for chIdx = 1:length(uchan)
     % Unfiltered: Plots --------------------------------------------------
     nTrl = size(sigUnfiltCh,1);
     nBatch = floor(nTrl/nTrlInBatch);
+    if ~isempty(nToShow)
+        idxToShow = randperm(nBatch);
+        nBatch = min(nBatch, nToShow);
+        idxToShow = idxToShow(1:nBatch);
+        idxToShow = sort(idxToShow);
+        
+        varnames = {'meanUnfiltBefore', ...
+                    'errbUnfiltBefore', ...
+                    'meanUnfiltAfter', ...
+                    'errbUnfiltAfter', ...
+                    'meanSpectUnfiltBefore', ...
+                    'errbSpectUnfiltBefore', ...
+                    'meanSpectUnfiltAfter', ...
+                    'errbSpectUnfiltAfter'};
+        for v = varnames
+            eval([v{:},' = ',v{:},'(idxToShow,:);']);
+        end
+    end
 
     figure(fig(chIdx,1)); subplot(4,2,3); hold on;
     for batchIdx = 1:nBatch

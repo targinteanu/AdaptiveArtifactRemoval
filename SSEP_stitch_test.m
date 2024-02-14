@@ -3,11 +3,12 @@ TDTPATH = 'TDTMatlabSDK';
 addpath(genpath(TDTPATH));
 foldername = uigetdir; 
 
+%%
 sig = RodentSSEPtoSig(foldername);
 Fs = sig.SampleRate;
 
 %% define parameters for filter 
-N = 2048; % filter taps 
+N = 64; % filter taps 
 stepsize = .2;
 nUpdates = 100;
 
@@ -40,7 +41,7 @@ hpFilt = designfilt('highpassiir', ...
 % lowpass filtering (noise removal)
 lpFilt = designfilt('lowpassiir', ...
                     'StopbandFrequency', 3000, ...
-                    'PassbandFrequency', 2000, ...
+                    'PassbandFrequency', 2500, ...
                     'PassbandRipple', .5, ...
                     'StopbandAttenuation', 60, ...
                     'SampleRate', Fs, ... 
@@ -66,11 +67,11 @@ for idx = 1:length(filts)
 end
 
 %% split into pre, post 
-tBeforeTrig = .06;
+tBeforeTrig = .1;
 [tPost, dPost, ePost] = getPrePostStim(tBeforeTrig, ...
-    sigs(1).Noise_Reference, sigs(1).Data_BPF, sigs(1).Data_LMS_LPF, Fs, sigs(1).Channels, N);
+    sigs(1).Noise_Reference, sigs(1).Data_HPF, sigs(1).Data_LMS_LPF, Fs, sigs(1).Channels, N);
 [tPre,  dPre,  ePre ] = getPrePostStim(tBeforeTrig, ...
-    sigs(2).Noise_Reference, sigs(2).Data_BPF, sigs(2).Data_LMS_LPF, Fs, sigs(1).Channels, N);
+    sigs(2).Noise_Reference, sigs(2).Data_HPF, sigs(2).Data_LMS_LPF, Fs, sigs(2).Channels, N);
 
 dStitch = cell(size(dPost)); eStitch = cell(size(ePost));
 for ch = 1:length(eStitch)
@@ -79,3 +80,4 @@ for ch = 1:length(eStitch)
 end
 
 PrePostAvgAll_v2(tBeforeTrig,tPost,dStitch,eStitch,Fs,sig.Channels,10);
+%PrePostAvgBatch(1,tPost,dStitch,eStitch,Fs,sig.Channels);
