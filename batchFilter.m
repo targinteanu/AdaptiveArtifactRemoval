@@ -4,7 +4,7 @@ folder = uigetdir;
 cd(folder);
 files = dir('*_sigObj.mat');
 cd(codedir);
-sig = loadSignalObj([folder,'/',files(1).name]);
+sig = loadSignalObj([folder,'\',files(1).name]);
 Fs = sig.SampleRate;
 clear sig
 
@@ -60,12 +60,12 @@ else
     mkdir(folder,savename);
 end
 cd(folder);
-savedir = [folder,'/',savename,'/'];
+savedir = [folder,'\',savename,'\'];
 cd(codedir);
 
 %%
 for f = 1:length(files)
-    sig = loadSignalObj([folder,'/',files(f).name]);
+    sig = loadSignalObj([folder,'\',files(f).name]);
     if ~(sig.SampleRate == Fs)
         error('Sample rates are not equal.')
     end
