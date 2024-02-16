@@ -1,15 +1,20 @@
- function phaseSpace = buildPhaseSpace(x, t, showPlotBool)
+function [phaseSpace, av] = buildPhaseSpace(filelabel, x, t, window, showPlotBool)
  %{
     showPlotBool=true;
     x=[1,2,4,8,16];
     t=[1,2,3,4,5];
  %}
+    x=movmean(x,window);
     deriv = diff(x)./diff(t);
     phaseSpace = [x(1:(end-1));deriv]';
+    [k,av] = convhull(phaseSpace, 'Simplify', true);
     if showPlotBool == true
        plot(phaseSpace(:,1),phaseSpace(:,2),".")
-       xlabel('x'); ylabel('dx/dt');
+       title(filelabel); xlabel('x'); ylabel('dx/dt');
+       hold on
+       plot(phaseSpace(k,1),phaseSpace(k,2))
     end
+    av
 % end
 %% 
 %{
