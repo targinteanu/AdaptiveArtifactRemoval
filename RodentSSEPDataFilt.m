@@ -55,7 +55,7 @@ lpFilt = designfilt('lowpassiir', ...
 
 %% filter to object 
 filtObj = buildFilterObj([notches, hpFilt], lpFilt, N, stepsize, ...
-                         [-1*ones(size(notches)), 0], 0, false);
+                         [-1*ones(size(notches)), 0], 0, true);
 
 %% pre-filtering 
 sig = doPreFilt(filtObj, sig);
