@@ -1,14 +1,18 @@
-% function phaseSpace = buildPhaseSpace(x, t, showPlotBool)
-%     showPlotBool=true;
-%     x=[1,2,4,8,16];
-%     t=[1,2,3,4,5];
-%     deriv = diff(x)./diff(t);
-%     phaseSpace = [x(1:-2);deriv]
-%     if showPlotBool == true
-%        plot(phaseSpace(1),phaseSpace(2),"-")
-%     end
+ function phaseSpace = buildPhaseSpace(x, t, showPlotBool)
+ %{
+    showPlotBool=true;
+    x=[1,2,4,8,16];
+    t=[1,2,3,4,5];
+ %}
+    deriv = diff(x)./diff(t);
+    phaseSpace = [x(1:(end-1));deriv]';
+    if showPlotBool == true
+       plot(phaseSpace(:,1),phaseSpace(:,2),".")
+       xlabel('x'); ylabel('dx/dt');
+    end
 % end
 %% 
+%{
 x=[1, 2, 1, 8, 4, 32, 64];
 t=1:length(x);
 
@@ -30,3 +34,6 @@ xlabel('Data(t)');
 ylabel('Data(t+1)');
 title('Phase Space Plot');
 grid on;
+%}
+
+end
