@@ -1,8 +1,8 @@
 function sigOut = extractTimes(sigIn, timeBounds)
 % gets signal object within specified time bounds. 
 % 
-% uses messy eval statements and functions. 
-% currently does not work (debugging). 
+% uses messy eval statements and functions - to be improved. 
+% currently works sometimes. 
 
 nCh = length(sigIn.Channels);
 
@@ -66,6 +66,8 @@ for ch = 1:nCh
     for v = 1:length(varnameslist)
         [cond, exif, exelse] = condAssign(varnameslist{v});
         if eval(cond)
+            % TODO: this screws up with LMS_Train, probably incompatible
+            % length. Fix this. 
             eval(exif);
         else
             eval(exelse);
@@ -112,20 +114,35 @@ for v = 1:length(varnameslist)
     eval(asgn(varnameslist{v}));
 end
 
-%% vars to adjust
+%% vars to adjust]
+
+trainTimeBnd = sigIn.Train_Time_Bounds; 
+trainTimeBnd(1) = max(trainTimeBnd(1), timeBounds(1)); 
+trainTimeBnd(2) = min(trainTimeBnd(2), timeBounds(2));
+sigOut.Train_Time_Bounds = trainTimeBnd; 
+
+prevTimeBnd = sigIn.Preview_Time_Bounds; 
+prevTimeBnd(1) = max(prevTimeBnd(1), timeBounds(1)); 
+prevTimeBnd(2) = min(prevTimeBnd(2), timeBounds(2));
+sigOut.Preview_Time_Bounds = prevTimeBnd; 
+
+%{
 varnameslist = {'Train_Time_Bounds', 'Preview_Time_Bounds'};
 for v = 1:length(varnameslist)
     eval(handleTimeBound(varnameslist{v}));
 end
+%}
 
 %% helper functions - strings to eval
 
+%{
     function str = handleTimeBound(varname)
-        str = [varname,' = sigIn.',varname,';', ...
-               varname,'(1) = max(',varname,'(1), timeBounds(1);', ...
-               varname,'(2) = min(',varname,'(2), timeBounds(2);', ...
+        str = [varname,' = sigIn.',varname,'; ', ...
+               varname,'(1) = max(',varname,'(1), timeBounds(1)); ', ...
+               varname,'(2) = min(',varname,'(2), timeBounds(2)); ', ...
                'sigOut.',varname,' = ',varname,';'];
     end
+%}
 
     function str = asgn(varname)
         str = ['sigOut.',varname,' = sigIn.',varname,';'];
