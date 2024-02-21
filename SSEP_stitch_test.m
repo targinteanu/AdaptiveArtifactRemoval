@@ -4,7 +4,7 @@ addpath(genpath(TDTPATH));
 foldername = uigetdir; 
 
 %%
-sig = RodentSSEPtoSig(foldername);
+sig = RodentSSEPtoSig(foldername, true);
 Fs = sig.SampleRate;
 
 %% define parameters for filter 
@@ -67,7 +67,7 @@ for idx = 1:length(filts)
 end
 
 %% split into pre, post 
-tBeforeTrig = .1;
+tBeforeTrig = .02;
 [tPost, dPost, ePost] = getPrePostStim(tBeforeTrig, ...
     sigs(1).Noise_Reference, sigs(1).Data_HPF, sigs(1).Data_LMS_LPF, Fs, sigs(1).Channels, N);
 [tPre,  dPre,  ePre ] = getPrePostStim(tBeforeTrig, ...
@@ -79,5 +79,22 @@ for ch = 1:length(eStitch)
     eStitch{ch} = cat(3, ePre{ch}(:,:,1), ePost{ch}(:,:,2));
 end
 
-PrePostAvgAll_v2(tBeforeTrig,tPost,dStitch,eStitch,Fs,sig.Channels,10);
+%PrePostAvgAll_v2(tBeforeTrig,tPost,dStitch,eStitch,Fs,sig.Channels,10);
 %PrePostAvgBatch(1,tPost,dStitch,eStitch,Fs,sig.Channels);
+
+%% phase space 
+x1 = dPost{1}(:,:,2);
+t1 = tPost(2,:); 
+x2 = ePost{1}(:,:,2);
+t2 = t1;
+t1 = t1(:,150:end);
+x1 = x1(:,150:end);
+x1 = mean(x1);
+%x1 = movmean(x1, 10);
+x2 = mean(x2); 
+%x2 = movmean(x2,10);
+figure; 
+subplot(221); plot(t1, x1); 
+subplot(222); buildPhaseSpace('R131-230915-133846 w=10',x1, t1, 10, true);
+subplot(223); plot(t2, x2); 
+subplot(224); buildPhaseSpace('R131-230915-133846 w=10',x2,t2, 10, true);
