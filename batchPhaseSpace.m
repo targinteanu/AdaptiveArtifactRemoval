@@ -50,25 +50,17 @@ for ch = 1:size(PSvals,2)
     for trl = 1:nTrl
         % populate row trl of table 
 
-        % define PSA times 
-        tPSA = (t >= .005) & (t <= .2);
-        tsub = (t >= .005) & (t <= .009);
-
         % unfiltered 
-        [n20n40,~,stat] = measureERP(tPost, d_PrePost_ch(trl,:,2), [.007 .015 .04], [], [.004,.1], 100, false);
-        tblUnfilt.n07amp(trl) = n20n40(1,1); tblUnfilt.n07lat(trl) = n20n40(2,1); % [amplitude; latency]
-        tblUnfilt.n15amp(trl) = n20n40(1,2); tblUnfilt.n15lat(trl) = n20n40(2,2); % [amplitude; latency]
-        tblUnfilt.n40amp(trl) = n20n40(1,3); tblUnfilt.n40lat(trl) = n20n40(2,3); % [amplitude; latency]
-        tblUnfilt.mean(trl) = stat(1); tblUnfilt.SD(trl) = std(d_PrePost_ch(trl,:,2)); 
-            % mean = only within selected time range
-            % noise = std thru all times
+        tblUnfilt.PSA(trl)    = getPhaseSpace(tPost, d_PrePost_ch(trl,:,2), [.005, .03], 10, false);
+        tblUnfilt.PSAsub(trl) = getPhaseSpace(tPost, d_PrePost_ch(trl,:,2), [.005,.009], 10, false);
+        tblUnfilt.PSA30(trl)  = getPhaseSpace(tPost, d_PrePost_ch(trl,:,2), [   0, .03], 10, false);
+        tblUnfilt.PSA50(trl)  = getPhaseSpace(tPost, d_PrePost_ch(trl,:,2), [   0, .05], 10, false);
 
         % filtered  
-        [n20n40,~,stat] = measureERP(tPost, e_PrePost_ch(trl,:,2), [.007 .015 .04], [], [.004,.1], 100, false);
-        tblFilt.n07amp(trl) = n20n40(1,1); tblFilt.n07lat(trl) = n20n40(2,1); % [amplitude; latency]
-        tblFilt.n15amp(trl) = n20n40(1,2); tblFilt.n15lat(trl) = n20n40(2,2); % [amplitude; latency]
-        tblFilt.n40amp(trl) = n20n40(1,3); tblFilt.n40lat(trl) = n20n40(2,3); % [amplitude; latency]
-        tblFilt.mean(trl) = stat(1); tblFilt.SD(trl) = std(e_PrePost_ch(trl,:,2)); 
+        tblFilt.PSA(trl)    = getPhaseSpace(tPost, d_PrePost_ch(trl,:,2), [.005, .03], 10, false);
+        tblFilt.PSAsub(trl) = getPhaseSpace(tPost, d_PrePost_ch(trl,:,2), [.005,.009], 10, false);
+        tblFilt.PSA30(trl)  = getPhaseSpace(tPost, d_PrePost_ch(trl,:,2), [   0, .03], 10, false);
+        tblFilt.PSA50(trl)  = getPhaseSpace(tPost, d_PrePost_ch(trl,:,2), [   0, .05], 10, false);
 
     end
 
@@ -84,51 +76,25 @@ for ch = 1:size(PSvals,2)
     tblUnfilt = PSvals{1,ch}; tblFilt = PSvals{2,ch}; 
     bigTblUnfilt = PStables{1,ch}; bigTblFilt = PStables{2,ch};
 
+    bigTblUnfilt.PSAmean(subjname) = mean(tblUnfilt.PSA, 'omitnan');
+    bigTblUnfilt.PSAsubmean(subjname) = mean(tblUnfilt.PSAsub, 'omitnan');
+    bigTblUnfilt.PSA30mean(subjname) = mean(tblUnfilt.PSA30, 'omitnan');
+    bigTblUnfilt.PSA50mean(subjname) = mean(tblUnfilt.PSA50, 'omitnan');
 
-    bigTblUnfilt.n07ampMean(subjname) = mean(tblUnfilt.n07amp - tblUnfilt.mean, 'omitnan');
-    bigTblUnfilt.n15ampMean(subjname) = mean(tblUnfilt.n15amp - tblUnfilt.mean, 'omitnan');
-    bigTblUnfilt.n40ampMean(subjname) = mean(tblUnfilt.n40amp - tblUnfilt.mean, 'omitnan');
-    bigTblUnfilt.n07latMean(subjname) = mean(tblUnfilt.n07lat, 'omitnan');
-    bigTblUnfilt.n15latMean(subjname) = mean(tblUnfilt.n15lat, 'omitnan');
-    bigTblUnfilt.n40latMean(subjname) = mean(tblUnfilt.n40lat, 'omitnan');
-    bigTblUnfilt.snrMean(subjname) = mean( (tblUnfilt.n15amp-tblUnfilt.mean)./tblUnfilt.SD, 'omitnan' );
-    bigTblUnfilt.noiseMean(subjname) = mean(tblUnfilt.SD); 
-    
-    bigTblUnfilt.n07ampSD(subjname) = std(tblUnfilt.n07amp - tblUnfilt.mean, 'omitnan');
-    bigTblUnfilt.n15ampSD(subjname) = std(tblUnfilt.n15amp - tblUnfilt.mean, 'omitnan');
-    bigTblUnfilt.n40ampSD(subjname) = std(tblUnfilt.n40amp - tblUnfilt.mean, 'omitnan');
-    bigTblUnfilt.n07latSD(subjname) = std(tblUnfilt.n07lat, 'omitnan');
-    bigTblUnfilt.n15latSD(subjname) = std(tblUnfilt.n15lat, 'omitnan');
-    bigTblUnfilt.n40latSD(subjname) = std(tblUnfilt.n40lat, 'omitnan');
-    bigTblUnfilt.snrSD(subjname) = std( (tblUnfilt.n15amp-tblUnfilt.mean)./tblUnfilt.SD, 'omitnan' );
-    bigTblUnfilt.noiseSD(subjname) = std(tblUnfilt.SD); 
+    bigTblFilt.PSAmean(subjname) = mean(tblFilt.PSA, 'omitnan');
+    bigTblFilt.PSAsubmean(subjname) = mean(tblFilt.PSAsub, 'omitnan');
+    bigTblFilt.PSA30mean(subjname) = mean(tblFilt.PSA30, 'omitnan');
+    bigTblFilt.PSA50mean(subjname) = mean(tblFilt.PSA50, 'omitnan');
 
-    bigTblUnfilt.n07num(subjname) = sum(~isnan(tblUnfilt.n07lat));
-    bigTblUnfilt.n15num(subjname) = sum(~isnan(tblUnfilt.n15lat));
-    bigTblUnfilt.n40num(subjname) = sum(~isnan(tblUnfilt.n40lat));
+    bigTblUnfilt.PSAstd(subjname) = std(tblUnfilt.PSA, 'omitnan');
+    bigTblUnfilt.PSAsubstd(subjname) = std(tblUnfilt.PSAsub, 'omitnan');
+    bigTblUnfilt.PSA30std(subjname) = std(tblUnfilt.PSA30, 'omitnan');
+    bigTblUnfilt.PSA50std(subjname) = std(tblUnfilt.PSA50, 'omitnan');
 
-
-    bigTblFilt.n07ampMean(subjname) = mean(tblFilt.n07amp - tblFilt.mean, 'omitnan');
-    bigTblFilt.n15ampMean(subjname) = mean(tblFilt.n15amp - tblFilt.mean, 'omitnan');
-    bigTblFilt.n40ampMean(subjname) = mean(tblFilt.n40amp - tblFilt.mean, 'omitnan');
-    bigTblFilt.n07latMean(subjname) = mean(tblFilt.n07lat, 'omitnan');
-    bigTblFilt.n15latMean(subjname) = mean(tblFilt.n15lat, 'omitnan');
-    bigTblFilt.n40latMean(subjname) = mean(tblFilt.n40lat, 'omitnan');
-    bigTblFilt.snrMean(subjname) = mean( (tblFilt.n15amp-tblFilt.mean)./tblFilt.SD, 'omitnan' );
-    bigTblFilt.noiseMean(subjname) = mean(tblFilt.SD); 
-    
-    bigTblFilt.n07ampSD(subjname) = std(tblFilt.n07amp - tblFilt.mean, 'omitnan');
-    bigTblFilt.n15ampSD(subjname) = std(tblFilt.n15amp - tblFilt.mean, 'omitnan');
-    bigTblFilt.n40ampSD(subjname) = std(tblFilt.n40amp - tblFilt.mean, 'omitnan');
-    bigTblFilt.n07latSD(subjname) = std(tblFilt.n07lat, 'omitnan');
-    bigTblFilt.n15latSD(subjname) = std(tblFilt.n15lat, 'omitnan');
-    bigTblFilt.n40latSD(subjname) = std(tblFilt.n40lat, 'omitnan');
-    bigTblFilt.snrSD(subjname) = std( (tblFilt.n15amp-tblFilt.mean)./tblFilt.SD, 'omitnan' );
-    bigTblFilt.noiseSD(subjname) = std(tblFilt.SD); 
-
-    bigTblFilt.n07num(subjname) = sum(~isnan(tblFilt.n07lat));
-    bigTblFilt.n15num(subjname) = sum(~isnan(tblFilt.n15lat));
-    bigTblFilt.n40num(subjname) = sum(~isnan(tblFilt.n40lat));
+    bigTblFilt.PSAstd(subjname) = std(tblFilt.PSA, 'omitnan');
+    bigTblFilt.PSAsubstd(subjname) = std(tblFilt.PSAsub, 'omitnan');
+    bigTblFilt.PSA30std(subjname) = std(tblFilt.PSA30, 'omitnan');
+    bigTblFilt.PSA50std(subjname) = std(tblFilt.PSA50, 'omitnan');
 
     PStables{1,ch} = bigTblUnfilt; PStables{2,ch} = bigTblFilt;
     clear bigTblFilt bigTblUnfilt tblFilt tblUnfilt
@@ -138,17 +104,17 @@ clear sig subjname
 end
 
 %% save after loop 
-saveFileName = 'ERP_SNR_Spreadsheet.xlsx';
+saveFileName = 'PSA_Spreadsheet.xlsx';
 sig = loadSignalObj([folder,'\',files(1).name]);
 
 rnames = {'Unfilt', 'Filt'};
 for r = 1:size(PStables,1)
     for c = 1:size(PStables,2)
         sheetname = ['Channel ',sig.Channels(c).labels,' ',rnames{r}]
-        erpTbl = PStables{r,c};
-        erpTbl = [erpTbl.Properties.RowNames, erpTbl];
-        erpTbl.Properties.VariableNames{1} = 'SubjName';
-        writetable(erpTbl,saveFileName,'Sheet',sheetname)
-        clear erpTbl sheetname
+        psTbl = PStables{r,c};
+        psTbl = [psTbl.Properties.RowNames, psTbl];
+        psTbl.Properties.VariableNames{1} = 'SubjName';
+        writetable(psTbl,saveFileName,'Sheet',sheetname)
+        clear psTbl sheetname
     end
 end
