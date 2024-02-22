@@ -1,13 +1,22 @@
-function [av, phaseSpace] = getPhaseSpace(t, x, window, showPlotBool, filelabel)
+function [av, phaseSpace] = getPhaseSpace(t, x, tRng, window, showPlotBool, filelabel)
 
-if nargin < 5
+if nargin < 6
     filelabel = '';
-    if nargin < 4
+    if nargin < 5
         showPlotBool = false;
-        if nargin < 3
+        if nargin < 4
             window = 10;
+            if nargin < 3
+                tRng = [];
+            end
         end
     end
+end
+
+if ~isempty(tRng)
+    tIdx = (t >= tRng(1)) & (t <= tRng(2));
+    t = t(tIdx);
+    x = x(tIdx);
 end
 
     x=movmean(x,window);
