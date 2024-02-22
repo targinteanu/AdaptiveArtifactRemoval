@@ -95,6 +95,6 @@ x2 = mean(x2);
 %x2 = movmean(x2,10);
 figure; 
 subplot(221); plot(t1, x1); 
-subplot(222); buildPhaseSpace('R131-230915-133846 w=10',x1, t1, 10, true);
+subplot(222); getPhaseSpace(t1, x1, 10, true, 'R131-230915-133846 w=10');
 subplot(223); plot(t2, x2); 
-subplot(224); buildPhaseSpace('R131-230915-133846 w=10',x2,t2, 10, true);
+subplot(224); getPhaseSpace(t1, x1, 10, true, 'R131-230915-133846 w=10');

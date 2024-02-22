@@ -1,4 +1,4 @@
-function [phaseSpace, av] = buildPhaseSpace(filelabel, x, t, window, showPlotBool)
+function [phaseSpace, av] = getPhaseSpace(t, x, window, showPlotBool, filelabel)
  %{
     showPlotBool=true;
     x=[1,2,4,8,16];
@@ -14,7 +14,6 @@ function [phaseSpace, av] = buildPhaseSpace(filelabel, x, t, window, showPlotBoo
        hold on
        plot(phaseSpace(k,1),phaseSpace(k,2))
     end
-    av
 % end
 %% 
 %{
