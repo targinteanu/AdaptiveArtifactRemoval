@@ -32,8 +32,8 @@ subplot(212); plot(g0);
 %}
 
 %% truncate signal 
-d0 = d0(:,1:3450000);
-g0 = g0(:,1:3450000);
+%d0 = d0(:,1:3450000);
+%g0 = g0(:,1:3450000);
 % d0 = d0(:,1:500000);
 % g0 = g0(:,1:500000);
 
@@ -196,8 +196,8 @@ lpFilt = designfilt('lowpassiir', ...
                     'SampleRate', Fs, ... 
                     'DesignMethod', 'cheby2');
 N = 150; % filter taps 
-stepsize = .000001;
-filtObj = buildFilterObj(hpFilt, lpFilt, N, stepsize, 0, 0, true);
+stepsize = .9;
+filtObj = buildFilterObj(hpFilt, lpFilt, N, stepsize, 0, 0, true, true);
 sig = doPreFilt(filtObj, sig);
 sig = getTrainTestWrapper(sig);
 [sig, filtObj] = preTrainWtsWrapper(filtObj, sig, .1*nUpdates);
