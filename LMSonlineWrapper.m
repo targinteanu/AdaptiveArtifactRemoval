@@ -30,7 +30,8 @@ if ~numel(w_start)
     end
 end
 
-[e_t, w_end] = LMSonline(t, g, sigUnfilt, stepsize, N, uchan, w_start, nUpdates, filtObj.useDLMS);
+[e_t, w_end] = LMSonline(t, g, sigUnfilt, stepsize, N, uchan, w_start, nUpdates, ...
+    filtObj.useDLMS, filtObj.useNLMS);
 
 sigObj.Data_LMS = e_t;
 

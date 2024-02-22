@@ -1,5 +1,5 @@
 function filtObj = buildFilterObj(preFilt, postFilt, Num_Taps, Step_Size, ...
-    preFiltDir, postFiltDir, useDLMS, ...
+    preFiltDir, postFiltDir, useDLMS, useNLMS, ...
     Starting_Weights, Current_Weights)
 
 if nargin < 5
@@ -10,15 +10,19 @@ if nargin < 7
     useDLMS = false;
 end
 if nargin < 8
-    Starting_Weights = [];
+    useNLMS = false;
 end
 if nargin < 9
+    Starting_Weights = [];
+end
+if nargin < 10
     Current_Weights = Starting_Weights;
 end
 
 filtObj.preFiltDir = preFiltDir;
 filtObj.postFiltDir = postFiltDir;
 filtObj.useDLMS = useDLMS;
+filtObj.useNLMS = useNLMS;
 
 filtObj.preFilt = preFilt; 
 filtObj.postFilt = postFilt; 

@@ -1,4 +1,4 @@
-function [e_t, w, fig] = LMSonline(t, g, d, stepsize, N, uchan, w, nUpdates, dLMS)
+function [e_t, w, fig] = LMSonline(t, g, d, stepsize, N, uchan, w, nUpdates, dLMS, nLMS)
 % Perform online LMS adaptive filtering. 
 % 
 % Inputs: 
@@ -14,20 +14,24 @@ function [e_t, w, fig] = LMSonline(t, g, d, stepsize, N, uchan, w, nUpdates, dLM
 %             and smoothed error. 0 = no output and no plots 
 %             Default = 100
 %   dLMS: if false, does LMS; if true, does dLMS. Default false
+%   nLMS: if true, does NLMS; if false, does not normalize. Default false
 % 
 % Outputs: 
 %   e_t: LMS error signal 
 %   w: final weights 
 %   fig: matlab figure showing the resulting weights and error signal 
 
-if nargin < 9
-    dLMS = false;
-    if nargin < 8
-        nUpdates = 100;
-        if nargin < 7
-            w = zeros(N,size(d,2));
-            if nargin < 6
-                uchan = 1:size(d,2); % need to fix
+if nargin < 10
+    nLMS = false;
+    if nargin < 9
+        dLMS = false;
+        if nargin < 8
+            nUpdates = 100;
+            if nargin < 7
+                w = zeros(N,size(d,2));
+                if nargin < 6
+                    uchan = 1:size(d,2); % need to fix
+                end
             end
         end
     end
@@ -64,8 +68,15 @@ for idx = 1:length(uchan)
         e_t(ep, idx) = E;
         if ~dLMS
             dw = E*Gidx'; % LMS
+            if nLMS
+                dw = dw./(Gidx*Gidx' + eps);
+            end
         else
-            dw = (E-Eprev) * (Gidx-Gprev)'; % dLMS
+            dG = Gidx-Gprev;
+            dw = (E-Eprev) * dG'; % dLMS
+            if nLMS
+                dw = dw./(dG*dG' + eps);
+            end
         end
         w(:,idx) = w(:,idx) + stepsize*dw;
         Gprev = Gidx; Eprev = E;

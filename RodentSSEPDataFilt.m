@@ -8,7 +8,7 @@ Fs = sig.SampleRate;
 
 %% define parameters for filter 
 N = 64; % filter taps 
-stepsize = .2;
+stepsize = .8;
 nUpdates = 100;
 
 %% pre-filtering
@@ -55,7 +55,7 @@ lpFilt = designfilt('lowpassiir', ...
 
 %% filter to object 
 filtObj = buildFilterObj([notches, hpFilt], lpFilt, N, stepsize, ...
-                         [-1*ones(size(notches)), 0], 0, true);
+                         [-1*ones(size(notches)), 0], 0, true, true);
 
 %% pre-filtering 
 sig = doPreFilt(filtObj, sig);
@@ -80,10 +80,11 @@ xlabel('t (s)'); ylabel('Signal (V)');
 legend('Unfiltered', 'Filtered');
 
 %%
-tBeforeTrig = .06;
+tBeforeTrig = .01;
 [t_PrePost, d_PrePost, e_PrePost] = getPrePostStim(tBeforeTrig, ...
     sig.Noise_Reference, sig.Data_HPF, sig.Data_LMS_LPF, Fs, sig.Channels, N);
 PrePostAvgAll_v2(tBeforeTrig,t_PrePost,d_PrePost,e_PrePost,Fs,sig.Channels,10);
+PrePostAvgBatch(1,t_PrePost,d_PrePost,e_PrePost,Fs,sig.Channels,10);
 
 %{
 PrePostAvgAll(tBeforeTrig,t_PrePost,d_PrePost,e_PrePost,Fs,sig.Channels,10);
