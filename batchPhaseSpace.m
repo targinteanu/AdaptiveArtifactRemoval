@@ -57,10 +57,10 @@ for ch = 1:size(PSvals,2)
         tblUnfilt.PSA50(trl)  = getPhaseSpace(tPost, d_PrePost_ch(trl,:,2), [   0, .05], 10, false);
 
         % filtered  
-        tblFilt.PSA(trl)    = getPhaseSpace(tPost, d_PrePost_ch(trl,:,2), [.005, .03], 10, false);
-        tblFilt.PSAsub(trl) = getPhaseSpace(tPost, d_PrePost_ch(trl,:,2), [.005,.009], 10, false);
-        tblFilt.PSA30(trl)  = getPhaseSpace(tPost, d_PrePost_ch(trl,:,2), [   0, .03], 10, false);
-        tblFilt.PSA50(trl)  = getPhaseSpace(tPost, d_PrePost_ch(trl,:,2), [   0, .05], 10, false);
+        tblFilt.PSA(trl)    = getPhaseSpace(tPost, e_PrePost_ch(trl,:,2), [.005, .03], 10, false);
+        tblFilt.PSAsub(trl) = getPhaseSpace(tPost, e_PrePost_ch(trl,:,2), [.005,.009], 10, false);
+        tblFilt.PSA30(trl)  = getPhaseSpace(tPost, e_PrePost_ch(trl,:,2), [   0, .03], 10, false);
+        tblFilt.PSA50(trl)  = getPhaseSpace(tPost, e_PrePost_ch(trl,:,2), [   0, .05], 10, false);
 
     end
 
