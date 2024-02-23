@@ -7,6 +7,7 @@ sig = loadSignalObj([fp,'\',fn])
 Fs = sig.SampleRate;
 sig = extractChannel(sig, 2);
 %%
+N = size(sig.Data_Unfiltered, 1) - size(sig.Data_LMS, 1) + 1;
 tBeforeTrig = .04;
 [t_PrePost, d_PrePost, e_PrePost] = getPrePostStim(tBeforeTrig, ...
     sig.Noise_Reference, sig.Data_HPF, sig.Data_LMS_LPF, Fs, sig.Channels, N);
