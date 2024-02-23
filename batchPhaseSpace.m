@@ -41,9 +41,9 @@ for ch = 1:size(PSvals,2)
     nTrl = size(d_PrePost_ch,1);
 
     % setup tables for calculated values 
-    tblFilt = table('Size',[nTrl,4],...
-                    'VariableTypes',["double","double","double","double"], ...
-                    'VariableNames',{'PSA','PSAsub','PSA30','PSA50'});
+    tblFilt = table('Size',[nTrl,5],...
+                    'VariableTypes',["double","double","double","double","double"], ...
+                    'VariableNames',{'PSA','PSAsub','PSA09','PSA30','PSA50'});
     tblUnfilt = tblFilt;
 
     % calculate values for each trial 
@@ -53,12 +53,14 @@ for ch = 1:size(PSvals,2)
         % unfiltered 
         tblUnfilt.PSA(trl)    = getPhaseSpace(tPost, d_PrePost_ch(trl,:,2), [.005, .03], 10, false);
         tblUnfilt.PSAsub(trl) = getPhaseSpace(tPost, d_PrePost_ch(trl,:,2), [.005,.009], 10, false);
+        tblUnfilt.PSA09(trl)  = getPhaseSpace(tPost, d_PrePost_ch(trl,:,2), [   0,.009], 10, false);
         tblUnfilt.PSA30(trl)  = getPhaseSpace(tPost, d_PrePost_ch(trl,:,2), [   0, .03], 10, false);
         tblUnfilt.PSA50(trl)  = getPhaseSpace(tPost, d_PrePost_ch(trl,:,2), [   0, .05], 10, false);
 
         % filtered  
         tblFilt.PSA(trl)    = getPhaseSpace(tPost, e_PrePost_ch(trl,:,2), [.005, .03], 10, false);
         tblFilt.PSAsub(trl) = getPhaseSpace(tPost, e_PrePost_ch(trl,:,2), [.005,.009], 10, false);
+        tblFilt.PSA09(trl)  = getPhaseSpace(tPost, e_PrePost_ch(trl,:,2), [   0,.009], 10, false);
         tblFilt.PSA30(trl)  = getPhaseSpace(tPost, e_PrePost_ch(trl,:,2), [   0, .03], 10, false);
         tblFilt.PSA50(trl)  = getPhaseSpace(tPost, e_PrePost_ch(trl,:,2), [   0, .05], 10, false);
 
