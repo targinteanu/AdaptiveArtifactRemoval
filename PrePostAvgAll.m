@@ -46,10 +46,11 @@ dkGreen = [  0,  85,  15] /255;
 %% plotting averaged signals before and after stim 
 
 % spectrogram parameters ------------------------------ make input to function? 
-sgramWinLen = .005; % s
-sgramWinLen = ceil(max(32, sgramWinLen/Fs)); % samples 
+sgramWinLen = .0001; % s
+%sgramWinLen = ceil(max(32, sgramWinLen/Fs)); % samples 
+sgramWinLen = 10; 
 sgramFmax = Fs/2.25; % -------------------------------- also use for power spectrum plots?
-sgramFWinLen = 4/(tBeforeTrig); % Hz
+sgramFWinLen = .1/(tBeforeTrig); % Hz
 sgramFQ = 0:sgramFWinLen:sgramFmax; 
 
 % spectrogram outputs --------------------------------- can be organized better with multi-d matrices?
