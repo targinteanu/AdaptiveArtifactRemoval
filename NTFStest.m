@@ -28,7 +28,7 @@ Sti = (St>=.03); St = St(Sti);
 Sfi = (Sf<=1500)&(Sf>=150); Sf = Sf(Sfi);
 Sch = Sch(Sfi, Sti); 
 imagesc(St, Sf, log(Sch)); colorbar;
-xlabel('t (s)'); ylabel('f (Hz)'); title([Sname,' ch',num2str(ch)]);
+xlabel('t (s)'); ylabel('f (Hz)'); title(['SUA trial ',num2str(trl)]);
 
 %%
 getAllTFS = @(S, fRng, tRng) S{1,4}( ...
