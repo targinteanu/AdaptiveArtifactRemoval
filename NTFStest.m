@@ -48,7 +48,7 @@ for s = 1:length(Snames)
         
         Sch = mean(Sch,3);
         Sti = (St>=.01); St = St(Sti);
-        Sfi = (Sf<=6000)&(Sf>=150); Sf = Sf(Sfi);
+        Sfi = (Sf<=950)&(Sf>=150); Sf = Sf(Sfi);
         Sch = Sch(Sfi, Sti); 
         imagesc(St, Sf, 10*log10(Sch)); colorbar;
         xlabel('t (s)'); ylabel('f (Hz)'); title([Sname,' ch',num2str(ch)]);
