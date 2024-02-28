@@ -61,7 +61,7 @@ files = dir(ampFolder);
 files = files(~[files.isdir]);
 for f = 1:length(files)
     files(f).name
-    load([ampFolder,'/',files(f).name]);
+    load([ampFolder,'/',files(f).name], 'filt');
     d0 = [d0, filt];
     clear filt
 end
@@ -71,7 +71,7 @@ files = dir(trigFolder);
 files = files(~[files.isdir]);
 for f = 1:length(files)
     files(f).name
-    load([trigFolder,'/',files(f).name]);
+    load([trigFolder,'/',files(f).name], 'board_adc_data');
     g0 = [g0, board_adc_data];
     clear board_adc_data
 end
@@ -225,7 +225,7 @@ end
 
         % Naive / N
         for i = 1:length(nIdx)
-            nIdx(i) = contains(names{i}, 'naive', 'IgnoreCase', 'true');
+            nIdx(i) = contains(names{i}, 'naive', 'IgnoreCase', true);
         end
         if ~sum(nIdx)
             for i = 1:length(nIdx)
@@ -234,13 +234,13 @@ end
         end
         if ~sum(nIdx)
             for i = 1:length(nIdx)
-                nIdx(i) = contains(names{i}, 'n', 'IgnoreCase', 'true');
+                nIdx(i) = contains(names{i}, 'n', 'IgnoreCase', true);
             end
         end
 
         % VDMT / V
         for i = 1:length(vIdx)
-            vIdx(i) = contains(names{i}, 'VDMT', 'IgnoreCase', 'true');
+            vIdx(i) = contains(names{i}, 'VDMT', 'IgnoreCase', true);
         end
         if ~sum(vIdx)
             for i = 1:length(vIdx)
@@ -249,7 +249,7 @@ end
         end
         if ~sum(vIdx)
             for i = 1:length(vIdx)
-                vIdx(i) = contains(names{i}, 'v', 'IgnoreCase', 'true');
+                vIdx(i) = contains(names{i}, 'v', 'IgnoreCase', true);
             end
         end
 
