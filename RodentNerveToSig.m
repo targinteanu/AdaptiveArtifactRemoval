@@ -37,7 +37,7 @@ if (~isempty(folder_amp_N)) & (~isempty(folder_trig_N))
     folderTrig = [folder_trig,filesep,folder_trig_N];
     sigNaive = sigFromAmpTrigFolders(folderAmp, folderTrig, truncateSig);
 else
-    sigNaive = [];
+    sigNaive = buildSignalObj(); % all fields empty 
 end
 
 %% VDMT 
@@ -46,7 +46,7 @@ if (~isempty(folder_amp_V)) & (~isempty(folder_trig_V))
     folderTrig = [folder_trig,filesep,folder_trig_V];
     sigVDMT = sigFromAmpTrigFolders(folderAmp, folderTrig, truncateSig);
 else
-    sigVDMT = [];
+    sigVDMT = buildSignalObj(); % all fields empty
 end
 
 %% main body helper: use on N and V

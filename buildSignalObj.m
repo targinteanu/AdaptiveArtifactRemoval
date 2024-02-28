@@ -27,6 +27,17 @@ if nargin < 10
     Data_LMS_LPF_Test = [];
     Data_BPF_Test = [];
     Data_BPF_Train = [];
+    if ~nargin
+        Data_Ground_Truth = [];
+        Data_Unfiltered = [];
+        Times = [];
+        Noise_Reference = [];
+        SampleRate = [];
+        Channels = [];
+        Train_Time_Bounds = [];
+        Preview_Time_Bounds = [];
+        Preview_Channel_Index = [];
+    end
 end
 
 sigObj.Data_Ground_Truth = Data_Ground_Truth;
