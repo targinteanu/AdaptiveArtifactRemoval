@@ -80,21 +80,25 @@ for ch = 1:size(PSvals,2)
 
     bigTblUnfilt.PSAmean(subjname) = mean(tblUnfilt.PSA, 'omitnan');
     bigTblUnfilt.PSAsubmean(subjname) = mean(tblUnfilt.PSAsub, 'omitnan');
+    bigTblUnfilt.PSA09mean(subjname) = mean(tblUnfilt.PSA09, 'omitnan');
     bigTblUnfilt.PSA30mean(subjname) = mean(tblUnfilt.PSA30, 'omitnan');
     bigTblUnfilt.PSA50mean(subjname) = mean(tblUnfilt.PSA50, 'omitnan');
 
     bigTblFilt.PSAmean(subjname) = mean(tblFilt.PSA, 'omitnan');
     bigTblFilt.PSAsubmean(subjname) = mean(tblFilt.PSAsub, 'omitnan');
+    bigTblFilt.PSA09mean(subjname) = mean(tblFilt.PSA09, 'omitnan');
     bigTblFilt.PSA30mean(subjname) = mean(tblFilt.PSA30, 'omitnan');
     bigTblFilt.PSA50mean(subjname) = mean(tblFilt.PSA50, 'omitnan');
 
     bigTblUnfilt.PSAstd(subjname) = std(tblUnfilt.PSA, 'omitnan');
     bigTblUnfilt.PSAsubstd(subjname) = std(tblUnfilt.PSAsub, 'omitnan');
+    bigTblUnfilt.PSA09std(subjname) = std(tblUnfilt.PSA09, 'omitnan');
     bigTblUnfilt.PSA30std(subjname) = std(tblUnfilt.PSA30, 'omitnan');
     bigTblUnfilt.PSA50std(subjname) = std(tblUnfilt.PSA50, 'omitnan');
 
     bigTblFilt.PSAstd(subjname) = std(tblFilt.PSA, 'omitnan');
     bigTblFilt.PSAsubstd(subjname) = std(tblFilt.PSAsub, 'omitnan');
+    bigTblFilt.PSA09std(subjname) = std(tblFilt.PSA09, 'omitnan');
     bigTblFilt.PSA30std(subjname) = std(tblFilt.PSA30, 'omitnan');
     bigTblFilt.PSA50std(subjname) = std(tblFilt.PSA50, 'omitnan');
 
