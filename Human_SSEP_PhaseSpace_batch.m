@@ -14,9 +14,9 @@ PStable = table; % table is initiated here.
 %% main loop
 for f = 1:length(files)
     subjname = files(f).name; 
-    if isfolder([folder,'\',subjname])
+    if isfolder([folder,filesep,subjname])
         %
-        % [folder,'\',subjname] should be a path to a folder full of .mul
+        % [folder,filesep,subjname] should be a path to a folder full of .mul
         % files that contain patient SSEP data.
         %
         % subjname is the subject's study ID (e.g. 0055). 
@@ -24,7 +24,7 @@ for f = 1:length(files)
         % Files are named 'YYYYMMDD-HHMM-<side>-<nerve>.mul' (e.g.
         % '20181119-0845-LT-median.mul'). 
         %
-        subjfiles = dir([folder,'\',subjname]); % all files for this subject. 
+        subjfiles = dir([folder,filesep,subjname]); % all files for this subject. 
 
         for ff = 1:length(subjfiles)
             subjfilename = subjfiles(ff).name;

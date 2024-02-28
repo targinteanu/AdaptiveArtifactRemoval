@@ -17,7 +17,7 @@ clear r c
 for f = 1:length(files)
 %% get all trials 
 subjname = files(f).name; subjname = subjname(1:(end-37))
-sig = loadSignalObj([folder,'\',files(f).name]);
+sig = loadSignalObj([folder,filesep,files(f).name]);
 
 N = size(sig.Data_Unfiltered,1) - size(sig.Data_LMS_LPF,1) + 1;
 
@@ -107,7 +107,7 @@ end
 
 %% save after loop 
 saveFileName = 'PSA_Spreadsheet.xlsx';
-sig = loadSignalObj([folder,'\',files(1).name]);
+sig = loadSignalObj([folder,filesep,files(1).name]);
 
 rnames = {'Unfilt', 'Filt'};
 for r = 1:size(PStables,1)

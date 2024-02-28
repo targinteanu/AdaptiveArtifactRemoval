@@ -7,7 +7,7 @@ cd(codedir);
 
 %% overwrite all files with compact version 
 for f = 1:length(files)
-    curfilename = [folder,'\',files(f).name]
+    curfilename = [folder,filesep,files(f).name]
     sig = loadSignalObj(curfilename);
     curfilename = curfilename(1:(end-11));
     saveSignalCompact(curfilename, sig);

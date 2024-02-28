@@ -3,7 +3,7 @@ searchdir = 'C:\Users\targi\Documents\Rodent_SSEP_Data\Data_AnesthesiaControl\sa
 cd(searchdir); 
 [fn,fp] = uigetfile('*_filtered_sigObj.mat');
 cd(startdir);
-sig = loadSignalObj([fp,'\',fn])
+sig = loadSignalObj([fp,filesep,fn])
 Fs = sig.SampleRate;
 sig = extractChannel(sig, 2);
 %%

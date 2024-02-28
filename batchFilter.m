@@ -4,7 +4,7 @@ folder = uigetdir;
 cd(folder);
 files = dir('*_sigObj.mat');
 cd(codedir);
-sig = loadSignalObj([folder,'\',files(1).name]);
+sig = loadSignalObj([folder,filesep,files(1).name]);
 Fs = sig.SampleRate;
 clear sig
 
@@ -54,18 +54,18 @@ filtObj = buildFilterObj([notches, hpFilt], lpFilt, N, stepsize, ...
 
 %% loop 
 savename = 'filtered_signal_obj';
-if isfolder([folder,'/',savename]) | isfolder([folder,'\',savename])
+if isfolder([folder,'/',savename]) | isfolder([folder,filesep,savename])
     error('already saved')
 else
     mkdir(folder,savename);
 end
 cd(folder);
-savedir = [folder,'\',savename,'\'];
+savedir = [folder,filesep,savename,filesep];
 cd(codedir);
 
 %%
 for f = 1:length(files)
-    sig = loadSignalObj([folder,'\',files(f).name]);
+    sig = loadSignalObj([folder,filesep,files(f).name]);
     if ~(sig.SampleRate == Fs)
         error('Sample rates are not equal.')
     end
