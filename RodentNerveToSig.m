@@ -53,8 +53,6 @@ end
 
 function sig = sigFromAmpTrigFolders(ampFolder, trigFolder, truncatesig)
 
-outerFolderName = ampFolder;
-
 try
 
 %% load     
@@ -79,8 +77,6 @@ for f = 1:length(files)
     g0 = [g0, board_adc_data];
     clear board_adc_data
 end
-
-outerFolderName = files(1).folder;
 
 %% truncate 
 if truncatesig
@@ -225,7 +221,7 @@ sig = buildSignalObj([], d_unfilt, t, g, Fs, [chA; chB], ...
                      tTrainBnd, tTrainBnd, 2);
 
 catch ME  
-    warning(['Unable to process ',outerFolderName,': ',ME.message])
+    warning(['Unable to process ',foldername,': ',ME.message])
     sig = buildSignalObj(); % all fields empty
 end
 
