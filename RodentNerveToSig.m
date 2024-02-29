@@ -113,7 +113,7 @@ pulseFirstLast(:) = trigloc(:);
 pulseFirstLast = pulseFirstLast';
 pulseFirstLast = pulseFirstLast(:,[1,end]);
 pulsesGap0 = [pulseFirstLast(2:end,1), pulseFirstLast(1:(end-1),2)];
-pulsesBnd = mean(pulsesGap0, 2)'; 
+pulsesBnd = round(mean(pulsesGap0, 2)'); 
 
 if sum(ampvalSz) == ngrp
     % There are the same number of expected and recorded pulses. Proceed
