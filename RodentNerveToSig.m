@@ -60,7 +60,7 @@ d0 = []; g0 = []; % init
 files = dir(ampFolder);
 files = files(~[files.isdir]);
 for f = 1:length(files)
-    files(f).name
+    %files(f).name
     load([ampFolder,'/',files(f).name], 'filt');
     d0 = [d0, filt];
     clear filt
@@ -70,7 +70,7 @@ end
 files = dir(trigFolder);
 files = files(~[files.isdir]);
 for f = 1:length(files)
-    files(f).name
+    %files(f).name
     load([trigFolder,'/',files(f).name], 'board_adc_data');
     g0 = [g0, board_adc_data];
     clear board_adc_data
