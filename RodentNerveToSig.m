@@ -105,6 +105,13 @@ g = g.*(g > .1);
 % find actual recorded number of pulses 
 [trigval, trigloc] = findpeaks(g, 'MinPeakProminence', .1*max(g));
 
+if length(trigloc)/10 > length(ampvals)
+    error('Found more pulses than expected.')
+    % To Do: consider replacing this to salvage some of the data 
+    % for example, later on, if mismatchSz(1) == 0 or mismatchSz(end) == 0,
+    % cut off signal at end or beginning, respectively. 
+end
+
 % split pulses into groups of 10 
 nInGrp = 10;
 ngrp = length(trigloc)/nInGrp;
