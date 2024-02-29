@@ -53,6 +53,10 @@ end
 
 function sig = sigFromAmpTrigFolders(ampFolder, trigFolder, truncatesig)
 
+outerFolderName = ampFolder;
+
+try
+
 %% load     
 d0 = []; g0 = []; % init 
 
@@ -75,6 +79,8 @@ for f = 1:length(files)
     g0 = [g0, board_adc_data];
     clear board_adc_data
 end
+
+outerFolderName = files(1).folder;
 
 %% truncate 
 if truncatesig
@@ -109,7 +115,7 @@ if length(trigloc)/10 > length(ampvals)
     error('Found more pulses than expected.')
     % To Do: consider replacing this to salvage some of the data 
     % for example, later on, if mismatchSz(1) == 0 or mismatchSz(end) == 0,
-    % cut off signal at end or beginning, respectively. 
+    % cut off extra signal at end or beginning, respectively. 
 end
 
 % split pulses into groups of 10 
@@ -217,6 +223,11 @@ tTrainBnd = [t(1), t(splIdx)];
 
 sig = buildSignalObj([], d_unfilt, t, g, Fs, [chA; chB], ...
                      tTrainBnd, tTrainBnd, 2);
+
+catch ME  
+    warning(['Unable to process ',outerFolderName,': ',ME.message])
+    sig = buildSignalObj(); % all fields empty
+end
 
 end
 
