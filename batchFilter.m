@@ -8,8 +8,10 @@ sig = loadSignalObj([folder,filesep,files(1).name]);
 Fs = sig.SampleRate;
 clear sig
 
-%% define parameters for filter 
+%% define parameters for filter - SSEP
 % to do: change this to load a saved filter from file 
+
+%{
 
 N = 64; % filter taps 
 stepsize = .2;
@@ -51,6 +53,34 @@ lpFilt = designfilt('lowpassiir', ...
 % filter to object 
 filtObj = buildFilterObj([notches, hpFilt], lpFilt, N, stepsize, ...
                          [-1*ones(size(notches)), 0], 0, true);
+
+%}
+
+%% Define parameters for filter - motor nerve
+% to do: change this to load a saved filter from file 
+
+nUpdates = 100;
+
+% highpass filtering (baseline removal) 
+hpFilt = designfilt('highpassiir', ...
+                    'StopbandFrequency', .5, ...
+                    'PassbandFrequency', 1.5, ...
+                    'PassbandRipple', .5, ...
+                    'StopbandAttenuation', 60, ...
+                    'SampleRate', Fs, ... 
+                    'DesignMethod', 'butter');
+% lowpass filtering (noise removal)
+lpFilt = designfilt('lowpassiir', ...
+                    'StopbandFrequency', 1500, ...
+                    'PassbandFrequency', 1000, ...
+                    'PassbandRipple', .5, ...
+                    'StopbandAttenuation', 60, ...
+                    'SampleRate', Fs, ... 
+                    'DesignMethod', 'cheby2');
+N = 150; % filter taps 
+stepsize = .9;
+
+filtObj = buildFilterObj(hpFilt, lpFilt, N, stepsize, 0, 0, true, true);
 
 %% loop 
 savename = 'filtered_signal_obj';
