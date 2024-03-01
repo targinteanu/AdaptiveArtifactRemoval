@@ -196,7 +196,7 @@ lpFilt = designfilt('lowpassiir', ...
                     'SampleRate', Fs, ... 
                     'DesignMethod', 'cheby2');
 N = 150; % filter taps 
-stepsize = .9;
+stepsize = .2;
 filtObj = buildFilterObj(hpFilt, lpFilt, N, stepsize, 0, 0, true, true);
 sig = doPreFilt(filtObj, sig);
 sig = getTrainTestWrapper(sig);
@@ -339,6 +339,7 @@ linkaxes(ax1,'y'); linkaxes(ax2,'y');
 %}
 
 %% Sys ID 
+%{
 splIdx = round(length(t)/2);
 tTrainBnd = [t(splIdx-5e5), t(splIdx+5e5)];
 sig.Train_Time_Bounds = tTrainBnd;
@@ -351,6 +352,7 @@ figure; compare(TT, sysLin);
 sysHW0 = nlhw(TTtrain,sysLin); 
 figure; compare(TTtrain, sysHW0); 
 sysGB = idnlgrey(TTtrain,sysLin);
+%}
 % seems like a good idea but takes too long 
 %{
 sigmoidIn = idSigmoidNetwork(1); waveletOut = idWaveletNetwork(1);

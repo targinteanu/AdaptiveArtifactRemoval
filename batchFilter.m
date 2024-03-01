@@ -75,7 +75,7 @@ lpFilt = designfilt('lowpassiir', ...
                     'SampleRate', Fs, ... 
                     'DesignMethod', 'cheby2');
 N = 150; % filter taps 
-stepsize = .9;
+stepsize = .2;
 
 filtObj = buildFilterObj(hpFilt, lpFilt, N, stepsize, 0, 0, true, true);
 
@@ -104,13 +104,17 @@ parfor f = 1:length(files)
         error(['in ',files(f).name,': Sample rates are not equal.'])
     end
 
-    sig = doPreFilt(FO, sig);
-    sig = getTrainTestWrapper(sig);
-    [sig, FO] = preTrainWtsWrapper(FO, sig, .1*nUpdates);
-    [sig, w_end] = LMSonlineWrapper(FO, sig, nUpdates);
-    sig = doPostFilt(FO, sig);
+    try
+        sig = doPreFilt(FO, sig);
+        sig = getTrainTestWrapper(sig);
+        [sig, FO] = preTrainWtsWrapper(FO, sig, .1*nUpdates);
+        [sig, w_end] = LMSonlineWrapper(FO, sig, nUpdates);
+        sig = doPostFilt(FO, sig);
 
-    saveSignalCompact([savedir,files(f).name,'_filtered'],sig);
-    % clear sig
-    disp(['Completed ',files(f).name])
+        saveSignalCompact([savedir,files(f).name,'_filtered'],sig);
+        % clear sig
+        disp(['Completed ',files(f).name])
+    catch ME
+        warning(['Could not complete ',files(f).name,': ',ME.message])
+    end
 end
