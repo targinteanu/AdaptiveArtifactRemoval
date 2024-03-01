@@ -15,7 +15,6 @@ clear sig
 
 N = 64; % filter taps 
 stepsize = .2;
-nUpdates = 100;
 
 % notch out 60Hz (& odd harmonics)
 notches = [];
@@ -59,8 +58,6 @@ filtObj = buildFilterObj([notches, hpFilt], lpFilt, N, stepsize, ...
 %% Define parameters for filter - motor nerve
 % to do: change this to load a saved filter from file 
 
-nUpdates = 100;
-
 % highpass filtering (baseline removal) 
 hpFilt = designfilt('highpassiir', ...
                     'StopbandFrequency', .5, ...
@@ -94,10 +91,13 @@ savedir = [folder,filesep,savename,filesep];
 cd(codedir);
 
 %%
+nUpdates = 100;
+
 for f = 1:length(files)
+    disp(['Starting ',files(f).name])
     sig = loadSignalObj([folder,filesep,files(f).name]);
     if ~(sig.SampleRate == Fs)
-        error('Sample rates are not equal.')
+        error(['in ',files(f).name,': Sample rates are not equal.'])
     end
 
     sig = doPreFilt(filtObj, sig);
@@ -108,4 +108,5 @@ for f = 1:length(files)
 
     saveSignalCompact([savedir,files(f,1).name,'_filtered'],sig);
     clear sig
+    disp(['Completed ',files(f).name])
 end
