@@ -91,22 +91,26 @@ savedir = [folder,filesep,savename,filesep];
 cd(codedir);
 
 %%
-nUpdates = 100;
 
-for f = 1:length(files)
+% unsure if updates are compatible with parallel computing
+%nUpdates = 100; 
+nUpdates = 0;
+
+parfor f = 1:length(files)
     disp(['Starting ',files(f).name])
+    FO = filtObj;
     sig = loadSignalObj([folder,filesep,files(f).name]);
     if ~(sig.SampleRate == Fs)
         error(['in ',files(f).name,': Sample rates are not equal.'])
     end
 
-    sig = doPreFilt(filtObj, sig);
+    sig = doPreFilt(FO, sig);
     sig = getTrainTestWrapper(sig);
-    [sig, filtObj] = preTrainWtsWrapper(filtObj, sig, .1*nUpdates);
-    [sig, w_end] = LMSonlineWrapper(filtObj, sig, nUpdates);
-    sig = doPostFilt(filtObj, sig);
+    [sig, FO] = preTrainWtsWrapper(FO, sig, .1*nUpdates);
+    [sig, w_end] = LMSonlineWrapper(FO, sig, nUpdates);
+    sig = doPostFilt(FO, sig);
 
-    saveSignalCompact([savedir,files(f,1).name,'_filtered'],sig);
-    clear sig
+    saveSignalCompact([savedir,files(f).name,'_filtered'],sig);
+    % clear sig
     disp(['Completed ',files(f).name])
 end
