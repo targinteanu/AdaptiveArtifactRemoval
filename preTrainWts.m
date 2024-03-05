@@ -74,6 +74,13 @@ if nUpdates
     pause(.5);
 end
 
+wnan = isnan(w);
+if sum(wnan(:))
+    w(wnan) = 0;
+    wnan = sum(wnan(:))/numel(wnan);
+    warning(['Weights are ',num2str(wnan*100),'% undefined; reverting to zeros.'])
+end
+
 %% post-processing  
 op_train = zeros([size(t_train,1)-N+1,size(t_train,2)]); 
 for idx = 1:length(uchan)
