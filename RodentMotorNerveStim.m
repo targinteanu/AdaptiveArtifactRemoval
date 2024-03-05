@@ -5,7 +5,7 @@ load('rat1/amplifier_data/Naive/rat1_N_CMAP_1_230731_113111'); % load the "filt"
 load('rat1/trigger_data/Naive/rat1_N_CMAP_1_230731_113111_trigger'); % load the "board_adc_data" 1D array 
 %load('D:\filtering research proj\rat1\rat1\trigger_data\Naive\rat1_N_CMAP_1_230731_113111_trigger.mat');
 %}
-foldername = 'rat1/amplifier_data/Naive';
+foldername = 'rat1/amplifier_data/VDMT';
 files = dir(foldername);
 files = files(~[files.isdir]);
 d0 = []; g0 = [];
@@ -14,7 +14,7 @@ for f = 1:length(files)
     load([foldername,'/',files(f).name]);
     d0 = [d0, filt];
 end
-foldername = 'rat1/trigger_data/Naive';
+foldername = 'rat1/trigger_data/VDMT';
 files = dir(foldername);
 files = files(~[files.isdir]);
 for f = 1:length(files)
@@ -172,7 +172,7 @@ g = repmat(g, 1, size(d_unfilt,2));
 %trainfrac = .02;
 nUpdates = 100;
 %splIdx = floor(trainfrac*size(t,1));
-splIdx = 14e4;
+splIdx = 2.2e5;
 tTrainBnd = [t(1), t(splIdx)];
 
 sig = buildSignalObj([], d_unfilt, t, g, Fs, [chA; chB], ...

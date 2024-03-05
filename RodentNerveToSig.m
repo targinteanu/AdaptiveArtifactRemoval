@@ -214,7 +214,7 @@ g = repmat(g, 1, size(d_unfilt,2));
 %% define parameters for filter and training 
 %trainfrac = .02;
 %splIdx = floor(trainfrac*size(t,1));
-splIdx = 14e4;
+splIdx = 2.2e5;
 tTrainBnd = [t(1), t(splIdx)];
 
 sig = buildSignalObj([], d_unfilt, t, g, Fs, [chA; chB], ...
