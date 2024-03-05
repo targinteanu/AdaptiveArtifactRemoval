@@ -96,7 +96,7 @@ cd(codedir);
 %nUpdates = 100; 
 nUpdates = 0;
 
-parfor f = 1:length(files)
+for f = 1:length(files)
     disp(['Starting ',files(f).name])
     FO = filtObj;
     sig = loadSignalObj([folder,filesep,files(f).name]);
