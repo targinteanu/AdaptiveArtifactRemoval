@@ -1,3 +1,8 @@
+% Extract the ERP peak amplitudes/latencies and SNR from a batch of 
+% _filtered_sigObj.mat files in a folder.
+% Save the summary statistics as a spreadsheet. 
+% Meant to work with rodent SSEP data (Mingfeng). 
+
 %% setup before loop 
 codedir = cd;
 folder = uigetdir; 
