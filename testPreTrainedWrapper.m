@@ -28,7 +28,7 @@ uchan = sigObj.Channels;
 
 N = filtObj.Num_Taps; 
 
-e_test = testPreTrained(w, t_test, g_test, sigUnfiltTest, N, uchan, nUpdates);
+e_test = testPreTrained(w, t_test, g_test, sigUnfilt, N, uchan, nUpdates);
 
 sigObj.Data_LMS_Test = e_test;
 
