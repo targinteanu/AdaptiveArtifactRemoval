@@ -10,7 +10,7 @@ cd(folder);
 files = dir('*_filtered_sigObj.mat');
 cd(codedir);
 
-SNRtables = cell(2, 4); % rows = unfilt vs filt; cols = channel
+SNRtables = cell(2, 2); % rows = unfilt vs filt; cols = channel
 for r = 1:size(SNRtables,1)
     for c = 1:size(SNRtables,2)
         SNRtables{r,c} = table;
@@ -21,7 +21,10 @@ clear r c
 %%
 for f = 1:length(files)
 %% get all trials 
-subjname = files(f).name; subjname = subjname(1:(end-20))
+subjname = files(f).name; subjname = subjname(1:(end-37))
+
+try
+
 sig = loadSignalObj([folder,filesep,files(f).name]);
 
 N = size(sig.Data_Unfiltered,1) - size(sig.Data_LMS_LPF,1) + 1;
@@ -130,6 +133,10 @@ for ch = 1:size(SNRvals,2)
 
     SNRtables{1,ch} = bigTblUnfilt; SNRtables{2,ch} = bigTblFilt;
     clear bigTblFilt bigTblUnfilt tblFilt tblUnfilt
+end
+
+catch ME 
+    warning(['Could not load ',subjname,': ',ME.message])
 end
 
 clear sig subjname
