@@ -530,9 +530,10 @@ length = length / 2;
 
 for i=1:length
     aNext = fread(fid, 1, 'uint16');
-    if numel(aNext)
-        a(i) = aNext;
+    if ~numel(aNext)
+        return
     end
+    a(i) = aNext;
 end
 
 return
