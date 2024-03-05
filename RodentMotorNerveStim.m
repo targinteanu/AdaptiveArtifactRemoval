@@ -172,7 +172,7 @@ g = repmat(g, 1, size(d_unfilt,2));
 %trainfrac = .02;
 nUpdates = 100;
 %splIdx = floor(trainfrac*size(t,1));
-splIdx = 2.2e5;
+splIdx = 4e5;
 tTrainBnd = [t(1), t(splIdx)];
 
 sig = buildSignalObj([], d_unfilt, t, g, Fs, [chA; chB], ...
@@ -196,7 +196,7 @@ lpFilt = designfilt('lowpassiir', ...
                     'SampleRate', Fs, ... 
                     'DesignMethod', 'cheby2');
 N = 150; % filter taps 
-stepsize = .2;
+stepsize = .5;
 filtObj = buildFilterObj(hpFilt, lpFilt, N, stepsize, 0, 0, true, true);
 sig = doPreFilt(filtObj, sig);
 sig = getTrainTestWrapper(sig);

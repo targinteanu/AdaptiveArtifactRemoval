@@ -75,7 +75,7 @@ lpFilt = designfilt('lowpassiir', ...
                     'SampleRate', Fs, ... 
                     'DesignMethod', 'cheby2');
 N = 150; % filter taps 
-stepsize = .2;
+stepsize = .5;
 
 filtObj = buildFilterObj(hpFilt, lpFilt, N, stepsize, 0, 0, true, true);
 
