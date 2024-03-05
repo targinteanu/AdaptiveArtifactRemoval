@@ -5,7 +5,7 @@ load('rat1/amplifier_data/Naive/rat1_N_CMAP_1_230731_113111'); % load the "filt"
 load('rat1/trigger_data/Naive/rat1_N_CMAP_1_230731_113111_trigger'); % load the "board_adc_data" 1D array 
 %load('D:\filtering research proj\rat1\rat1\trigger_data\Naive\rat1_N_CMAP_1_230731_113111_trigger.mat');
 %}
-foldername = 'rat1/amplifier_data/VDMT';
+foldername = 'rat1/amplifier_data/Naive';
 files = dir(foldername);
 files = files(~[files.isdir]);
 d0 = []; g0 = [];
@@ -14,7 +14,7 @@ for f = 1:length(files)
     load([foldername,'/',files(f).name]);
     d0 = [d0, filt];
 end
-foldername = 'rat1/trigger_data/VDMT';
+foldername = 'rat1/trigger_data/Naive';
 files = dir(foldername);
 files = files(~[files.isdir]);
 for f = 1:length(files)
@@ -196,8 +196,8 @@ lpFilt = designfilt('lowpassiir', ...
                     'SampleRate', Fs, ... 
                     'DesignMethod', 'cheby2');
 N = 150; % filter taps 
-stepsize = .5;
-filtObj = buildFilterObj(hpFilt, lpFilt, N, stepsize, 0, 0, true, true);
+stepsize = .00001;
+filtObj = buildFilterObj(hpFilt, lpFilt, N, stepsize, 0, 0, true, false);
 sig = doPreFilt(filtObj, sig);
 sig = getTrainTestWrapper(sig);
 [sig, filtObj] = preTrainWtsWrapper(filtObj, sig, .1*nUpdates);
