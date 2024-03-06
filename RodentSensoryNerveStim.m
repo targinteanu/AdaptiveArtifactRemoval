@@ -5,7 +5,8 @@ filename = '220202_Experimental5Month_Sci_L_L4DRG_220202_131245_comb.rhd';
           t_amplifier,t_board_adc]...
           =read_Intan_RHD2000_file(filename); 
 
-chansel = [2,3,6,7,8];
+%chansel = [2,3,6,7,8];
+chansel = [2,3];
 amplifier_channels = amplifier_channels(chansel);
 amplifier_data = amplifier_data(chansel,:);
 spike_triggers = spike_triggers(chansel);
@@ -42,7 +43,7 @@ d_unfilt = amplifier_data;
 padT = .005; % delay dur (s); should be at least .0005
 padL = floor(padT*Fs); 
 dPad = d_unfilt(1,:).*ones(padL,1);
-d_unfilt = [dPad; d_unfilt(:,1:(end-padL))];
+d_unfilt = [dPad; d_unfilt(1:(end-padL),:)];
 
 d_unfilt = (d_unfilt-32768)*0.0003125; %filt in multiple of volt units
 
@@ -80,10 +81,25 @@ lpFilt = designfilt('lowpassiir', ...
                     'SampleRate', Fs, ... 
                     'DesignMethod', 'cheby2');
 N = 150; % filter taps 
-stepsize = .5;
+stepsize = .001;
 filtObj = buildFilterObj(hpFilt, lpFilt, N, stepsize, 0, 0, true, true);
 sig = doPreFilt(filtObj, sig);
 sig = getTrainTestWrapper(sig);
-[sig, filtObj] = preTrainWtsWrapper(filtObj, sig, .1*nUpdates);
+%[sig, filtObj] = preTrainWtsWrapper(filtObj, sig, .1*nUpdates);
 [sig, w_end] = LMSonlineWrapper(filtObj, sig, nUpdates);
 sig = doPostFilt(filtObj, sig);
+
+%%
+figure('Units','normalized', 'Position',[.1,.1,.8,.8]); 
+ax(1) = subplot(211);
+plot(sig.Times(:,1), sig.Data_HPF(:,1));
+hold on; 
+plot(sig.Times(N:end,1), sig.Data_LMS(:,1));
+legend('Unfiltered', 'Filtered');
+xlabel('time (s)'); ylabel('Volts'); title('signal');
+grid on;
+ax(2) = subplot(212); 
+plot(sig.Times(:,1), sig.Noise_Reference(:,1));
+xlabel('time (s)'); ylabel('current (amps?)'); title('noise reference');
+grid on;
+linkaxes(ax,'x');
