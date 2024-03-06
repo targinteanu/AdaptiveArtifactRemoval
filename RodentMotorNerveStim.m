@@ -173,7 +173,7 @@ g = repmat(g, 1, size(d_unfilt,2));
 nUpdates = 100;
 %splIdx = floor(trainfrac*size(t,1));
 splIdx = 4e5;
-tTrainBnd = [t(1), t(splIdx)];
+tTrainBnd = [t(1,1), t(splIdx,1)];
 
 sig = buildSignalObj([], d_unfilt, t, g, Fs, [chA; chB], ...
                      tTrainBnd, tTrainBnd, 2);

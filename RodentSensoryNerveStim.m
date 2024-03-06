@@ -57,7 +57,7 @@ g = repmat(g, 1, size(d_unfilt,2));
 %% define parameters for filter and training 
 nUpdates = 100;
 splIdx = 4e5;
-tTrainBnd = [t(1), t(splIdx)];
+tTrainBnd = [t(1,1), t(splIdx,1)];
 
 sig = buildSignalObj([], d_unfilt, t, g, Fs, chans, ...
                      tTrainBnd, tTrainBnd, 2);
