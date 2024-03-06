@@ -40,7 +40,7 @@ end
 d_unfilt = amplifier_data;
 
 % introduce delay in signal compared to noise reference 
-padT = .005; % delay dur (s); should be at least .0005
+padT = .002; % delay dur (s); should be at least .0005
 padL = floor(padT*Fs); 
 dPad = d_unfilt(1,:).*ones(padL,1);
 d_unfilt = [dPad; d_unfilt(1:(end-padL),:)];
@@ -48,6 +48,8 @@ d_unfilt = [dPad; d_unfilt(1:(end-padL),:)];
 d_unfilt = (d_unfilt-32768)*0.0003125; %filt in multiple of volt units
 
 g = board_adc_data;
+g = g./max(g);
+g = g.*(g > .1);
 
 chans = arrayfun(@(ch) buildChannelObj(ch.custom_channel_name, 0,0,0, 'Cartesian'), amplifier_channels);
 
@@ -81,7 +83,7 @@ lpFilt = designfilt('lowpassiir', ...
                     'SampleRate', Fs, ... 
                     'DesignMethod', 'cheby2');
 N = 150; % filter taps 
-stepsize = .001;
+stepsize = .1;
 filtObj = buildFilterObj(hpFilt, lpFilt, N, stepsize, 0, 0, true, true);
 sig = doPreFilt(filtObj, sig);
 sig = getTrainTestWrapper(sig);
