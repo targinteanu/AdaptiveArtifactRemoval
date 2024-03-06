@@ -1,4 +1,7 @@
-function read_Intan_RHD2000_file
+function [amplifier_channels, amplifier_data, board_adc_channels,...
+          board_adc_data,frequency_parameters,notes,spike_triggers,...,
+          t_amplifier,t_board_adc,t_temp_sensor,temp_sensor_data]...
+          =read_Intan_RHD2000_file(filename)
 
 % read_Intan_RHD2000_file
 %
@@ -17,15 +20,17 @@ function read_Intan_RHD2000_file
 % >> amplifier_channels(1)
 % >> plot(t_amplifier, amplifier_data(1,:))
 
+if nargin < 1
 [file, path, filterindex] = ...
     uigetfile('*.rhd', 'Select an RHD2000 Data File', 'MultiSelect', 'off');
+filename = [path,file];
 
 if (file == 0)
     return;
 end
+end
 
 tic;
-filename = [path,file];
 fid = fopen(filename, 'r');
 
 s = dir(filename);
@@ -454,7 +459,7 @@ if (data_present)
 end
 
 % Move variables to base workspace.
-
+%{
 % new for version 2.01: move filename info to base workspace
 filename = file;
 move_to_base_workspace(filename);
@@ -515,6 +520,8 @@ if (num_temp_sensor_channels > 0)
         move_to_base_workspace(t_temp_sensor);
     end
 end
+
+%}
 
 fprintf(1, 'Done!  Elapsed time: %0.1f seconds\n', toc);
 if (data_present)
