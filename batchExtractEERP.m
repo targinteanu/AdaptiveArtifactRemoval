@@ -91,7 +91,7 @@ for ch = 1:size(ERPvals,2)
         tblUnfilt.n15amp(trl) = n20n40(1,2); tblUnfilt.n15lat(trl) = n20n40(2,2); % [amplitude; latency]
         tblUnfilt.n40amp(trl) = n20n40(1,3); tblUnfilt.n40lat(trl) = n20n40(2,3); % [amplitude; latency]
         tblUnfilt.mean(trl) = mean(forward_HPF_ch(trl,:,1)); tblUnfilt.SD(trl) = std(d_PrePost_ch(trl,:,2)); 
-            % mean = only within selected time range
+            % mean = prior to stim
             % noise = std thru all times
         clear n20n40 stat
 
