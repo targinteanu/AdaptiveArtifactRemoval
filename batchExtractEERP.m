@@ -68,6 +68,8 @@ for ch = 1:size(ERPvals,2)
     % get filtered and unfiltered waveforms at this channel for each trial
     e_PrePost_ch = e_PrePost{ch};
     d_PrePost_ch = d_PrePost{ch};
+    forward_HPF_ch = forward_HPF{ch};
+    forward_BPF_ch = forward_BPF{ch};
 
     % get number of trials 
     nTrl = size(d_PrePost_ch,1);
@@ -88,7 +90,7 @@ for ch = 1:size(ERPvals,2)
         tblUnfilt.n07amp(trl) = n20n40(1,1); tblUnfilt.n07lat(trl) = n20n40(2,1); % [amplitude; latency]
         tblUnfilt.n15amp(trl) = n20n40(1,2); tblUnfilt.n15lat(trl) = n20n40(2,2); % [amplitude; latency]
         tblUnfilt.n40amp(trl) = n20n40(1,3); tblUnfilt.n40lat(trl) = n20n40(2,3); % [amplitude; latency]
-        tblUnfilt.mean(trl) = mean(forward_HPF(trl,:,1)); tblUnfilt.SD(trl) = std(d_PrePost_ch(trl,:,2)); 
+        tblUnfilt.mean(trl) = mean(forward_HPF_ch(trl,:,1)); tblUnfilt.SD(trl) = std(d_PrePost_ch(trl,:,2)); 
             % mean = only within selected time range
             % noise = std thru all times
         clear n20n40 stat
@@ -101,7 +103,7 @@ for ch = 1:size(ERPvals,2)
         tblFilt.n07amp(trl) = n20n40(1,1); tblFilt.n07lat(trl) = n20n40(2,1); % [amplitude; latency]
         tblFilt.n15amp(trl) = n20n40(1,2); tblFilt.n15lat(trl) = n20n40(2,2); % [amplitude; latency]
         tblFilt.n40amp(trl) = n20n40(1,3); tblFilt.n40lat(trl) = n20n40(2,3); % [amplitude; latency]
-        tblFilt.mean(trl) = mean(forward_BPF(trl,:,1)); tblFilt.SD(trl) = std(e_PrePost_ch(trl,:,2)); 
+        tblFilt.mean(trl) = mean(forward_BPF_ch(trl,:,1)); tblFilt.SD(trl) = std(e_PrePost_ch(trl,:,2)); 
         clear n20n40 stat
 
         %title('filt');
