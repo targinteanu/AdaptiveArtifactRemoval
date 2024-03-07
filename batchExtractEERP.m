@@ -19,17 +19,44 @@ for r = 1:size(ERPtables,1)
 end
 clear r c 
 
+% highpass filtering (baseline removal) 
+hpFilt = designfilt('highpassiir', ...
+                    'StopbandFrequency', .5, ...
+                    'PassbandFrequency', 1.5, ...
+                    'PassbandRipple', .5, ...
+                    'StopbandAttenuation', 60, ...
+                    'SampleRate', Fs, ... 
+                    'DesignMethod', 'butter');
+
+% lowpass filtering (noise removal)
+lpFilt = designfilt('lowpassiir', ...
+                    'StopbandFrequency', 3000, ...
+                    'PassbandFrequency', 2500, ...
+                    'PassbandRipple', .5, ...
+                    'StopbandAttenuation', 60, ...
+                    'SampleRate', Fs, ... 
+                    'DesignMethod', 'cheby2');
+
 %%
 for f = 1:length(files)
-%% get all trials 
 subjname = files(f).name; subjname = subjname(1:(end-37))
 sig = loadSignalObj([folder,filesep,files(f).name]);
+
+%% stitching (questionable) 
+sigHPF = filter(hpFilt, sig.Data_Unfiltered); % forward HPF 
+sigBPF = filter(lpFilt, sigHPF); % forward BPF 
+
+%% get all trials 
 
 N = size(sig.Data_Unfiltered,1) - size(sig.Data_LMS_LPF,1) + 1;
 
 tBeforeTrig = .06;
+
 [t_PrePost, d_PrePost, e_PrePost] = getPrePostStim(tBeforeTrig, ...
     sig.Noise_Reference, sig.Data_HPF, sig.Data_LMS_LPF, sig.SampleRate, sig.Channels, N);
+
+[forward_t, forward_HPF, forward_BPF] = getPrePostStim(tBeforeTrig, ...
+    sig.Noise_Reference, sigHPF, sigBPF, sig.SampleRate, sig.Channels, N);
 
 %% SNR (signal : noise ratio) - measure ERP peaks 
 tPost = t_PrePost(2,:);
@@ -61,7 +88,7 @@ for ch = 1:size(ERPvals,2)
         tblUnfilt.n07amp(trl) = n20n40(1,1); tblUnfilt.n07lat(trl) = n20n40(2,1); % [amplitude; latency]
         tblUnfilt.n15amp(trl) = n20n40(1,2); tblUnfilt.n15lat(trl) = n20n40(2,2); % [amplitude; latency]
         tblUnfilt.n40amp(trl) = n20n40(1,3); tblUnfilt.n40lat(trl) = n20n40(2,3); % [amplitude; latency]
-        tblUnfilt.mean(trl) = stat(1); tblUnfilt.SD(trl) = std(d_PrePost_ch(trl,:,2)); 
+        tblUnfilt.mean(trl) = mean(forward_HPF(trl,:,1)); tblUnfilt.SD(trl) = std(d_PrePost_ch(trl,:,2)); 
             % mean = only within selected time range
             % noise = std thru all times
         clear n20n40 stat
@@ -74,7 +101,7 @@ for ch = 1:size(ERPvals,2)
         tblFilt.n07amp(trl) = n20n40(1,1); tblFilt.n07lat(trl) = n20n40(2,1); % [amplitude; latency]
         tblFilt.n15amp(trl) = n20n40(1,2); tblFilt.n15lat(trl) = n20n40(2,2); % [amplitude; latency]
         tblFilt.n40amp(trl) = n20n40(1,3); tblFilt.n40lat(trl) = n20n40(2,3); % [amplitude; latency]
-        tblFilt.mean(trl) = stat(1); tblFilt.SD(trl) = std(e_PrePost_ch(trl,:,2)); 
+        tblFilt.mean(trl) = mean(forward_BPF(trl,:,1)); tblFilt.SD(trl) = std(e_PrePost_ch(trl,:,2)); 
         clear n20n40 stat
 
         %title('filt');
