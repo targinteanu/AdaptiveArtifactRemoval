@@ -26,7 +26,7 @@ sig = loadSignalObj([folder,filesep,files(f).name]);
 
 N = size(sig.Data_Unfiltered,1) - size(sig.Data_LMS_LPF,1) + 1;
 
-tBeforeTrig = .02;
+tBeforeTrig = .025;
 [t_PrePost, d_PrePost, e_PrePost] = getPrePostStim(tBeforeTrig, ...
     sig.Noise_Reference, sig.Data_HPF, sig.Data_LMS_LPF, sig.SampleRate, sig.Channels, N);
 
@@ -45,9 +45,9 @@ for ch = 1:size(SNRvals,2)
     nTrl = size(d_PrePost_ch,1);
 
     % setup tables for calculated values 
-    tblFilt = table('Size',[nTrl,6],...
-                    'VariableTypes',["double","double","double","double","double","double"], ...
-                    'VariableNames',{'n14amp','n14lat','p10amp','p10lat', 'mean','SD'});
+    tblFilt = table('Size',[nTrl,4],...
+                    'VariableTypes',["double","double","double","double"], ...
+                    'VariableNames',{'n13amp','n13lat', 'mean','SD'});
     tblUnfilt = tblFilt;
 
     % calculate values for each trial 
@@ -56,25 +56,23 @@ for ch = 1:size(SNRvals,2)
         %figure; subplot(211); 
 
         % populate row trl of table with n20 & n40 amps and latencies and stats (mean & SD)
-        [n14,p10,stat] = measureERP(tPost, d_PrePost_ch(trl,:,2), .014, .01, [.008,.25], 10, false);
-        tblUnfilt.n14amp(trl) = n14(1); tblUnfilt.n14lat(trl) = n14(2); % [amplitude; latency]
-        tblUnfilt.p10amp(trl) = p10(1); tblUnfilt.p10lat(trl) = p10(2); % [amplitude; latency]
-        tblUnfilt.mean(trl) = stat(1); tblUnfilt.SD(trl) = std(d_PrePost_ch(trl,:,2)); 
-            % mean = only within selected time range
+        [n13,~,~] = measureERP(tPost, d_PrePost_ch(trl,:,2), .013, [], [.008,.25], 10, false);
+        tblUnfilt.n13amp(trl) = n13(1); tblUnfilt.n13lat(trl) = n13(2); % [amplitude; latency]
+        tblUnfilt.mean(trl) = mean(d_PrePost_ch(trl,:,1)); tblUnfilt.SD(trl) = std(d_PrePost_ch(trl,:,2)); 
+            % mean = prior to stim
             % noise = std thru all times
-        clear n14 p10 stat
+        clear n13 p10 stat
 
         %title('unfilt');
         %subplot(212); 
 
         % do the same for filtered data 
-        [n14,p10,stat] = measureERP(tPost, e_PrePost_ch(trl,:,2), .014, .01, [.008,.25], 10, false);
-        tblFilt.n14amp(trl) = n14(1); tblFilt.n14lat(trl) = n14(2); % [amplitude; latency]
-        tblFilt.p10amp(trl) = p10(1); tblFilt.p10lat(trl) = p10(2); % [amplitude; latency]
-        tblFilt.mean(trl) = stat(1); tblFilt.SD(trl) = std(e_PrePost_ch(trl,:,2)); 
-            % mean = only within selected time range
+        [n13,~,~] = measureERP(tPost, e_PrePost_ch(trl,:,2), .013, [], [.008,.25], 10, false);
+        tblFilt.n13amp(trl) = n13(1); tblFilt.n13lat(trl) = n13(2); % [amplitude; latency]
+        tblFilt.mean(trl) = mean(e_PrePost_ch(trl,:,1)); tblFilt.SD(trl) = std(e_PrePost_ch(trl,:,2)); 
+            % mean = prior to stim
             % noise = std thru all times
-        clear n14 p10 stat
+        clear n13 p10 stat
 
         %title('filt');
     end
@@ -92,40 +90,30 @@ for ch = 1:size(SNRvals,2)
     bigTblUnfilt = SNRtables{1,ch}; bigTblFilt = SNRtables{2,ch};
 
 
-    bigTblUnfilt.n14ampMean(subjname) = mean(tblUnfilt.n14amp, 'omitnan');
-    bigTblUnfilt.p10ampMean(subjname) = mean(tblUnfilt.p10amp, 'omitnan');
-    bigTblUnfilt.n14latMean(subjname) = mean(tblUnfilt.n14lat, 'omitnan');
-    bigTblUnfilt.p10latMean(subjname) = mean(tblUnfilt.p10lat, 'omitnan');
-    bigTblUnfilt.snrMean(subjname) = mean( (tblUnfilt.n14amp-tblUnfilt.p10amp)./tblUnfilt.SD, 'omitnan' );
+    bigTblUnfilt.n13ampMean(subjname) = mean(tblUnfilt.n13amp - tblUnfilt.mean, 'omitnan');
+    bigTblUnfilt.n13latMean(subjname) = mean(tblUnfilt.n13lat, 'omitnan');
+    bigTblUnfilt.snrMean(subjname) = mean( (tblUnfilt.n13amp - tblUnfilt.mean)./tblUnfilt.SD, 'omitnan' );
     bigTblUnfilt.noiseMean(subjname) = mean(tblUnfilt.SD); 
     
-    bigTblUnfilt.n14ampSD(subjname) = std(tblUnfilt.n14amp, 'omitnan');
-    bigTblUnfilt.p10ampSD(subjname) = std(tblUnfilt.p10amp, 'omitnan');
-    bigTblUnfilt.n14latSD(subjname) = std(tblUnfilt.n14lat, 'omitnan');
-    bigTblUnfilt.p10latSD(subjname) = std(tblUnfilt.p10lat, 'omitnan');
-    bigTblUnfilt.snrSD(subjname) = std( (tblUnfilt.n14amp-tblUnfilt.p10amp)./tblUnfilt.SD, 'omitnan' );
+    bigTblUnfilt.n13ampSD(subjname) = std(tblUnfilt.n13amp - tblUnfilt.mean, 'omitnan');
+    bigTblUnfilt.n13latSD(subjname) = std(tblUnfilt.n13lat, 'omitnan');
+    bigTblUnfilt.snrSD(subjname) = std( (tblUnfilt.n13amp - tblUnfilt.mean)./tblUnfilt.SD, 'omitnan' );
     bigTblUnfilt.noiseSD(subjname) = std(tblUnfilt.SD); 
 
-    bigTblUnfilt.n14num(subjname) = sum(~isnan(tblUnfilt.n14lat));
-    bigTblUnfilt.p10num(subjname) = sum(~isnan(tblUnfilt.p10lat));
+    bigTblUnfilt.n13num(subjname) = sum(~isnan(tblUnfilt.n13lat));
 
 
-    bigTblFilt.n14ampMean(subjname) = mean(tblFilt.n14amp, 'omitnan');
-    bigTblFilt.p10ampMean(subjname) = mean(tblFilt.p10amp, 'omitnan');
-    bigTblFilt.n14latMean(subjname) = mean(tblFilt.n14lat, 'omitnan');
-    bigTblFilt.p10latMean(subjname) = mean(tblFilt.p10lat, 'omitnan');
-    bigTblFilt.snrMean(subjname) = mean( (tblFilt.n14amp-tblFilt.p10amp)./tblFilt.SD, 'omitnan' );
+    bigTblFilt.n13ampMean(subjname) = mean(tblFilt.n13amp - tblFilt.mean, 'omitnan');
+    bigTblFilt.n13latMean(subjname) = mean(tblFilt.n13lat, 'omitnan');
+    bigTblFilt.snrMean(subjname) = mean( (tblFilt.n13amp - tblFilt.mean)./tblFilt.SD, 'omitnan' );
     bigTblFilt.noiseMean(subjname) = mean(tblFilt.SD); 
     
-    bigTblFilt.n14ampSD(subjname) = std(tblFilt.n14amp, 'omitnan');
-    bigTblFilt.p10ampSD(subjname) = std(tblFilt.p10amp, 'omitnan');
-    bigTblFilt.n14latSD(subjname) = std(tblFilt.n14lat, 'omitnan');
-    bigTblFilt.p10latSD(subjname) = std(tblFilt.p10lat, 'omitnan');
-    bigTblFilt.snrSD(subjname) = std( (tblFilt.n14amp-tblFilt.p10amp)./tblFilt.SD, 'omitnan' );
+    bigTblFilt.n13ampSD(subjname) = std(tblFilt.n13amp - tblFilt.mean, 'omitnan');
+    bigTblFilt.n13latSD(subjname) = std(tblFilt.n13lat, 'omitnan');
+    bigTblFilt.snrSD(subjname) = std( (tblFilt.n13amp - tblFilt.mean)./tblFilt.SD, 'omitnan' );
     bigTblFilt.noiseSD(subjname) = std(tblFilt.SD); 
 
-    bigTblFilt.n14num(subjname) = sum(~isnan(tblFilt.n14lat));
-    bigTblFilt.p10num(subjname) = sum(~isnan(tblFilt.p10lat));
+    bigTblFilt.n13num(subjname) = sum(~isnan(tblFilt.n13lat));
 
 
     SNRtables{1,ch} = bigTblUnfilt; SNRtables{2,ch} = bigTblFilt;

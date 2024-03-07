@@ -5,7 +5,7 @@ load('rat1/amplifier_data/Naive/rat1_N_CMAP_1_230731_113111'); % load the "filt"
 load('rat1/trigger_data/Naive/rat1_N_CMAP_1_230731_113111_trigger'); % load the "board_adc_data" 1D array 
 %load('D:\filtering research proj\rat1\rat1\trigger_data\Naive\rat1_N_CMAP_1_230731_113111_trigger.mat');
 %}
-foldername = 'rat1/amplifier_data/VDMT';
+foldername = 'rat1/amplifier_data/Naive';
 files = dir(foldername);
 files = files(~[files.isdir]);
 d0 = []; g0 = [];
@@ -14,7 +14,7 @@ for f = 1:length(files)
     load([foldername,'/',files(f).name]);
     d0 = [d0, filt];
 end
-foldername = 'rat1/trigger_data/VDMT';
+foldername = 'rat1/trigger_data/Naive';
 files = dir(foldername);
 files = files(~[files.isdir]);
 for f = 1:length(files)
@@ -226,7 +226,7 @@ grid on;
 linkaxes(ax,'x');
 
 %%
-tBeforeTrig = .02;
+tBeforeTrig = .025;
 [t_PrePost, d_PrePost, e_PrePost] = getPrePostStim(tBeforeTrig, ...
     sig.Noise_Reference, sig.Data_BPF, sig.Data_LMS_LPF, Fs, sig.Channels, N);
 PrePostAvgAll_v2(tBeforeTrig,t_PrePost,d_PrePost,e_PrePost,Fs,sig.Channels,10);
