@@ -11,15 +11,9 @@ files = dir('*_filtered_sigObj.mat');
 cd(codedir);
 
 tblNcol = 19;
-%{
-tblBlank = table('Size',[length(files),tblNcol], ...
-                 'VariableTypes',repmat("double",[1,tblNcol]), ...
-                 'RowNames',{files.name});
-%}
 ERPtables = cell(2, 4); % rows = unfilt vs filt; cols = channel
 for r = 1:size(ERPtables,1)
     for c = 1:size(ERPtables,2)
-        %ERPtables{r,c} = tblBlank;
         ERPtables{r,c} = table;
     end
 end
@@ -36,7 +30,6 @@ N = size(sig.Data_Unfiltered,1) - size(sig.Data_LMS_LPF,1) + 1;
 tBeforeTrig = .06;
 [t_PrePost, d_PrePost, e_PrePost] = getPrePostStim(tBeforeTrig, ...
     sig.Noise_Reference, sig.Data_HPF, sig.Data_LMS_LPF, sig.SampleRate, sig.Channels, N);
-%PrePostAvgAll_v2(tBeforeTrig,t_PrePost,d_PrePost,e_PrePost,Fs,sig.Channels,10);
 
 %% SNR (signal : noise ratio) - measure ERP peaks 
 tPost = t_PrePost(2,:);
