@@ -19,6 +19,10 @@ for r = 1:size(ERPtables,1)
 end
 clear r c 
 
+sig = loadSignalObj([folder,filesep,files(1).name]);
+Fs = sig.SampleRate;
+clear sig
+
 % highpass filtering (baseline removal) 
 hpFilt = designfilt('highpassiir', ...
                     'StopbandFrequency', .5, ...
