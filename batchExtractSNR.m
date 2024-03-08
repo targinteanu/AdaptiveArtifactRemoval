@@ -21,7 +21,7 @@ clear r c
 %%
 for f = 1:length(files)
 %% get all trials 
-subjname = files(f).name; subjname = subjname(1:(end-37))
+subjname = files(f).name; subjname = subjname(1:(end-37)) % consider using shortenFileName instead 
 
 try
 

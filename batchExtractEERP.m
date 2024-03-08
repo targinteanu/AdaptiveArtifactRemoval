@@ -43,7 +43,7 @@ lpFilt = designfilt('lowpassiir', ...
 
 %%
 for f = 1:length(files)
-subjname = files(f).name; subjname = subjname(1:(end-37))
+subjname = files(f).name; subjname = shortenFileName(subjname)
 sig = loadSignalObj([folder,filesep,files(f).name]);
 
 %% stitching (questionable) 
