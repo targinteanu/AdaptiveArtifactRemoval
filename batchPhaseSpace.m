@@ -102,6 +102,18 @@ for ch = 1:size(PSvals,2)
     bigTblFilt.PSA30std(subjname) = std(tblFilt.PSA30, 'omitnan');
     bigTblFilt.PSA50std(subjname) = std(tblFilt.PSA50, 'omitnan');
 
+    bigTblUnfilt.PSAnum(subjname) = sum(~isnan(tblUnfilt.PSA));
+    bigTblUnfilt.PSAsubnum(subjname) = sum(~isnan(tblUnfilt.PSAsub));
+    bigTblUnfilt.PSA09num(subjname) = sum(~isnan(tblUnfilt.PSA09));
+    bigTblUnfilt.PSA30num(subjname) = sum(~isnan(tblUnfilt.PSA30));
+    bigTblUnfilt.PSA50num(subjname) = sum(~isnan(tblUnfilt.PSA50));
+
+    bigTblFilt.PSAnum(subjname) = sum(~isnan(tblFilt.PSA));
+    bigTblFilt.PSAsubnum(subjname) = sum(~isnan(tblFilt.PSAsub));
+    bigTblFilt.PSA09num(subjname) = sum(~isnan(tblFilt.PSA09));
+    bigTblFilt.PSA30num(subjname) = sum(~isnan(tblFilt.PSA30));
+    bigTblFilt.PSA50num(subjname) = sum(~isnan(tblFilt.PSA50));
+
     PStables{1,ch} = bigTblUnfilt; PStables{2,ch} = bigTblFilt;
     clear bigTblFilt bigTblUnfilt tblFilt tblUnfilt
 end
