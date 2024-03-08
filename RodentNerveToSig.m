@@ -246,26 +246,31 @@ end
                 nIdx(i) = (names{i}(1) == 'N') | (names{i}(1) == 'n');
             end
         end
+        %{
         if ~sum(nIdx)
             for i = 1:length(nIdx)
                 nIdx(i) = contains(names{i}, 'n', 'IgnoreCase', true);
             end
         end
+        %}
 
         % VDMT / V
         for i = 1:length(vIdx)
-            vIdx(i) = contains(names{i}, 'VDMT', 'IgnoreCase', true);
+            vIdx(i) = contains(names{i}, 'DMT', 'IgnoreCase', true);
         end
         if ~sum(vIdx)
             for i = 1:length(vIdx)
                 vIdx(i) = (names{i}(1) == 'V') | (names{i}(1) == 'v');
             end
         end
+        %{
+        % This is flawed because the word "Naive" contains letter 'v'
         if ~sum(vIdx)
             for i = 1:length(vIdx)
                 vIdx(i) = contains(names{i}, 'v', 'IgnoreCase', true);
             end
         end
+        %}
 
         nameN = names(nIdx); nameV = names(vIdx);
         if (length(nameN) > 1) | (length(nameV) > 1)
