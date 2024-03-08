@@ -116,6 +116,7 @@ for ch = 1:size(SNRvals,2)
     bigTblUnfilt.noiseSD(subjname) = std(tblUnfilt.SD); 
 
     bigTblUnfilt.n13num(subjname) = sum(~isnan(tblUnfilt.n13lat));
+    bigTblUnfilt.p15num(subjname) = sum(~isnan(tblUnfilt.p15lat));
 
 
     bigTblFilt.n13ampMean(subjname) = mean(tblFilt.n13amp - tblFilt.mean, 'omitnan');
@@ -137,6 +138,7 @@ for ch = 1:size(SNRvals,2)
     bigTblFilt.noiseSD(subjname) = std(tblFilt.SD); 
 
     bigTblFilt.n13num(subjname) = sum(~isnan(tblFilt.n13lat));
+    bigTblFilt.p15num(subjname) = sum(~isnan(tblFilt.p15lat));
 
 
     SNRtables{1,ch} = bigTblUnfilt; SNRtables{2,ch} = bigTblFilt;
