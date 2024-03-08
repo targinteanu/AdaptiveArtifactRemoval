@@ -123,7 +123,7 @@ Fs = 1/dt_mean; % Hz
 
 %splIdx = floor(trainfrac*size(t,1));
 splIdx = 2.2e5;
-tTrainBnd = [t(1), t(splIdx)];
+tTrainBnd = [t(1,1), t(splIdx,1)];
 
 %% shorten - to be removed?
 if truncateSig
