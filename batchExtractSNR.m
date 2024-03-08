@@ -144,7 +144,7 @@ for ch = 1:size(SNRvals,2)
 end
 
 catch ME 
-    warning(['Could not load ',subjname,': ',ME.message])
+    warning(['Could not load or process ',subjname,': ',ME.message])
 end
 
 clear sig subjname

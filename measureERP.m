@@ -39,10 +39,16 @@ xRng = max(x) - min(x); % range of signal
 
 xstats = [mean(x); std(x)];
 
+if isempty(t) | isempty(x)
+    nOut = nan(2, length(nPk));
+    pOut = nan(2, length(pPk));
+else
+
 if ~( isempty(avgwinlen) | (avgwinlen==0) )
     x = movmean(x, avgwinlen);
 end
 
+% 2 lines below: needed? change to nan? needs second row? 
 pOut = zeros(size(pPk)); 
 nOut = zeros(size(nPk));
 
@@ -61,6 +67,8 @@ end
 if ~isempty(nPk)
 nPksList = candidatePeaks(nPk, npk, nlc, nw, npr);
 nOut = selectPeaks(nPk, nPksList);
+end
+
 end
 
 if showPlot
