@@ -1,5 +1,6 @@
 function [sgramUnfiltBefore, sgramUnfiltAfter, sgramFiltBefore, sgramFiltAfter, ...
-    fig] = PrePostAvgAll(tBeforeTrig, t_PrePost, d_PrePost, e_PrePost, Fs, uchan, nUpdates)
+    fig] = PrePostAvgAll(tBeforeTrig, t_PrePost, d_PrePost, e_PrePost, Fs, uchan, nUpdates, ...
+                            useCWT)
 % Plot the filtered and unfiltered signals and their power spectra/spectrograms 
 % before and after the stimulus, averaged over all available trials.  
 % 
@@ -30,6 +31,10 @@ function [sgramUnfiltBefore, sgramUnfiltAfter, sgramFiltBefore, sgramFiltAfter, 
 
 % TO DO: consider breaking spectrogram stuff into separate function or
 % having option to disable it 
+
+if nargin < 8
+    useCWT = false;
+end
 
 %% colors: 
 dkBlue  = [  1,  50, 130] /255;
@@ -75,17 +80,17 @@ for chIdx = 1:length(uchan)
 
 
     % Spectrogram Calculation --------------------------------------------
-    [~, sFiltBeforeF,   sFiltBeforeT,   sFiltBefore] = ...
-        spectrogram(meanFiltBefore,   sgramWinLen, [], sgramFQ, Fs);
+    [sFiltBeforeF,   sFiltBeforeT,   sFiltBefore] = ...
+        sGramFcn(meanFiltBefore,   sgramWinLen, [], sgramFQ, Fs, t_PrePost(1,:));
 
-    [~, sFiltAfterF,    sFiltAfterT,    sFiltAfter] = ...
-        spectrogram(meanFiltAfter,    sgramWinLen, [], sgramFQ, Fs);
+    [sFiltAfterF,    sFiltAfterT,    sFiltAfter] = ...
+        sGramFcn(meanFiltAfter,    sgramWinLen, [], sgramFQ, Fs, t_PrePost(2,:));
 
-    [~, sUnfiltBeforeF, sUnfiltBeforeT, sUnfiltBefore] = ...
-        spectrogram(meanUnfiltBefore, sgramWinLen, [], sgramFQ, Fs);
+    [sUnfiltBeforeF, sUnfiltBeforeT, sUnfiltBefore] = ...
+        sGramFcn(meanUnfiltBefore, sgramWinLen, [], sgramFQ, Fs, t_PrePost(1,:));
 
-    [~, sUnfiltAfterF,  sUnfiltAfterT,  sUnfiltAfter] = ...
-        spectrogram(meanUnfiltAfter,  sgramWinLen, [], sgramFQ, Fs);
+    [sUnfiltAfterF,  sUnfiltAfterT,  sUnfiltAfter] = ...
+        sGramFcn(meanUnfiltAfter,  sgramWinLen, [], sgramFQ, Fs, t_PrePost(2,:));
 
     sFiltBefore   = zeros([size(sFiltBefore),   size(sigFiltCh,1)]);
     sFiltAfter    = zeros([size(sFiltAfter),    size(sigFiltCh,1)]);
@@ -93,8 +98,8 @@ for chIdx = 1:length(uchan)
     sUnfiltAfter  = zeros([size(sUnfiltAfter),  size(sigUnfiltCh,1)]);
 
     for trl = 1:size(sigFiltCh,1)
-        [~,~,~,sFiltBefore(:,:,trl)] = spectrogram(sigFiltCh(trl,:,1), sgramWinLen, [], sgramFQ, Fs);
-        [~,~,~,sFiltAfter(:,:,trl)] = spectrogram(sigFiltCh(trl,:,2), sgramWinLen, [], sgramFQ, Fs);
+        [~,~,sFiltBefore(:,:,trl)] = sGramFcn(sigFiltCh(trl,:,1), sgramWinLen, [], sgramFQ, Fs, t_PrePost(1,:));
+        [~,~,sFiltAfter(:,:,trl)] = sGramFcn(sigFiltCh(trl,:,2), sgramWinLen, [], sgramFQ, Fs, t_PrePost(2,:));
         if nUpdates
             if ~mod(trl, floor(size(sigFiltCh,1)/(nUpdates)))
                 disp(['Obtaining Channel ',chan.labels,' Spectrograms: ',...
@@ -104,8 +109,8 @@ for chIdx = 1:length(uchan)
     end
 
     for trl = 1:size(sigUnfiltCh,1)
-        [~,~,~,sUnfiltBefore(:,:,trl)] = spectrogram(sigUnfiltCh(trl,:,1), sgramWinLen, [], sgramFQ, Fs);
-        [~,~,~,sUnfiltAfter(:,:,trl)] = spectrogram(sigUnfiltCh(trl,:,2), sgramWinLen, [], sgramFQ, Fs);
+        [~,~,sUnfiltBefore(:,:,trl)] = sGramFcn(sigUnfiltCh(trl,:,1), sgramWinLen, [], sgramFQ, Fs, t_PrePost(1,:));
+        [~,~,sUnfiltAfter(:,:,trl)] = sGramFcn(sigUnfiltCh(trl,:,2), sgramWinLen, [], sgramFQ, Fs, t_PrePost(1,:));
         if nUpdates
             if ~mod(trl, floor(size(sigUnfiltCh,1)/(nUpdates)))
                 disp(['Obtaining Channel ',chan.labels,' Spectrograms: ',...
@@ -224,5 +229,15 @@ for chIdx = 1:length(uchan)
 
     pause(.25);
 end
+
+    function [fOut, tOut, S] = sGramFcn(x, winlen, nover, fq, fs, t)
+        if useCWT
+            [S, fOut] = cwt(x, fs);
+            S = abs(S);
+            tOut = t;
+        else
+            [~, fOut, tOut, S] = spectrogram(x, winlen, nover, fq, fs);
+        end
+    end
 
 end

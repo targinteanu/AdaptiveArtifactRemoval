@@ -191,7 +191,7 @@ linkaxes(ax1,'y'); linkaxes(ax2,'y'); linkaxes(ax3,'y');
 
 %% NTFS 
 % first, try getting it from averaged spectrogram 
-[SUB, SUA, SFB, SFA] = PrePostAvgAll(tBeforeTrig,t_PrePost,d_PrePost,e_PrePost,Fs,sig.Channels,10);
+[SUB, SUA, SFB, SFA] = PrePostAvgAll(tBeforeTrig,t_PrePost,d_PrePost,e_PrePost,Fs,sig.Channels,10, true);
 %%
 getAllTFS = @(S, fRng, tRng) S{1,4}( ...
                                      (S{1,2}>=min(fRng)) & (S{1,2}<=max(fRng)), ...

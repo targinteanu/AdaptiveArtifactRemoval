@@ -13,9 +13,23 @@ tBeforeTrig = .04;
     sig.Noise_Reference, sig.Data_HPF, sig.Data_LMS_LPF, Fs, sig.Channels, N);
 %PrePostAvgAll_v2(tBeforeTrig,t_PrePost,d_PrePost,e_PrePost,Fs,sig.Channels,10);
 
+%% spectrogram of averaged 
+tPost = t_PrePost(2,:);
+d_PrePost_avg = e_PrePost{1};
+d_PrePost_avg = mean(d_PrePost_avg);
+d_Post_avg = d_PrePost_avg(:,:,2);
+
+sgramFmax = Fs/2.25; 
+sgramFWinLen = .1/(tBeforeTrig); % Hz
+sgramFQ = 0:sgramFWinLen:sgramFmax; 
+
+figure; plot(tPost, d_Post_avg);
+figure; spectrogram(d_Post_avg, 10, [], sgramFQ, Fs, 'yaxis');
+figure; cwt(d_Post_avg, Fs);
+
 %% NTFS 
 % first, try getting it from averaged spectrogram 
-[SUB, SUA, SFB, SFA] = PrePostAvgAll(tBeforeTrig,t_PrePost,d_PrePost,e_PrePost,Fs,sig.Channels,10);
+[SUB, SUA, SFB, SFA] = PrePostAvgAll(tBeforeTrig,t_PrePost,d_PrePost,e_PrePost,Fs,sig.Channels,10, true);
 
 %%
 figure;
