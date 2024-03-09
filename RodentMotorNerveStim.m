@@ -204,7 +204,7 @@ sig = getTrainTestWrapper(sig);
 [sig, w_end] = LMSonlineWrapper(filtObj, sig, nUpdates);
 sig = doPostFilt(filtObj, sig);
 
-%%
+%% display
 %plotwindow1 = 1:1100000;
 plotwindow2 = 3450000 - ((1e6):(-1):0);
 plotwindow1 = plotwindow2 - N;

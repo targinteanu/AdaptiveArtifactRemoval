@@ -99,7 +99,7 @@ sig = getTrainTestWrapper(sig);
 [sig, w_end] = LMSonlineWrapper(filtObj, sig, nUpdates);
 sig = doPostFilt(filtObj, sig);
 
-%%
+%% display
 figure('Units','normalized', 'Position',[.1,.1,.8,.8]); 
 ax(1) = subplot(211);
 plot(sig.Times(:,1), sig.Data_HPF(:,1));
@@ -113,3 +113,12 @@ plot(sig.Times(:,1), sig.Noise_Reference(:,1));
 xlabel('time (s)'); ylabel('current (amps?)'); title('noise reference');
 grid on;
 linkaxes(ax,'x');
+
+%%
+tBeforeTrig = .025;
+[t_PrePost, d_PrePost, e_PrePost] = getPrePostStim(tBeforeTrig, ...
+    sig.Noise_Reference, sig.Data_BPF, sig.Data_LMS_LPF, Fs, sig.Channels, N);
+
+PrePostAvgAll_v2(tBeforeTrig,t_PrePost,d_PrePost,e_PrePost,Fs,sig.Channels,10);
+
+PrePostAvgBatch(3+5+10,t_PrePost,d_PrePost,e_PrePost,Fs,sig.Channels);
