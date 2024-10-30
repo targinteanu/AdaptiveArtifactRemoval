@@ -56,7 +56,7 @@ varplt = {'n15amp',  'n07amp'};
 varnam = {'N10',     'N7'};
 varmkr = {'.',       '.'};
 varclr = {'#D95319', '#0072BD'}; % red, blue
-CAtime = TTtime(2);
+CAtime = TTtime(2); REtime = TTtime(3);
 
 % summary stats helpers 
 avgTbl = @(T) mean(T, 'omitnan');
@@ -73,7 +73,8 @@ TTcat = [];
 for TTi = TTsel'
     TTcat = [TTcat; TTi{:}];
 end
-TTcat.Time = TTcat.Time - CAtime;
+TTcat.Time = TTcat.Time - CAtime; REtime = REtime - CAtime;
+REtime_lbl = round(minutes(REtime));
 
 figure; 
 
@@ -85,7 +86,8 @@ for v = 1:length(varplt)
     yP = [y-yP, y+yP, y+yP, y-yP];
     y = [y, y];
     plot(x,y, '--', 'Color',varclr{v}, 'LineWidth',2); hold on;
-    patch('XData',xP, 'YData',yP, 'FaceColor',varclr{v}, 'FaceAlpha',.1);
+    patch('XData',xP, 'YData',yP, 'FaceColor',varclr{v}, ...
+        'FaceAlpha',.1, 'EdgeColor','none');
     %{
     y = CAavg.(varplt{v}); 
     yP = CAci.(['Fun_',varplt{v}]); 
@@ -108,9 +110,21 @@ for v = 1:length(varplt)
     %plot(x, yci, '--', 'Color',varclr{v}, 'LineWidth',.5);
 end
 
+% plot start of resusc
+yrng = ylim; 
+plot(seconds(0)*ones(size(yrng)), yrng, ':k', 'LineWidth',1);
+plot(    REtime*ones(size(yrng)), yrng, '-k', 'LineWidth',1);
+
 % labels 
 grid on;
-xlabel('time from CA onset'); ylabel('Amplitude (V)');
+set(gca, 'FontSize',16);
+xlabel('time from CA onset', 'FontSize',20); 
+ylabel('Amplitude (V)', 'FontSize',20);
+title([num2str(REtime_lbl),'-Minute CA Recovery'], 'FontSize',28);
+legend('N10 Baseline Avg', 'N10 Baseline 95% C.I.', 'N17 Baseline Avg', 'N17 Baseline 95% C.I.', ...
+    'N10', 'N10 Moving Average', 'N7', 'N7 Moving Average', ...
+    'CA onset', 'Resuscitation onset', ...
+    'Location','westoutside', 'FontSize',18);
 
 %% helpers 
 
