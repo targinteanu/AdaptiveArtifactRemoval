@@ -1,4 +1,5 @@
-function [t_PrePost, d_PrePost, e_PrePost] = getPrePostStim(tBeforeTrig, g, d, e, Fs, uchan, N)
+function [t_PrePost, d_PrePost, e_PrePost, t_Stim] = ...
+    getPrePostStim(tBeforeTrig, g, d, e, Fs, uchan, N)
 % Get the filtered and unfiltered signals some time before and after the stimulus. 
 % 
 % Inputs: 
@@ -6,7 +7,7 @@ function [t_PrePost, d_PrePost, e_PrePost] = getPrePostStim(tBeforeTrig, g, d, e
 %   g: stimulus value over time, as columns 
 %   d: unfiltered value over time, as columns (V)
 %   e: filtered value over time, as columns (V)
-%   Fs: sampling rate of g, d, and e_t (Hz) 
+%   Fs: sampling rate of g, d, and e (Hz) 
 %   uchan: array of unique channels, same length as width of g, d, and e 
 %   N: number of filter taps         
 % 
@@ -16,6 +17,7 @@ function [t_PrePost, d_PrePost, e_PrePost] = getPrePostStim(tBeforeTrig, g, d, e
 %              d_PrePost{i}(r,c,1) is before stim, trial r, timepoint c, channel i;
 %              d_PrePost{i}(r,c,2) is after stim, trial r, timepoint c, channel i
 %   e_PrePost: filtered value in the same format as d_PrePost 
+%   t_Stim: time of each stimulus for each channel
 
 %% getting signals before and after stim  
 %tBeforeTrig = .29; % s
@@ -25,11 +27,13 @@ t_PrePost = [-tBeforeTrig:(1/Fs):0; 0:(1/Fs):tBeforeTrig]; % [before; after]
 
 d_PrePost           = cell(1, length(uchan));
 e_PrePost           = cell(size(d_PrePost));
+t_Stim              = cell(1, length(uchan));
 
 for chIdx = 1:length(uchan)
     gch = g(:,chIdx);
     grng = max(gch) - min(gch);
     [trigval, trig] = findpeaks(gch, 'MinPeakProminence',.1*grng);
+    t_Stim{chIdx} = trig/Fs;
     %trig = [0; abs(diff(gch))];
     %trig = trig > .1*max(trig); trig = find(trig);
 
