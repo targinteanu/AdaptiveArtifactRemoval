@@ -13,7 +13,7 @@ filesel = listdlg("PromptString","Select Files", "SelectionMode","multiple", ...
 files = files(filesel);
 
 %% setup 
-TTf = []; TTu = [];
+TTf = {}; TTu = {}; TTtime = [];
 
 %% loop
 for f = files'
@@ -39,47 +39,88 @@ for f = files'
     else
         Tend = NaT;
     end
+    TTtime = [TTtime; Tstr];
 
-    % read data - filt
-    T = readtable(fullfile(f.folder, f.name), "Sheet","Channel B Filt");
-    t = T.StimTime;
-    t = Tstr + seconds(t);
-    if ~isnat(Tend)
-        if sum(t > Tend)
-            warning(['Stim times may be after end time: ',f.name])
-        end
-    end
-    T.Time  = t;
-    T = table2timetable(T);
-    TTf = [TTf; T];
-
-    % read data - unfilt
-    T = readtable(fullfile(f.folder, f.name), "Sheet","Channel B Unfilt");
-    t = T.StimTime;
-    t = Tstr + seconds(t);
-    if ~isnat(Tend)
-        if sum(t > Tend)
-            warning(['Stim times may be after end time: ',f.name])
-        end
-    end
-    T.Time  = t;
-    T = table2timetable(T);
-    TTu = [TTu; T];
+    % read data
+    T = getTimeTable(f, "Channel B Filt", Tstr, Tend);
+    TTf = [TTf; {T}];
+    T = getTimeTable(f, "Channel B Unfilt", Tstr, Tend);
+    TTu = [TTu; {T}];
 end
 
 %% plotting 
+% consider first table = baseline, second = injury 
+TTsel = TTf; % pick which one to plot 
+winsize = 10; % samples 
+varplt = {'n15amp',  'n07amp'}; 
+varnam = {'N10',     'N7'};
+varmkr = {'.',       '.'};
+varclr = {'#D95319', '#0072BD'}; % red, blue
+CAtime = TTtime(2);
+
+% summary stats helpers 
+avgTbl = @(T) mean(T, 'omitnan');
+stdTbl = @(T) varfun(@(x)std(x,'omitnan'),T); 
+numTbl = @(T) varfun(@(x)sum(~isnan(x)),T);
+ci95rng = @(T) tinv(.975, numTbl(T).Variables-1) .* stdTbl(T)./sqrt(numTbl(T).Variables);
+
+% summary stats 
+BLavg = avgTbl(TTsel{1}); BLstd = stdTbl(TTsel{1}); BLci = ci95rng(TTsel{1});
+CAavg = avgTbl(TTsel{2}); CAstd = stdTbl(TTsel{2}); CAci = ci95rng(TTsel{2});
+
+% concatenate table 
+TTcat = [];
+for TTi = TTsel'
+    TTcat = [TTcat; TTi{:}];
+end
+TTcat.Time = TTcat.Time - CAtime;
+
 figure; 
 
-subplot(2,1,1); 
-plot(TTu.Time, TTu.n07amp, '.');
-grid on; hold on;
-plot(TTu.Time, TTu.n15amp, '.');
-ylabel('Amplitude (V)'); legend('N7', 'N10');
-title('Unfilt');
+% plot summary stats 
+for v = 1:length(varplt)
+    x = TTcat.Time; x = [min(x), max(x)]; xP = [x(1), x(1), x(2), x(2)];
+    y = BLavg.(varplt{v}); 
+    yP = BLci.(['Fun_',varplt{v}]); 
+    yP = [y-yP, y+yP, y+yP, y-yP];
+    y = [y, y];
+    plot(x,y,  ':', 'Color',varclr{v}, 'LineWidth',2); hold on;
+    patch('XData',xP, 'YData',yP, 'FaceColor',varclr{v}, 'FaceAlpha',.1);
+    y = CAavg.(varplt{v}); 
+    yP = CAci.(['Fun_',varplt{v}]); 
+    yP = [y-yP, y+yP, y+yP, y-yP];
+    y = [y, y];
+    plot(x,y, '-.', 'Color',varclr{v}, 'LineWidth',2); hold on;
+    patch('XData',xP, 'YData',yP, 'FaceColor',varclr{v}, 'FaceAlpha',.1);
+end
 
-subplot(2,1,2); 
-plot(TTf.Time, TTf.n07amp, '.');
-grid on; hold on;
-plot(TTf.Time, TTf.n15amp, '.');
-ylabel('Amplitude (V)'); legend('N7', 'N10');
-title('Filt');
+% plot data points and moving mean 
+for v = 1:length(varplt)
+    x = TTcat.Time; y = TTcat.(varplt{v});
+    plot(x, y, varmkr{v}, 'Color', varclr{v}); hold on;
+    ysel = ~isnan(y); 
+    x = x(ysel); y = y(ysel); 
+    yavg = movmean(y,winsize); ystd = movstd(y,winsize);
+    yci = tinv([.025,.975], winsize-1) .* ystd/sqrt(winsize);
+    plot(x, yavg, '-', 'Color',varclr{v}, 'LineWidth',1);
+    plot(x, yci, '--', 'Color',varclr{v}, 'LineWidth',.5);
+end
+
+% labels 
+grid on;
+xlabel('time from CA onset'); ylabel('Amplitude (V)');
+
+%% helpers 
+
+function T = getTimeTable(f, sheetname, Tstr, Tend)
+    T = readtable(fullfile(f.folder, f.name), "Sheet",sheetname);
+    t = T.StimTime;
+    t = Tstr + seconds(t);
+    if ~isnat(Tend)
+        if sum(t > Tend)
+            warning(['Stim times may be after end time: ',f.name])
+        end
+    end
+    T.Time  = t;
+    T = table2timetable(T);
+end
