@@ -51,7 +51,7 @@ end
 %% plotting 
 % consider first table = baseline, second = injury 
 TTsel = TTf; % pick which one to plot 
-winsize = 10; % samples 
+winsize = 50; % samples 
 varplt = {'n15amp',  'n07amp'}; 
 varnam = {'N10',     'N7'};
 varmkr = {'.',       '.'};
@@ -84,14 +84,16 @@ for v = 1:length(varplt)
     yP = BLci.(['Fun_',varplt{v}]); 
     yP = [y-yP, y+yP, y+yP, y-yP];
     y = [y, y];
-    plot(x,y,  ':', 'Color',varclr{v}, 'LineWidth',2); hold on;
+    plot(x,y, '--', 'Color',varclr{v}, 'LineWidth',2); hold on;
     patch('XData',xP, 'YData',yP, 'FaceColor',varclr{v}, 'FaceAlpha',.1);
+    %{
     y = CAavg.(varplt{v}); 
     yP = CAci.(['Fun_',varplt{v}]); 
     yP = [y-yP, y+yP, y+yP, y-yP];
     y = [y, y];
     plot(x,y, '-.', 'Color',varclr{v}, 'LineWidth',2); hold on;
     patch('XData',xP, 'YData',yP, 'FaceColor',varclr{v}, 'FaceAlpha',.1);
+    %}
 end
 
 % plot data points and moving mean 
@@ -102,8 +104,8 @@ for v = 1:length(varplt)
     x = x(ysel); y = y(ysel); 
     yavg = movmean(y,winsize); ystd = movstd(y,winsize);
     yci = tinv([.025,.975], winsize-1) .* ystd/sqrt(winsize);
-    plot(x, yavg, '-', 'Color',varclr{v}, 'LineWidth',1);
-    plot(x, yci, '--', 'Color',varclr{v}, 'LineWidth',.5);
+    plot(x, yavg, '-', 'Color',varclr{v}, 'LineWidth',1.5);
+    %plot(x, yci, '--', 'Color',varclr{v}, 'LineWidth',.5);
 end
 
 % labels 
