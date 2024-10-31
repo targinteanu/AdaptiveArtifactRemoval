@@ -51,7 +51,7 @@ end
 %% plotting 
 % consider first table = baseline, second = injury 
 TTsel = TTf; % pick which one to plot 
-winsize = 50; % samples 
+winsize = 100; % samples 
 varplt = {'n15amp',  'n07amp'}; 
 varnam = {'N10',     'N7'};
 varmkr = {'.',       '.'};
@@ -101,19 +101,26 @@ end
 % plot data points and moving mean 
 for v = 1:length(varplt)
     x = TTcat.Time; y = TTcat.(varplt{v});
-    plot(x, y, varmkr{v}, 'Color', varclr{v}); hold on;
+    %plot(x, y, varmkr{v}, 'Color', varclr{v}); hold on;
     ysel = ~isnan(y); 
     x = x(ysel); y = y(ysel); 
     yavg = movmean(y,winsize); ystd = movstd(y,winsize);
     yci = tinv([.025,.975], winsize-1) .* ystd/sqrt(winsize);
-    plot(x, yavg, '-', 'Color',varclr{v}, 'LineWidth',1.5);
-    %plot(x, yci, '--', 'Color',varclr{v}, 'LineWidth',.5);
+    %errorbar(x, yavg, yci(:,1), yci(:,2), '-', 'Color',varclr{v}, 'LineWidth',1.5);
+    %%{
+    yci = yci + yavg;
+    plot(x, yavg, '-', 'Color',varclr{v}, 'LineWidth',1.5); hold on;
+    %plot(x, yci, '--', 'Color',varclr{v}, 'LineWidth',1);
+    xP = [x; flipud(x)]; yP = [yci(:,1); flipud(yci(:,2))];
+    patch('XData', xP, 'YData', yP, ...
+        'FaceColor',varclr{v}, 'FaceAlpha',.2, 'EdgeColor','none');
+    %}
 end
 
 % plot start of resusc
 yrng = ylim; 
-plot(seconds(0)*ones(size(yrng)), yrng, ':k', 'LineWidth',1);
-plot(    REtime*ones(size(yrng)), yrng, '-k', 'LineWidth',1);
+plot(seconds(0)*ones(size(yrng)), yrng, '--k', 'LineWidth',1.5);
+plot(    REtime*ones(size(yrng)), yrng,  '-k', 'LineWidth',1.5);
 
 % labels 
 grid on;
@@ -122,7 +129,7 @@ xlabel('time from CA onset', 'FontSize',20);
 ylabel('Amplitude (V)', 'FontSize',20);
 title([num2str(REtime_lbl),'-Minute CA Recovery'], 'FontSize',28);
 legend('N10 Baseline Avg', 'N10 Baseline 95% C.I.', 'N17 Baseline Avg', 'N17 Baseline 95% C.I.', ...
-    'N10', 'N10 Moving Average', 'N7', 'N7 Moving Average', ...
+    'N10 Moving Average', 'N10 Moving 95% C.I.', 'N7 Moving Average', 'N7 Moving 95% C.I.', ...
     'CA onset', 'Resuscitation onset', ...
     'Location','westoutside', 'FontSize',18);
 
