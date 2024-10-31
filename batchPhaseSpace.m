@@ -1,3 +1,8 @@
+% compute the phase space of a folder of 
+% _filtered_sigObj.mat files.
+% Save the summary statistics of each as a spreadsheet. 
+% Meant to work with rodent SSEP data (Mingfeng). 
+
 %% setup before loop 
 codedir = cd;
 folder = uigetdir; 
