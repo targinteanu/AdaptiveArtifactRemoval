@@ -55,10 +55,10 @@ TTsel = TTf; % pick which one to plot
 winsize = 100; % samples 
 %varplt = {'n15amp',  'n07amp'}; 
 %varnam = {'N10',     'N7'};
-varplt = {'PSA09', 'PSA30'};
-varnam = {'0-9ms', '0-30ms'};
+varplt = {'PSA09', 'PSA30', 'PSA', 'PSAsub'};
+varnam = {'0-9ms', '0-30ms', '5-30ms', '5-9ms'};
 varmkr = {'.',       '.'};
-varclr = {'#D95319', '#0072BD'}; % red, blue
+varclr = {'#D95319', '#0072BD', '#77AC30', '#EDB120'}; % red, blue, green, yellow
 CAtime = TTtime(2); REtime = TTtime(3);
 
 % summary stats helpers 
